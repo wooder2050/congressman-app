@@ -55,6 +55,50 @@ export default function RootLayout() {
       >
         <Stack.Screen name="(tabs)" />
         <Stack.Screen
+          name="members/[id]"
+          options={{ headerShown: true, title: '의원 상세' }}
+        />
+        <Stack.Screen
+          name="members/[id]/history"
+          options={{ headerShown: true, title: '역대 활동' }}
+        />
+        <Stack.Screen
+          name="bills/[id]"
+          options={{ headerShown: true, title: '법안 상세' }}
+        />
+        <Stack.Screen
+          name="votes/[id]"
+          options={{ headerShown: true, title: '표결 상세' }}
+        />
+        <Stack.Screen
+          name="committees/index"
+          options={{ headerShown: true, title: '위원회' }}
+        />
+        <Stack.Screen
+          name="committees/[name]"
+          options={{ headerShown: true, title: '위원회 상세' }}
+        />
+        <Stack.Screen
+          name="schedule"
+          options={{ headerShown: true, title: '일정' }}
+        />
+        <Stack.Screen
+          name="compare"
+          options={{ headerShown: true, title: '의원 비교' }}
+        />
+        <Stack.Screen
+          name="guide"
+          options={{ headerShown: true, title: '입법 가이드' }}
+        />
+        <Stack.Screen
+          name="glossary"
+          options={{ headerShown: true, title: '용어 사전' }}
+        />
+        <Stack.Screen
+          name="about"
+          options={{ headerShown: true, title: '앱 정보' }}
+        />
+        <Stack.Screen
           name="weekly/index"
           options={{ headerShown: true, title: '주간뉴스' }}
         />

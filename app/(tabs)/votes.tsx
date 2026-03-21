@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
-import { useCallback, useState } from 'react';
-import { FlatList, Text, View } from 'react-native';
+import { useCallback, useMemo, useState } from 'react';
+import { ActivityIndicator, FlatList, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { getVotes, getVoteSummary } from '@/api/votes';
@@ -12,7 +12,7 @@ import { PressableCard } from '@/components/ui/Card';
 import { FilterChip } from '@/components/ui/FilterChip';
 import { SearchInput } from '@/components/ui/SearchInput';
 import { VOTE_RESULT_MAP } from '@/constants/maps';
-import { useLawmakeQuery } from '@/hooks/useLawmakeQuery';
+import { useLawmakeInfiniteQuery, useLawmakeQuery } from '@/hooks/useLawmakeQuery';
 import { formatDate } from '@/lib/format';
 import type { Vote } from '@/types';
 
@@ -32,7 +32,6 @@ export default function VotesScreen() {
   const insets = useSafeAreaInsets();
   const [search, setSearch] = useState('');
   const [resultCode, setResultCode] = useState('');
-  const [page, setPage] = useState(1);
 
   const { data: summary } = useLawmakeQuery(getVoteSummary, [CURRENT_TERM]);
 
@@ -41,15 +40,38 @@ export default function VotesScreen() {
     isLoading,
     error,
     refetch,
-  } = useLawmakeQuery(getVotes, [
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useLawmakeInfiniteQuery(
+    getVotes,
+    ({ pageParam }) => [
+      {
+        termId: CURRENT_TERM,
+        resultCode: resultCode || undefined,
+        search: search.trim() || undefined,
+        page: pageParam,
+        limit: PAGE_SIZE,
+      },
+    ] as const,
     {
-      termId: CURRENT_TERM,
-      resultCode: resultCode || undefined,
-      search: search.trim() || undefined,
-      page,
-      limit: PAGE_SIZE,
-    },
-  ]);
+      initialPageParam: 1,
+      getNextPageParam: (lastPage, allPages) => {
+        const loaded = allPages.reduce((sum, p) => sum + p.votes.length, 0);
+        return loaded < lastPage.total ? allPages.length + 1 : undefined;
+      },
+    }
+  );
+
+  const votes = useMemo(() => {
+    const all = data?.pages.flatMap((p) => p.votes) ?? [];
+    const seen = new Set<string>();
+    return all.filter((v) => {
+      if (seen.has(v.id)) return false;
+      seen.add(v.id);
+      return true;
+    });
+  }, [data]);
 
   const renderVote = useCallback(
     ({ item }: { item: Vote }) => {
@@ -113,7 +135,7 @@ export default function VotesScreen() {
     [router]
   );
 
-  if (isLoading && page === 1) return <LoadingSpinner />;
+  if (isLoading) return <LoadingSpinner />;
   if (error) return <ErrorState onRetry={refetch} />;
 
   return (
@@ -133,14 +155,8 @@ export default function VotesScreen() {
         <SearchInput
           placeholder="법안명으로 검색"
           value={search}
-          onChangeText={(t) => {
-            setSearch(t);
-            setPage(1);
-          }}
-          onClear={() => {
-            setSearch('');
-            setPage(1);
-          }}
+          onChangeText={(t) => setSearch(t)}
+          onClear={() => setSearch('')}
         />
       </View>
 
@@ -156,10 +172,7 @@ export default function VotesScreen() {
             <FilterChip
               label={item.label}
               selected={resultCode === item.id}
-              onPress={() => {
-                setResultCode(item.id);
-                setPage(1);
-              }}
+              onPress={() => setResultCode(item.id)}
             />
           )}
         />
@@ -167,16 +180,21 @@ export default function VotesScreen() {
 
       {/* Vote List */}
       <FlatList
-        data={data?.votes ?? []}
+        data={votes}
         keyExtractor={(item) => item.id}
         renderItem={renderVote}
         contentContainerStyle={{ paddingTop: 8, paddingBottom: insets.bottom + 16 }}
         onEndReached={() => {
-          if (data && data.votes.length < data.total) {
-            setPage((p) => p + 1);
+          if (hasNextPage && !isFetchingNextPage) {
+            fetchNextPage();
           }
         }}
         onEndReachedThreshold={0.5}
+        ListFooterComponent={
+          isFetchingNextPage ? (
+            <ActivityIndicator size="small" color="#2563EB" style={{ paddingVertical: 16 }} />
+          ) : null
+        }
         ListEmptyComponent={
           <EmptyState
             title="표결이 없습니다"
