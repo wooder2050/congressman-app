@@ -20,6 +20,20 @@ export const BILL_STATUS_MAP = {
   committee: { label: '위원회 심사', color: '#111111', textColor: '#FFFFFF' },
 } as const;
 
+export const SCORECARD_GRADE_MAP = {
+  S: { label: 'S', color: '#2563EB', bgColor: '#DBEAFE' },
+  A: { label: 'A', color: '#16A34A', bgColor: '#DCFCE7' },
+  B: { label: 'B', color: '#CA8A04', bgColor: '#FEF9C3' },
+  C: { label: 'C', color: '#EA580C', bgColor: '#FED7AA' },
+  D: { label: 'D', color: '#DC2626', bgColor: '#FEE2E2' },
+} as const;
+
+export const ELECTION_STATUS_MAP = {
+  upcoming: { label: '예정', color: '#2563EB', bgColor: '#DBEAFE' },
+  active: { label: '진행 중', color: '#16A34A', bgColor: '#DCFCE7' },
+  completed: { label: '완료', color: '#6B7280', bgColor: '#F3F4F6' },
+} as const;
+
 export const TOPIC_MAP: Record<string, { label: string; emoji: string }> = {
   '경제·산업': { label: '경제·산업', emoji: '💰' },
   '법·사법': { label: '법·사법', emoji: '⚖️' },

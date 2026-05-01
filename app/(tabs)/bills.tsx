@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
-import { useCallback, useState } from 'react';
-import { FlatList, Text, View } from 'react-native';
+import { useCallback, useMemo, useState } from 'react';
+import { ActivityIndicator, FlatList, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { getBills, getBillSummary } from '@/api/bills';
@@ -12,7 +12,7 @@ import { PressableCard } from '@/components/ui/Card';
 import { FilterChip } from '@/components/ui/FilterChip';
 import { SearchInput } from '@/components/ui/SearchInput';
 import { BILL_STATUS_MAP } from '@/constants/maps';
-import { useLawmakeQuery } from '@/hooks/useLawmakeQuery';
+import { useLawmakeInfiniteQuery, useLawmakeQuery } from '@/hooks/useLawmakeQuery';
 import { formatDate } from '@/lib/format';
 import type { Bill } from '@/types';
 
@@ -32,7 +32,6 @@ export default function BillsScreen() {
   const insets = useSafeAreaInsets();
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState('');
-  const [page, setPage] = useState(1);
 
   const { data: summary } = useLawmakeQuery(getBillSummary, [CURRENT_TERM]);
 
@@ -41,15 +40,38 @@ export default function BillsScreen() {
     isLoading,
     error,
     refetch,
-  } = useLawmakeQuery(getBills, [
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useLawmakeInfiniteQuery(
+    getBills,
+    ({ pageParam }) => [
+      {
+        termId: CURRENT_TERM,
+        status: status || undefined,
+        search: search.trim() || undefined,
+        page: pageParam,
+        limit: PAGE_SIZE,
+      },
+    ] as const,
     {
-      termId: CURRENT_TERM,
-      status: status || undefined,
-      search: search.trim() || undefined,
-      page,
-      limit: PAGE_SIZE,
-    },
-  ]);
+      initialPageParam: 1,
+      getNextPageParam: (lastPage, allPages) => {
+        const loaded = allPages.reduce((sum, p) => sum + p.bills.length, 0);
+        return loaded < lastPage.total ? allPages.length + 1 : undefined;
+      },
+    }
+  );
+
+  const bills = useMemo(() => {
+    const all = data?.pages.flatMap((p) => p.bills) ?? [];
+    const seen = new Set<string>();
+    return all.filter((b) => {
+      if (seen.has(b.id)) return false;
+      seen.add(b.id);
+      return true;
+    });
+  }, [data]);
 
   const renderBill = useCallback(
     ({ item }: { item: Bill }) => {
@@ -97,7 +119,7 @@ export default function BillsScreen() {
     [router]
   );
 
-  if (isLoading && page === 1) return <LoadingSpinner />;
+  if (isLoading) return <LoadingSpinner />;
   if (error) return <ErrorState onRetry={refetch} />;
 
   return (
@@ -117,14 +139,8 @@ export default function BillsScreen() {
         <SearchInput
           placeholder="법안명 검색"
           value={search}
-          onChangeText={(t) => {
-            setSearch(t);
-            setPage(1);
-          }}
-          onClear={() => {
-            setSearch('');
-            setPage(1);
-          }}
+          onChangeText={(t) => setSearch(t)}
+          onClear={() => setSearch('')}
         />
       </View>
 
@@ -140,10 +156,7 @@ export default function BillsScreen() {
             <FilterChip
               label={item.label}
               selected={status === item.id}
-              onPress={() => {
-                setStatus(item.id);
-                setPage(1);
-              }}
+              onPress={() => setStatus(item.id)}
             />
           )}
         />
@@ -151,16 +164,21 @@ export default function BillsScreen() {
 
       {/* Bill List */}
       <FlatList
-        data={data?.bills ?? []}
+        data={bills}
         keyExtractor={(item) => item.id}
         renderItem={renderBill}
         contentContainerStyle={{ paddingTop: 8, paddingBottom: insets.bottom + 16 }}
         onEndReached={() => {
-          if (data && data.bills.length < data.total) {
-            setPage((p) => p + 1);
+          if (hasNextPage && !isFetchingNextPage) {
+            fetchNextPage();
           }
         }}
         onEndReachedThreshold={0.5}
+        ListFooterComponent={
+          isFetchingNextPage ? (
+            <ActivityIndicator size="small" color="#2563EB" style={{ paddingVertical: 16 }} />
+          ) : null
+        }
         ListEmptyComponent={
           <EmptyState
             title="법안이 없습니다"

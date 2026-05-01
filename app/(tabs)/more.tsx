@@ -1,13 +1,16 @@
 import { useRouter } from 'expo-router';
 import {
+  Award,
   BookOpen,
   Building2,
   CalendarDays,
   ChevronRight,
   GitCompare,
+  Home,
   Info,
   type LucideIcon,
   Newspaper,
+  Vote,
 } from 'lucide-react-native';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -25,6 +28,24 @@ const MENU_ITEMS: MenuItem[] = [
     label: '주간뉴스',
     description: '매주 국회 소식 한눈에',
     route: '/weekly',
+  },
+  {
+    icon: Award,
+    label: '의정활동 성적표',
+    description: '의원 성적 랭킹 (S~D등급)',
+    route: '/scorecard-ranking',
+  },
+  {
+    icon: Home,
+    label: '부동산 보유 현황',
+    description: '다주택자·고가주택·과다보유',
+    route: '/property',
+  },
+  {
+    icon: Vote,
+    label: '재보궐선거',
+    description: '선거구·후보 정보',
+    route: '/elections',
   },
   {
     icon: Building2,

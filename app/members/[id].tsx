@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getAttendance, getAbsenceDetails } from '@/api/attendance';
 import { getBills } from '@/api/bills';
 import { getMember, getMemberTerms, getMemberVotes, getAssets } from '@/api/members';
+import { getMemberScorecard } from '@/api/scorecard';
 import { EmptyState } from '@/components/EmptyState';
 import { ErrorState } from '@/components/ErrorState';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
@@ -14,7 +15,7 @@ import { PartyBadge } from '@/components/PartyBadge';
 import { Badge } from '@/components/ui/Badge';
 import { Card, PressableCard } from '@/components/ui/Card';
 import { SectionHeader } from '@/components/ui/SectionHeader';
-import { BILL_STATUS_MAP, MEMBER_VOTE_RESULT_MAP } from '@/constants/maps';
+import { BILL_STATUS_MAP, MEMBER_VOTE_RESULT_MAP, SCORECARD_GRADE_MAP } from '@/constants/maps';
 import { useLawmakeQuery } from '@/hooks/useLawmakeQuery';
 import { formatDate, formatPercent, formatAmount } from '@/lib/format';
 
@@ -56,6 +57,12 @@ export default function MemberDetailScreen() {
   const { data: assetsData } = useLawmakeQuery(getAssets, [id], {
     enabled: !!member,
   });
+
+  const { data: scorecard } = useLawmakeQuery(
+    getMemberScorecard,
+    [{ memberId: id, termId: CURRENT_TERM }],
+    { enabled: !!member }
+  );
 
   if (isLoading) return <LoadingSpinner />;
   if (error) return <ErrorState onRetry={refetch} />;
@@ -120,7 +127,10 @@ export default function MemberDetailScreen() {
       {/* Attendance */}
       {attendance && (
         <View className="mt-3 px-5">
-          <SectionHeader title="출석 현황" />
+          <SectionHeader
+            title="출석 현황"
+            onMore={() => router.push(`/members/${id}/attendance`)}
+          />
           <Card className="mt-2">
             <View className="items-center">
               <Text className="text-3xl font-bold text-primary">
@@ -183,6 +193,68 @@ export default function MemberDetailScreen() {
               </View>
             )}
           </Card>
+        </View>
+      )}
+
+      {/* Scorecard */}
+      {scorecard && (
+        <View className="mt-3 px-5">
+          <SectionHeader
+            title="의정활동 성적표"
+            onMore={() => router.push(`/members/${id}/scorecard`)}
+          />
+          <PressableCard
+            className="mt-2"
+            onPress={() => router.push(`/members/${id}/scorecard`)}
+          >
+            <View className="flex-row items-center gap-4">
+              <View
+                className="h-14 w-14 items-center justify-center rounded-full"
+                style={{ backgroundColor: SCORECARD_GRADE_MAP[scorecard.grade].bgColor }}
+              >
+                <Text
+                  className="text-xl font-bold"
+                  style={{ color: SCORECARD_GRADE_MAP[scorecard.grade].color }}
+                >
+                  {scorecard.grade}
+                </Text>
+              </View>
+              <View className="flex-1">
+                <Text className="text-lg font-bold text-neutral-900">
+                  {scorecard.totalScore.toFixed(1)}점
+                </Text>
+                <Text className="text-xs text-neutral-400">
+                  전체 {scorecard.overallRank}위
+                </Text>
+              </View>
+            </View>
+            <View className="mt-3 flex-row justify-around border-t border-neutral-100 pt-3">
+              <View className="items-center">
+                <Text className="text-xs font-bold text-neutral-700">
+                  {scorecard.attendance.score.toFixed(0)}
+                </Text>
+                <Text className="text-[10px] text-neutral-400">출석</Text>
+              </View>
+              <View className="items-center">
+                <Text className="text-xs font-bold text-neutral-700">
+                  {scorecard.voteParticipation.score.toFixed(0)}
+                </Text>
+                <Text className="text-[10px] text-neutral-400">표결</Text>
+              </View>
+              <View className="items-center">
+                <Text className="text-xs font-bold text-neutral-700">
+                  {scorecard.billProposal.score.toFixed(0)}
+                </Text>
+                <Text className="text-[10px] text-neutral-400">발의</Text>
+              </View>
+              <View className="items-center">
+                <Text className="text-xs font-bold text-neutral-700">
+                  {scorecard.billPassRate.score.toFixed(0)}
+                </Text>
+                <Text className="text-[10px] text-neutral-400">통과</Text>
+              </View>
+            </View>
+          </PressableCard>
         </View>
       )}
 
@@ -302,8 +374,26 @@ export default function MemberDetailScreen() {
         </View>
       )}
 
-      {/* History link */}
-      <View className="mt-5 px-5">
+      {/* Navigation links */}
+      <View className="mt-5 px-5 gap-1">
+        <Pressable
+          className="flex-row items-center justify-between rounded-xl bg-white px-4 py-3.5 active:bg-neutral-50"
+          onPress={() => router.push(`/members/${id}/attendance`)}
+        >
+          <Text className="text-sm font-medium text-neutral-700">
+            출석 상세 보기
+          </Text>
+          <ChevronRight size={18} color="#a3a3a3" />
+        </Pressable>
+        <Pressable
+          className="flex-row items-center justify-between rounded-xl bg-white px-4 py-3.5 active:bg-neutral-50"
+          onPress={() => router.push(`/members/${id}/scorecard`)}
+        >
+          <Text className="text-sm font-medium text-neutral-700">
+            의정활동 성적표 보기
+          </Text>
+          <ChevronRight size={18} color="#a3a3a3" />
+        </Pressable>
         <Pressable
           className="flex-row items-center justify-between rounded-xl bg-white px-4 py-3.5 active:bg-neutral-50"
           onPress={() => router.push(`/members/${id}/history`)}

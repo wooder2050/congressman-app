@@ -1,13 +1,12 @@
 {
   "expo": {
-    "name": "lawmake",
+    "name": "국회의원 의정활동",
     "slug": "congressman-app",
     "version": "1.0.0",
     "scheme": "lawmake",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -16,8 +15,10 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "kr.lawmake.app",
+      "newArchEnabled": true,
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "CFBundleDisplayName": "국회의원 의정활동"
       }
     },
     "android": {
@@ -25,7 +26,8 @@
         "backgroundColor": "#FFFFFF",
         "foregroundImage": "./assets/adaptive-icon.png"
       },
-      "package": "kr.lawmake.app"
+      "package": "kr.lawmake.app",
+      "newArchEnabled": true
     },
     "web": {
       "favicon": "./assets/favicon.png",
@@ -34,7 +36,8 @@
     "plugins": [
       "expo-router",
       "expo-image",
-      "expo-font"
+      "expo-font",
+      "expo-secure-store"
     ],
     "extra": {
       "router": {},

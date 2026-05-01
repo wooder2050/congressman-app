@@ -1,18 +1,22 @@
 import { useRouter } from 'expo-router';
 import {
   CalendarDays,
+  CheckSquare,
   FileText,
   Newspaper,
   TrendingUp,
   Users,
   Vote as VoteIcon,
 } from 'lucide-react-native';
-import { RefreshControl, ScrollView, Text, View } from 'react-native';
+import { Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { getAttendanceRanking } from '@/api/attendance';
+import { getPropertyStats } from '@/api/property';
+import { getScorecardRanking } from '@/api/scorecard';
 import { getUpcomingSchedules } from '@/api/schedules';
 import { getHomeStats } from '@/api/stats';
+import { getActiveBreakingNews } from '@/data/breaking-news';
 import { EmptyState } from '@/components/EmptyState';
 import { ErrorState } from '@/components/ErrorState';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
@@ -21,10 +25,17 @@ import { PartyBadge } from '@/components/PartyBadge';
 import { Badge } from '@/components/ui/Badge';
 import { Card, PressableCard } from '@/components/ui/Card';
 import { SectionHeader } from '@/components/ui/SectionHeader';
-import { BILL_STATUS_MAP, VOTE_RESULT_MAP } from '@/constants/maps';
+import { BILL_STATUS_MAP, VOTE_RESULT_MAP, SCORECARD_GRADE_MAP } from '@/constants/maps';
 import { getLatestWeeklyArticle } from '@/data/weekly';
 import { useLawmakeQuery } from '@/hooks/useLawmakeQuery';
 import { formatDate, formatNumber, formatPercent } from '@/lib/format';
+
+const BREAKING_CATEGORY_STYLE: Record<string, { label: string; color: string }> = {
+  committee: { label: '국회', color: '#F59E0B' },
+  election: { label: '선거', color: '#F43F5E' },
+  legislation: { label: '입법', color: '#3B82F6' },
+  politics: { label: '정치', color: '#8B5CF6' },
+};
 
 const CURRENT_TERM = 22;
 
@@ -44,13 +55,19 @@ export default function HomeScreen() {
 
   const { data: ranking } = useLawmakeQuery(getAttendanceRanking, [CURRENT_TERM]);
 
+  const { data: scorecardData } = useLawmakeQuery(getScorecardRanking, [CURRENT_TERM]);
+
+  const { data: propertyData } = useLawmakeQuery(getPropertyStats, []);
+
   const latestWeekly = getLatestWeeklyArticle();
+  const breakingNews = getActiveBreakingNews();
 
   if (isLoading) return <LoadingSpinner />;
   if (error) return <ErrorState onRetry={refetch} />;
   if (!stats) return <EmptyState title="데이터가 없습니다" />;
 
   return (
+  <View className="flex-1">
     <ScrollView
       className="flex-1 bg-neutral-50"
       contentContainerStyle={{ paddingBottom: insets.bottom + 16 }}
@@ -63,6 +80,47 @@ export default function HomeScreen() {
         <Text className="text-2xl font-bold text-neutral-900">제22대 국회</Text>
         <Text className="mt-1 text-sm text-neutral-400">국회 의정활동 한눈에 보기</Text>
       </View>
+
+      {/* Breaking News */}
+      {breakingNews.length > 0 && (
+        <View className="mt-4 px-5 gap-3">
+          <SectionHeader title="속보" />
+          {breakingNews.map((item) => {
+            const cat = BREAKING_CATEGORY_STYLE[item.category] ?? BREAKING_CATEGORY_STYLE.politics;
+            return (
+              <PressableCard
+                key={item.id}
+                className="border-amber-200 bg-amber-50"
+                onPress={() => item.linkUrl && router.push(item.linkUrl as never)}
+              >
+                <View className="flex-row items-center gap-2">
+                  <View className="h-2.5 w-2.5 rounded-full bg-amber-500" />
+                  <Badge label={cat.label} color={cat.color} textColor="#FFFFFF" />
+                  <Text className="ml-auto text-[10px] text-amber-600">{item.date}</Text>
+                </View>
+                <Text className="mt-1.5 text-sm font-bold text-amber-900">
+                  {item.title}
+                </Text>
+                <Text className="mt-1 text-xs leading-4 text-amber-800" numberOfLines={3}>
+                  {item.description}
+                </Text>
+                {item.items && item.items.length > 0 && (
+                  <View className="mt-2 gap-1.5">
+                    {item.items.slice(0, 3).map((detail) => (
+                      <View key={detail.label} className="rounded-lg bg-white/70 px-3 py-1.5">
+                        <Text className="text-[10px] font-semibold text-amber-700">
+                          {detail.label}
+                        </Text>
+                        <Text className="text-[11px] text-amber-900/70">{detail.value}</Text>
+                      </View>
+                    ))}
+                  </View>
+                )}
+              </PressableCard>
+            );
+          })}
+        </View>
+      )}
 
       {/* Latest Weekly News */}
       {latestWeekly && (
@@ -308,6 +366,168 @@ export default function HomeScreen() {
         </View>
       )}
 
+      {/* Close Votes */}
+      {stats.closeVotes && stats.closeVotes.length > 0 && (
+        <View className="mt-5 px-5">
+          <SectionHeader title="접전 표결" />
+          <View className="mt-3 gap-2">
+            {stats.closeVotes.slice(0, 5).map((vote) => {
+              const result = VOTE_RESULT_MAP[vote.resultCode];
+              const total = vote.yesCount + vote.noCount + vote.abstainCount;
+              const yesPct = total > 0 ? (vote.yesCount / total) * 100 : 0;
+              const noPct = total > 0 ? (vote.noCount / total) * 100 : 0;
+              return (
+                <PressableCard
+                  key={vote.id}
+                  onPress={() => router.push(`/votes/${vote.id}`)}
+                >
+                  <View className="flex-row items-start justify-between">
+                    <Text
+                      className="flex-1 text-sm font-semibold text-neutral-800"
+                      numberOfLines={2}
+                    >
+                      {vote.billName}
+                    </Text>
+                    <Badge
+                      label={result.label}
+                      color={result.color}
+                      textColor={result.textColor}
+                      className="ml-2"
+                    />
+                  </View>
+                  {/* Vote bar */}
+                  <View className="mt-2 h-2 flex-row overflow-hidden rounded-full">
+                    <View className="h-full bg-green-500" style={{ width: `${yesPct}%` }} />
+                    <View className="h-full bg-red-500" style={{ width: `${noPct}%` }} />
+                    <View className="h-full flex-1 bg-neutral-200" />
+                  </View>
+                  <View className="mt-1 flex-row gap-3">
+                    <Text className="text-xs text-green-600">찬성 {vote.yesCount}</Text>
+                    <Text className="text-xs text-red-600">반대 {vote.noCount}</Text>
+                    <Text className="text-xs text-neutral-400">기권 {vote.abstainCount}</Text>
+                  </View>
+                </PressableCard>
+              );
+            })}
+          </View>
+        </View>
+      )}
+
+      {/* Rejected Votes */}
+      {stats.rejectedVotes && stats.rejectedVotes.length > 0 && (
+        <View className="mt-5 px-5">
+          <SectionHeader title="부결된 표결" />
+          <View className="mt-3 gap-2">
+            {stats.rejectedVotes.slice(0, 5).map((vote) => (
+              <PressableCard
+                key={vote.id}
+                onPress={() => router.push(`/votes/${vote.id}`)}
+              >
+                <View className="flex-row items-start justify-between">
+                  <Text
+                    className="flex-1 text-sm font-semibold text-neutral-800"
+                    numberOfLines={2}
+                  >
+                    {vote.billName}
+                  </Text>
+                  <Badge label="부결" color="#DC2626" textColor="#FFFFFF" className="ml-2" />
+                </View>
+                <View className="mt-1 flex-row gap-3">
+                  <Text className="text-xs text-green-600">찬성 {vote.yesCount}</Text>
+                  <Text className="text-xs text-red-600">반대 {vote.noCount}</Text>
+                  <Text className="text-xs text-neutral-400">기권 {vote.abstainCount}</Text>
+                </View>
+                <Text className="mt-0.5 text-xs text-neutral-400">
+                  {formatDate(vote.procDate)}
+                </Text>
+              </PressableCard>
+            ))}
+          </View>
+        </View>
+      )}
+
+      {/* Scorecard Highlight */}
+      {scorecardData?.rankings && scorecardData.rankings.length > 0 && (
+        <View className="mt-5 px-5">
+          <SectionHeader
+            title="의정활동 성적표"
+            onMore={() => router.push('/scorecard-ranking')}
+          />
+          <View className="mt-3 gap-2">
+            <Card>
+              <Text className="mb-2 text-xs font-semibold text-primary">TOP 5</Text>
+              {scorecardData.rankings.slice(0, 5).map((m, i) => {
+                const grade = SCORECARD_GRADE_MAP[m.grade];
+                return (
+                  <PressableCard
+                    key={m.memberId}
+                    className="mb-1.5 flex-row items-center gap-2 border-0 p-2"
+                    style={{ elevation: 0 }}
+                    onPress={() => router.push(`/members/${m.memberId}/scorecard`)}
+                  >
+                    <Text className="w-5 text-center text-xs font-bold text-primary">
+                      {i + 1}
+                    </Text>
+                    <MemberPhoto uri={m.photoUrl} size={32} partyColor={m.party.color} />
+                    <View className="flex-1">
+                      <Text className="text-sm font-medium text-neutral-800">{m.name}</Text>
+                    </View>
+                    <View
+                      className="h-6 w-6 items-center justify-center rounded-full"
+                      style={{ backgroundColor: grade.bgColor }}
+                    >
+                      <Text className="text-[10px] font-bold" style={{ color: grade.color }}>
+                        {m.grade}
+                      </Text>
+                    </View>
+                    <Text className="w-10 text-right text-xs font-bold text-neutral-600">
+                      {m.totalScore.toFixed(1)}
+                    </Text>
+                  </PressableCard>
+                );
+              })}
+            </Card>
+
+            <Card>
+              <Text className="mb-2 text-xs font-semibold text-red-500">하위 5</Text>
+              {scorecardData.rankings
+                .slice(-5)
+                .reverse()
+                .map((m, i) => {
+                  const grade = SCORECARD_GRADE_MAP[m.grade];
+                  return (
+                    <PressableCard
+                      key={m.memberId}
+                      className="mb-1.5 flex-row items-center gap-2 border-0 p-2"
+                      style={{ elevation: 0 }}
+                      onPress={() => router.push(`/members/${m.memberId}/scorecard`)}
+                    >
+                      <Text className="w-5 text-center text-xs font-bold text-red-500">
+                        {scorecardData.rankings.length - i}
+                      </Text>
+                      <MemberPhoto uri={m.photoUrl} size={32} partyColor={m.party.color} />
+                      <View className="flex-1">
+                        <Text className="text-sm font-medium text-neutral-800">{m.name}</Text>
+                      </View>
+                      <View
+                        className="h-6 w-6 items-center justify-center rounded-full"
+                        style={{ backgroundColor: grade.bgColor }}
+                      >
+                        <Text className="text-[10px] font-bold" style={{ color: grade.color }}>
+                          {m.grade}
+                        </Text>
+                      </View>
+                      <Text className="w-10 text-right text-xs font-bold text-neutral-600">
+                        {m.totalScore.toFixed(1)}
+                      </Text>
+                    </PressableCard>
+                  );
+                })}
+            </Card>
+          </View>
+        </View>
+      )}
+
       {/* Attendance Ranking */}
       {ranking && (
         <View className="mt-5 px-5">
@@ -369,6 +589,90 @@ export default function HomeScreen() {
           </View>
         </View>
       )}
+
+      {/* Property Highlight */}
+      {propertyData && propertyData.members.length > 0 && (() => {
+        const memberMap = new Map(propertyData.members.map((m) => [m.memberId, m]));
+        const memberAssets = new Map<string, typeof propertyData.assets>();
+        for (const a of propertyData.assets) {
+          if (!memberAssets.has(a.memberId)) memberAssets.set(a.memberId, []);
+          memberAssets.get(a.memberId)!.push(a);
+        }
+
+        let multiHomeCount = 0;
+        let expensiveCount = 0;
+        let excessiveCount = 0;
+        const topMultiHome: { name: string; memberId: string; photoUrl: string; partyColor: string; count: number }[] = [];
+
+        for (const [memberId, assets] of memberAssets) {
+          const member = memberMap.get(memberId);
+          if (!member) continue;
+          const ownAssets = assets.filter((a) => a.relation === '본인' || a.relation === '배우자');
+          const homes = ownAssets.filter((a) => a.category === '건물' && !a.item.includes('임차') && !a.item.includes('분양'));
+          if (homes.length >= 2) {
+            multiHomeCount++;
+            topMultiHome.push({ name: member.name, memberId, photoUrl: member.photoUrl, partyColor: member.partyColor, count: homes.length });
+          }
+          if (ownAssets.some((a) => a.category === '건물' && a.amount >= 1500000000)) expensiveCount++;
+          const totalProp = ownAssets.filter((a) => a.category === '건물' || a.category === '토지').reduce((s, a) => s + a.amount, 0);
+          if (totalProp >= 3000000000) excessiveCount++;
+        }
+        topMultiHome.sort((a, b) => b.count - a.count);
+
+        return (
+          <View className="mt-5 px-5">
+            <SectionHeader
+              title="부동산 보유 현황"
+              onMore={() => router.push('/property')}
+            />
+            <View className="mt-3 flex-row gap-2">
+              <PressableCard className="flex-1 items-center py-3" onPress={() => router.push('/property')}>
+                <Text className="text-lg font-bold text-red-600">{multiHomeCount}</Text>
+                <Text className="text-[10px] text-neutral-400">다주택자</Text>
+              </PressableCard>
+              <PressableCard className="flex-1 items-center py-3" onPress={() => router.push('/property')}>
+                <Text className="text-lg font-bold text-amber-600">{expensiveCount}</Text>
+                <Text className="text-[10px] text-neutral-400">고가주택</Text>
+              </PressableCard>
+              <PressableCard className="flex-1 items-center py-3" onPress={() => router.push('/property')}>
+                <Text className="text-lg font-bold text-violet-600">{excessiveCount}</Text>
+                <Text className="text-[10px] text-neutral-400">과다보유</Text>
+              </PressableCard>
+            </View>
+            {topMultiHome.length > 0 && (
+              <Card className="mt-2">
+                <Text className="mb-2 text-xs font-semibold text-red-600">다주택 TOP 3</Text>
+                {topMultiHome.slice(0, 3).map((m, i) => (
+                  <PressableCard
+                    key={m.memberId}
+                    className="mb-1.5 flex-row items-center gap-2 border-0 p-2"
+                    style={{ elevation: 0 }}
+                    onPress={() => router.push(`/members/${m.memberId}`)}
+                  >
+                    <Text className="w-5 text-center text-xs font-bold text-red-500">{i + 1}</Text>
+                    <MemberPhoto uri={m.photoUrl} size={32} partyColor={m.partyColor} />
+                    <View className="flex-1">
+                      <Text className="text-sm font-medium text-neutral-800">{m.name}</Text>
+                    </View>
+                    <Badge label={`${m.count}채`} color="#DC2626" textColor="#FFFFFF" />
+                  </PressableCard>
+                ))}
+              </Card>
+            )}
+          </View>
+        );
+      })()}
     </ScrollView>
+
+    {/* Election FAB */}
+    <Pressable
+      className="absolute right-5 flex-row items-center gap-2 rounded-full bg-rose-500 px-4 py-3 shadow-lg active:bg-rose-600"
+      style={{ bottom: insets.bottom }}
+      onPress={() => router.push('/elections/2026-06-03')}
+    >
+      <CheckSquare size={18} color="#FFFFFF" />
+      <Text className="text-sm font-semibold text-white">6·3 재보궐</Text>
+    </Pressable>
+  </View>
   );
 }
