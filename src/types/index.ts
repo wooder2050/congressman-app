@@ -388,6 +388,171 @@ export interface MemberWithTerm extends Member {
   term: MemberTerm;
 }
 
+// ====== 부동산 현황 ======
+export interface PropertyMember {
+  memberId: string;
+  name: string;
+  photoUrl: string;
+  party: string;
+  partyColor: string;
+  district: string;
+  proportional: boolean;
+  committees: string[];
+  electedCount: number;
+}
+
+export interface PropertyAsset {
+  memberId: string;
+  category: string;
+  item: string;
+  amount: number;
+  relation: string;
+}
+
+export interface PropertyStatsResponse {
+  members: PropertyMember[];
+  assets: PropertyAsset[];
+}
+
+// ====== 활동 히트맵 ======
+export interface ActivityHeatmapDay {
+  date: string;
+  representativeBills: number;
+  coBills: number;
+  votes: number;
+}
+
+// ====== 의원 성적표 ======
+export type ScorecardGrade = 'S' | 'A' | 'B' | 'C' | 'D';
+
+export interface MemberScorecard {
+  memberId: string;
+  name: string;
+  photoUrl: string;
+  party: Party;
+  district: string;
+  termId: number;
+
+  attendance: {
+    rate: number;
+    score: number;
+    rank: number;
+    totalMembers: number;
+  };
+  voteParticipation: {
+    rate: number;
+    score: number;
+    rank: number;
+    totalMembers: number;
+    yes: number;
+    no: number;
+    abstain: number;
+    absent: number;
+  };
+  billProposal: {
+    representativeCount: number;
+    coCount: number;
+    score: number;
+    rank: number;
+    totalMembers: number;
+  };
+  billPassRate: {
+    passedCount: number;
+    totalRepresentative: number;
+    rate: number;
+    score: number;
+    rank: number;
+    totalMembers: number;
+  };
+
+  totalScore: number;
+  grade: ScorecardGrade;
+  overallRank: number;
+
+  recentActivity: {
+    last30Days: {
+      bills: number;
+      votes: number;
+      votesAttended: number;
+    };
+  };
+}
+
+// ====== 성적표 랭킹 ======
+export interface ScorecardRankingItem {
+  memberId: string;
+  name: string;
+  photoUrl: string;
+  party: Party;
+  district: string;
+  totalScore: number;
+  grade: ScorecardGrade;
+  attendance: { rate: number; score: number };
+  voteParticipation: { rate: number; score: number };
+  billProposal: { representativeCount: number; score: number };
+  billPassRate: { rate: number; score: number };
+}
+
+export interface ScorecardRankingResponse {
+  rankings: ScorecardRankingItem[];
+}
+
+// ====== 재보궐선거 ======
+export interface ByElectionSummary {
+  id: string;
+  name: string;
+  electionDate: string;
+  status: 'upcoming' | 'active' | 'completed';
+  districtCount: number;
+}
+
+export interface ByElectionDetail {
+  id: string;
+  name: string;
+  electionDate: string;
+  status: 'upcoming' | 'active' | 'completed';
+  description: string;
+  districts: ElectionDistrictInfo[];
+}
+
+export interface ElectionDistrictInfo {
+  id: number;
+  district: string;
+  region: string;
+  vacancyReason: string;
+  confirmed: boolean;
+  status: string;
+  previousMember: {
+    id: string | null;
+    name: string;
+    photoUrl: string;
+    party: Party | null;
+  } | null;
+  candidates: ElectionCandidate[];
+}
+
+export interface CandidatePledge {
+  category: string;
+  title: string;
+  description: string;
+}
+
+export interface ElectionCandidate {
+  id: number;
+  name: string;
+  party: Party | null;
+  photoUrl: string | null;
+  birthDate: string | null;
+  career: string | null;
+  education: string | null;
+  slogan: string | null;
+  pledges: CandidatePledge[];
+  assets: string | null;
+  candidateNumber: number | null;
+  status: string;
+  memberIdRef: string | null;
+}
+
 // ====== 주간뉴스 ======
 export interface WeeklyArticle {
   id: string;

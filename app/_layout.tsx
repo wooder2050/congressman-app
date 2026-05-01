@@ -63,6 +63,14 @@ export default function RootLayout() {
           options={{ headerShown: true, title: '역대 활동' }}
         />
         <Stack.Screen
+          name="members/[id]/scorecard"
+          options={{ headerShown: true, title: '의정활동 성적표' }}
+        />
+        <Stack.Screen
+          name="members/[id]/attendance"
+          options={{ headerShown: true, title: '출석 상세' }}
+        />
+        <Stack.Screen
           name="bills/[id]"
           options={{ headerShown: true, title: '법안 상세' }}
         />
@@ -93,6 +101,22 @@ export default function RootLayout() {
         <Stack.Screen
           name="glossary"
           options={{ headerShown: true, title: '용어 사전' }}
+        />
+        <Stack.Screen
+          name="scorecard-ranking"
+          options={{ headerShown: true, title: '의정활동 성적표' }}
+        />
+        <Stack.Screen
+          name="property"
+          options={{ headerShown: true, title: '부동산 보유 현황' }}
+        />
+        <Stack.Screen
+          name="elections/index"
+          options={{ headerShown: true, title: '재보궐선거' }}
+        />
+        <Stack.Screen
+          name="elections/[id]"
+          options={{ headerShown: true, title: '선거 상세' }}
         />
         <Stack.Screen
           name="about"
