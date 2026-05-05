@@ -50,7 +50,7 @@ export default function SignInScreen() {
 
   return (
     <ScrollView
-      className="flex-1 bg-white"
+      className="flex-1 bg-surface-primary"
       contentContainerStyle={{
         flexGrow: 1,
         padding: 24,
@@ -63,27 +63,27 @@ export default function SignInScreen() {
           <View className="h-16 w-16 items-center justify-center rounded-full bg-primary-light">
             <LogIn size={28} color="#2563EB" />
           </View>
-          <Text className="mt-4 text-2xl font-bold text-neutral-900">로그인</Text>
-          <Text className="mt-2 text-center text-sm leading-5 text-neutral-500">
+          <Text className="mt-lawmake-md text-lawmake-title1 font-bold text-neutral-900">로그인</Text>
+          <Text className="mt-lawmake-sm text-center text-lawmake-footnote leading-5 text-neutral-500">
             로그인하면 관심 의원·법안을 즐겨찾기하고{'\n'}
             내 지역구 활동을 한눈에 볼 수 있어요.
           </Text>
         </View>
 
-        <View className="mt-10 gap-3">
+        <View className="mt-lawmake-xl gap-lawmake-sm">
           <Pressable
             onPress={handleGoogleSignIn}
             disabled={isLoading}
-            className="flex-row items-center justify-center gap-2.5 rounded-xl border border-neutral-200 bg-white px-4 py-3.5 active:bg-neutral-50"
+            className="flex-row items-center justify-center gap-lawmake-sm rounded-lawmake-lg border border-neutral-200 bg-surface-primary px-lawmake-md py-lawmake-md active:bg-neutral-50"
           >
-            <Text className="text-lg">🔍</Text>
-            <Text className="text-sm font-semibold text-neutral-900">
+            <Text className="text-lawmake-headline">🔍</Text>
+            <Text className="text-lawmake-footnote font-semibold text-neutral-900">
               {isLoading ? '진행 중…' : 'Google로 계속하기'}
             </Text>
           </Pressable>
         </View>
 
-        <Text className="mt-8 text-center text-[11px] leading-4 text-neutral-400">
+        <Text className="mt-lawmake-xl text-center text-lawmake-caption leading-4 text-neutral-400">
           로그인하면 lawmake의{' '}
           <Text className="underline">개인정보처리방침</Text>에 동의하는 것으로
           간주됩니다.

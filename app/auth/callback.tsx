@@ -56,9 +56,9 @@ export default function AuthCallbackScreen() {
   }, [params, router]);
 
   return (
-    <View className="flex-1 items-center justify-center bg-white">
+    <View className="flex-1 items-center justify-center bg-surface-primary">
       <ActivityIndicator size="large" color="#2563EB" />
-      <Text className="mt-3 text-sm text-neutral-500">로그인 처리 중…</Text>
+      <Text className="mt-lawmake-sm text-lawmake-footnote text-neutral-500">로그인 처리 중…</Text>
     </View>
   );
 }

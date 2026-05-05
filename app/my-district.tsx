@@ -73,17 +73,17 @@ export default function MyDistrictScreen() {
 
   if (!session) {
     return (
-      <View className="flex-1 items-center justify-center bg-neutral-50 p-8">
+      <View className="flex-1 items-center justify-center bg-surface-secondary p-lawmake-xl">
         <MapPin size={48} color="#D1D5DB" />
-        <Text className="mt-4 text-base font-bold text-neutral-900">로그인이 필요합니다</Text>
-        <Text className="mt-1 text-center text-sm text-neutral-500">
+        <Text className="mt-lawmake-md text-lawmake-callout font-bold text-neutral-900">로그인이 필요합니다</Text>
+        <Text className="mt-lawmake-xs text-center text-lawmake-footnote text-neutral-500">
           내 지역구는 로그인 후 사용할 수 있습니다.
         </Text>
         <Pressable
           onPress={() => router.push('/sign-in' as never)}
-          className="mt-6 rounded-xl bg-primary px-6 py-3 active:opacity-80"
+          className="mt-lawmake-lg rounded-lawmake-lg bg-primary px-lawmake-lg py-lawmake-sm active:opacity-80"
         >
-          <Text className="text-sm font-semibold text-white">로그인하기</Text>
+          <Text className="text-lawmake-footnote font-semibold text-white">로그인하기</Text>
         </Pressable>
       </View>
     );
@@ -97,20 +97,20 @@ export default function MyDistrictScreen() {
     : null;
 
   return (
-    <View className="flex-1 bg-neutral-50">
+    <View className="flex-1 bg-surface-secondary">
       {/* 현재 선택된 지역구 */}
       {savedDistrict && matchedMember ? (
         <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom + 16 }}>
-          <View className="bg-white px-5 py-4">
-            <Text className="text-xs text-neutral-500">내 지역구</Text>
-            <Text className="mt-0.5 text-lg font-bold text-neutral-900">{savedDistrict}</Text>
+          <View className="bg-surface-primary px-lawmake-lg py-lawmake-md">
+            <Text className="text-lawmake-caption text-neutral-500">내 지역구</Text>
+            <Text className="mt-lawmake-xs text-lawmake-headline font-bold text-neutral-900">{savedDistrict}</Text>
           </View>
 
-          <View className="mt-3 px-4">
+          <View className="mt-lawmake-sm px-lawmake-md">
             <PressableCard
               onPress={() => router.push(`/members/${matchedMember.id}` as never)}
             >
-              <View className="flex-row items-center gap-3">
+              <View className="flex-row items-center gap-lawmake-sm">
                 <View
                   className="h-12 w-12 overflow-hidden rounded-full"
                   style={{
@@ -119,29 +119,29 @@ export default function MyDistrictScreen() {
                   }}
                 />
                 <View className="flex-1">
-                  <Text className="text-base font-bold text-neutral-900">
+                  <Text className="text-lawmake-callout font-bold text-neutral-900">
                     {matchedMember.name}
                   </Text>
-                  <Text className="mt-0.5 text-xs text-neutral-500">
+                  <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-500">
                     {matchedMember.term.party.shortName}
                   </Text>
                 </View>
-                <Text className="text-xs font-medium text-primary">상세 →</Text>
+                <Text className="text-lawmake-caption font-medium text-primary">상세 →</Text>
               </View>
             </PressableCard>
 
-            <Card className="mt-2">
-              <Text className="text-xs text-neutral-500">
+            <Card className="mt-lawmake-sm">
+              <Text className="text-lawmake-caption text-neutral-500">
                 의원 상세 화면에서 출석률, 법안, 표결 등 의정활동 상세를 확인할 수 있습니다.
               </Text>
             </Card>
 
             <Pressable
-              className="mt-4 rounded-xl border border-neutral-200 bg-white px-4 py-3 active:bg-neutral-50"
+              className="mt-lawmake-md rounded-lawmake-lg border border-neutral-200 bg-surface-primary px-lawmake-md py-lawmake-sm active:bg-neutral-50"
               onPress={() => updateMutation.mutate(null)}
               disabled={updateMutation.isPending}
             >
-              <Text className="text-center text-xs text-neutral-600">
+              <Text className="text-center text-lawmake-caption text-neutral-600">
                 {updateMutation.isPending ? '변경 중…' : '지역구 다시 선택하기'}
               </Text>
             </Pressable>
@@ -150,18 +150,18 @@ export default function MyDistrictScreen() {
       ) : (
         <>
           {/* 지역구 선택 화면 */}
-          <View className="bg-white px-5 pt-3 pb-2">
-            <Text className="mb-2 text-sm font-bold text-neutral-900">
+          <View className="bg-surface-primary px-lawmake-lg pt-lawmake-sm pb-lawmake-sm">
+            <Text className="mb-lawmake-sm text-lawmake-footnote font-bold text-neutral-900">
               내 지역구를 선택하세요
             </Text>
-            <View className="flex-row items-center gap-2 rounded-lg bg-neutral-100 px-3 py-2.5">
+            <View className="flex-row items-center gap-lawmake-sm rounded-lawmake-md bg-neutral-100 px-lawmake-sm py-lawmake-sm">
               <Search size={16} color="#9CA3AF" />
               <TextInput
                 value={search}
                 onChangeText={setSearch}
                 placeholder="지역구 또는 의원명 검색"
                 placeholderTextColor="#9CA3AF"
-                className="flex-1 text-sm text-neutral-900"
+                className="flex-1 text-lawmake-footnote text-neutral-900"
               />
             </View>
           </View>
@@ -180,24 +180,24 @@ export default function MyDistrictScreen() {
               >
                 <View className="flex-row items-center justify-between">
                   <View className="flex-1">
-                    <Text className="text-sm font-semibold text-neutral-900">
+                    <Text className="text-lawmake-footnote font-semibold text-neutral-900">
                       {item.district}
                     </Text>
-                    <Text className="mt-0.5 text-[11px] text-neutral-500">
+                    <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-500">
                       {item.member.name} · {item.member.term.party.shortName}
                     </Text>
                   </View>
                   {updateMutation.isPending && updateMutation.variables === item.district ? (
                     <ActivityIndicator size="small" />
                   ) : (
-                    <Text className="text-xs text-primary">선택</Text>
+                    <Text className="text-lawmake-caption text-primary">선택</Text>
                   )}
                 </View>
               </PressableCard>
             )}
             ListEmptyComponent={
-              <View className="items-center py-12">
-                <Text className="text-sm text-neutral-400">검색 결과가 없습니다</Text>
+              <View className="items-center py-lawmake-xl">
+                <Text className="text-lawmake-footnote text-neutral-400">검색 결과가 없습니다</Text>
               </View>
             }
           />
