@@ -34,10 +34,11 @@ export default function SignInScreen() {
       const result = await WebBrowser.openAuthSessionAsync(data.url, REDIRECT_URL);
 
       if (result.type === 'success' && result.url) {
-        // 콜백 화면(app/auth/callback.tsx)이 토큰 교환을 처리
-        router.replace(result.url.replace(REDIRECT_URL, '/auth/callback') as never);
-      } else if (result.type === 'cancel' || result.type === 'dismiss') {
-        // 사용자 취소 — 무시
+        // URL fragment(#)를 query string(?)로 변환 — expo-router가 fragment를 무시하므로
+        // Supabase implicit flow는 lawmake://auth/callback#access_token=... 형태로 응답함
+        const callbackPath =
+          '/auth/callback' + result.url.replace(REDIRECT_URL, '').replace(/^#/, '?');
+        router.replace(callbackPath as never);
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : '로그인 중 오류가 발생했습니다.';
