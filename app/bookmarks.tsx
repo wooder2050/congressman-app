@@ -27,17 +27,17 @@ export default function BookmarksScreen() {
 
   if (!session) {
     return (
-      <View className="flex-1 items-center justify-center bg-neutral-50 p-8">
+      <View className="flex-1 items-center justify-center bg-surface-secondary p-lawmake-xl">
         <Bookmark size={48} color="#D1D5DB" />
-        <Text className="mt-4 text-base font-bold text-neutral-900">로그인이 필요합니다</Text>
-        <Text className="mt-1 text-center text-sm text-neutral-500">
+        <Text className="mt-lawmake-md text-lawmake-callout font-bold text-neutral-900">로그인이 필요합니다</Text>
+        <Text className="mt-lawmake-xs text-center text-lawmake-footnote text-neutral-500">
           즐겨찾기는 로그인 후 사용할 수 있습니다.
         </Text>
         <Pressable
           onPress={() => router.push('/sign-in' as never)}
-          className="mt-6 rounded-xl bg-primary px-6 py-3 active:opacity-80"
+          className="mt-lawmake-lg rounded-lawmake-lg bg-primary px-lawmake-lg py-lawmake-sm active:opacity-80"
         >
-          <Text className="text-sm font-semibold text-white">로그인하기</Text>
+          <Text className="text-lawmake-footnote font-semibold text-white">로그인하기</Text>
         </Pressable>
       </View>
     );
@@ -50,18 +50,18 @@ export default function BookmarksScreen() {
   const ids = tab === 'members' ? memberIds : billIds;
 
   return (
-    <View className="flex-1 bg-neutral-50">
-      <View className="flex-row gap-2 border-b border-neutral-100 bg-white px-5 pt-3 pb-2">
+    <View className="flex-1 bg-surface-secondary">
+      <View className="flex-row gap-lawmake-sm border-b border-neutral-100 bg-surface-primary px-lawmake-lg pt-lawmake-sm pb-lawmake-sm">
         {(['members', 'bills'] as Tab[]).map((t) => (
           <Pressable
             key={t}
             onPress={() => setTab(t)}
-            className={`rounded-full px-4 py-2 ${
+            className={`rounded-full px-lawmake-md py-lawmake-sm ${
               tab === t ? 'bg-primary' : 'bg-neutral-100'
             }`}
           >
             <Text
-              className={`text-xs font-semibold ${
+              className={`text-lawmake-caption font-semibold ${
                 tab === t ? 'text-white' : 'text-neutral-600'
               }`}
             >
@@ -72,12 +72,12 @@ export default function BookmarksScreen() {
       </View>
 
       {ids.length === 0 ? (
-        <View className="flex-1 items-center justify-center p-8">
+        <View className="flex-1 items-center justify-center p-lawmake-xl">
           <Bookmark size={48} color="#D1D5DB" />
-          <Text className="mt-4 text-base font-bold text-neutral-900">
+          <Text className="mt-lawmake-md text-lawmake-callout font-bold text-neutral-900">
             아직 즐겨찾기한 {tab === 'members' ? '의원' : '법안'}이 없습니다
           </Text>
-          <Text className="mt-1 text-center text-sm text-neutral-500">
+          <Text className="mt-lawmake-xs text-center text-lawmake-footnote text-neutral-500">
             {tab === 'members' ? '의원 상세' : '법안 상세'} 화면의 북마크 버튼을 눌러보세요.
           </Text>
         </View>
@@ -110,7 +110,7 @@ function MemberRow({ id }: { id: string }) {
   if (!member) {
     return (
       <Card>
-        <Text className="text-xs text-neutral-400">데이터를 찾을 수 없습니다 (ID: {id})</Text>
+        <Text className="text-lawmake-caption text-neutral-400">데이터를 찾을 수 없습니다 (ID: {id})</Text>
       </Card>
     );
   }
@@ -119,8 +119,8 @@ function MemberRow({ id }: { id: string }) {
     <PressableCard onPress={() => router.push(`/members/${id}` as never)}>
       <View className="flex-row items-center justify-between">
         <View className="flex-1">
-          <Text className="text-sm font-bold text-neutral-900">{member.name}</Text>
-          <Text className="mt-0.5 text-[11px] text-neutral-500">의원</Text>
+          <Text className="text-lawmake-footnote font-bold text-neutral-900">{member.name}</Text>
+          <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-500">의원</Text>
         </View>
         <ChevronRight size={18} color="#9CA3AF" />
       </View>
@@ -143,19 +143,19 @@ function BillRow({ id }: { id: string }) {
   if (!bill) {
     return (
       <Card>
-        <Text className="text-xs text-neutral-400">데이터를 찾을 수 없습니다 (ID: {id})</Text>
+        <Text className="text-lawmake-caption text-neutral-400">데이터를 찾을 수 없습니다 (ID: {id})</Text>
       </Card>
     );
   }
 
   return (
     <PressableCard onPress={() => router.push(`/bills/${id}` as never)}>
-      <View className="flex-row items-start justify-between gap-2">
+      <View className="flex-row items-start justify-between gap-lawmake-sm">
         <View className="flex-1">
-          <Text className="text-sm font-bold text-neutral-900" numberOfLines={2}>
+          <Text className="text-lawmake-footnote font-bold text-neutral-900" numberOfLines={2}>
             {bill.title}
           </Text>
-          <Text className="mt-0.5 text-[11px] text-neutral-500">{bill.proposedDate}</Text>
+          <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-500">{bill.proposedDate}</Text>
         </View>
         <ChevronRight size={18} color="#9CA3AF" />
       </View>
