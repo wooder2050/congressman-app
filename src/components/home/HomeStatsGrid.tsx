@@ -1,7 +1,7 @@
 import { FileText, TrendingUp, Users, Vote as VoteIcon } from 'lucide-react-native';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 
-import { Card } from '@/components/ui/Card';
+import { MetricCard } from '@/components/ui/MetricCard';
 import { formatNumber, formatPercent } from '@/lib/format';
 
 interface Props {
@@ -13,47 +13,50 @@ interface Props {
 
 /**
  * 홈 화면 2x2 통계 그리드.
- * v1.1까지 사용된 디자인 그대로 유지 (PR1 refactor: 디자인 변경 없음).
- * PR2에서 MetricCard로 교체 예정.
+ *
+ * 변경 (PR2):
+ * - Card → MetricCard (Toss 스타일: 좌측 정렬 라벨/숫자, hint)
+ * - 아이콘 + UPPERCASE 라벨 + 큰 숫자 (title1, 22pt)
+ * - 패딩/간격 토큰화
  */
 export function HomeStatsGrid({ memberCount, billCount, voteCount, avgAttendanceRate }: Props) {
   return (
-    <View className="flex-row flex-wrap px-4 pt-4">
-      <View className="w-1/2 p-1">
-        <Card className="items-center">
-          <Users size={20} color="#2563EB" />
-          <Text className="mt-1.5 text-xl font-bold text-neutral-900">
-            {formatNumber(memberCount)}
-          </Text>
-          <Text className="text-xs text-neutral-400">의원 수</Text>
-        </Card>
+    <View className="mt-lawmake-lg gap-lawmake-md px-lawmake-lg">
+      <View className="flex-row gap-lawmake-md">
+        <MetricCard
+          className="flex-1"
+          icon={<Users size={14} color="#2563EB" />}
+          label="의원"
+          value={formatNumber(memberCount)}
+          hint="제22대"
+          accentColor="#2563EB"
+        />
+        <MetricCard
+          className="flex-1"
+          icon={<FileText size={14} color="#2563EB" />}
+          label="법안"
+          value={formatNumber(billCount)}
+          hint="발의 누적"
+          accentColor="#2563EB"
+        />
       </View>
-      <View className="w-1/2 p-1">
-        <Card className="items-center">
-          <FileText size={20} color="#2563EB" />
-          <Text className="mt-1.5 text-xl font-bold text-neutral-900">
-            {formatNumber(billCount)}
-          </Text>
-          <Text className="text-xs text-neutral-400">발의 법안</Text>
-        </Card>
-      </View>
-      <View className="w-1/2 p-1">
-        <Card className="items-center">
-          <VoteIcon size={20} color="#2563EB" />
-          <Text className="mt-1.5 text-xl font-bold text-neutral-900">
-            {formatNumber(voteCount)}
-          </Text>
-          <Text className="text-xs text-neutral-400">표결 수</Text>
-        </Card>
-      </View>
-      <View className="w-1/2 p-1">
-        <Card className="items-center">
-          <TrendingUp size={20} color="#2563EB" />
-          <Text className="mt-1.5 text-xl font-bold text-neutral-900">
-            {formatPercent(avgAttendanceRate)}
-          </Text>
-          <Text className="text-xs text-neutral-400">평균 출석률</Text>
-        </Card>
+      <View className="flex-row gap-lawmake-md">
+        <MetricCard
+          className="flex-1"
+          icon={<VoteIcon size={14} color="#2563EB" />}
+          label="표결"
+          value={formatNumber(voteCount)}
+          hint="본회의"
+          accentColor="#2563EB"
+        />
+        <MetricCard
+          className="flex-1"
+          icon={<TrendingUp size={14} color="#16A34A" />}
+          label="평균 출석률"
+          value={formatPercent(avgAttendanceRate)}
+          hint="대수 기준"
+          accentColor="#16A34A"
+        />
       </View>
     </View>
   );
