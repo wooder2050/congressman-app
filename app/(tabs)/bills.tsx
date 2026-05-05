@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/Badge';
 import { PressableCard } from '@/components/ui/Card';
 import { FilterChip } from '@/components/ui/FilterChip';
 import { SearchInput } from '@/components/ui/SearchInput';
-import { BILL_STATUS_MAP } from '@/constants/maps';
+import { StatusBadge, type StatusTone } from '@/components/ui/StatusBadge';
 import { useLawmakeInfiniteQuery, useLawmakeQuery } from '@/hooks/useLawmakeQuery';
 import { formatDate } from '@/lib/format';
 import type { Bill } from '@/types';
@@ -26,6 +26,13 @@ const STATUS_FILTERS = [
   { id: 'committee', label: '위원회' },
   { id: 'discarded', label: '폐기' },
 ];
+
+const BILL_STATUS_TONE: Record<Bill['status'], { label: string; tone: StatusTone }> = {
+  passed: { label: '가결', tone: 'success' },
+  pending: { label: '계류', tone: 'neutral' },
+  discarded: { label: '폐기', tone: 'error' },
+  committee: { label: '위원회', tone: 'info' },
+};
 
 export default function BillsScreen() {
   const router = useRouter();
@@ -60,7 +67,7 @@ export default function BillsScreen() {
         const loaded = allPages.reduce((sum, p) => sum + p.bills.length, 0);
         return loaded < lastPage.total ? allPages.length + 1 : undefined;
       },
-    }
+    },
   );
 
   const bills = useMemo(() => {
@@ -75,67 +82,57 @@ export default function BillsScreen() {
 
   const renderBill = useCallback(
     ({ item }: { item: Bill }) => {
-      const statusInfo = BILL_STATUS_MAP[item.status];
+      const statusInfo = BILL_STATUS_TONE[item.status] ?? BILL_STATUS_TONE.pending;
       return (
         <PressableCard
-          className="mx-5 mb-2"
+          className="mx-lawmake-lg mb-lawmake-sm"
           onPress={() => router.push(`/bills/${item.id}`)}
         >
-          <View className="flex-row items-start justify-between">
+          <View className="flex-row items-start justify-between gap-lawmake-sm">
             <Text
-              className="flex-1 text-sm font-semibold text-neutral-800"
+              className="flex-1 text-lawmake-callout font-semibold text-neutral-900"
               numberOfLines={2}
             >
               {item.title}
             </Text>
-            <Badge
-              label={statusInfo.label}
-              color={statusInfo.color}
-              textColor={statusInfo.textColor}
-              className="ml-2"
-            />
+            <StatusBadge label={statusInfo.label} tone={statusInfo.tone} />
           </View>
-          <Text className="mt-1.5 text-xs text-neutral-400">
+          <Text className="mt-lawmake-xs text-lawmake-footnote text-neutral-500">
             {item.proposerName}
-            {item.coProposerCount > 0 ? ` 외 ${item.coProposerCount}인` : ''} |{' '}
+            {item.coProposerCount > 0 ? ` 외 ${item.coProposerCount}인` : ''} ·{' '}
             {formatDate(item.proposedDate)}
           </Text>
           {item.simpleSummary && (
             <Text
-              className="mt-1.5 text-xs leading-4 text-neutral-500"
+              className="mt-lawmake-sm text-lawmake-footnote text-neutral-600"
               numberOfLines={2}
             >
               {item.simpleSummary}
             </Text>
           )}
           {item.topic && (
-            <View className="mt-2">
+            <View className="mt-lawmake-sm">
               <Badge label={item.topic} />
             </View>
           )}
         </PressableCard>
       );
     },
-    [router]
+    [router],
   );
 
   if (isLoading) return <LoadingSpinner />;
   if (error) return <ErrorState onRetry={refetch} />;
 
   return (
-    <View className="flex-1 bg-neutral-50">
-      {/* Summary */}
-      {summary && (
-        <View className="flex-row bg-white px-5 pb-2 pt-1">
-          <Text className="text-xs text-neutral-400">
-            전체 {summary.total} | 가결 {summary.passed} | 계류 {summary.pending} | 폐기{' '}
-            {summary.discarded}
-          </Text>
-        </View>
-      )}
+    <View className="flex-1 bg-surface-secondary">
+      {/* Large Title */}
+      <View className="bg-surface-primary px-lawmake-lg pb-lawmake-md pt-lawmake-md">
+        <Text className="text-lawmake-large text-neutral-900">법안</Text>
+      </View>
 
       {/* Search */}
-      <View className="bg-white px-5 pb-3">
+      <View className="bg-surface-primary px-lawmake-lg pb-lawmake-md">
         <SearchInput
           placeholder="법안명 검색"
           value={search}
@@ -145,13 +142,16 @@ export default function BillsScreen() {
       </View>
 
       {/* Status Filters */}
-      <View className="bg-white px-5 pb-3">
+      <View className="bg-surface-primary pb-lawmake-md">
         <FlatList
           data={STATUS_FILTERS}
           horizontal
           showsHorizontalScrollIndicator={false}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={{ gap: 6 }}
+          contentContainerStyle={{
+            paddingHorizontal: 16,
+            gap: 8,
+          }}
           renderItem={({ item }) => (
             <FilterChip
               label={item.label}
@@ -162,12 +162,25 @@ export default function BillsScreen() {
         />
       </View>
 
+      {/* Summary */}
+      {summary && (
+        <View className="border-t border-neutral-100 bg-surface-secondary px-lawmake-lg py-lawmake-sm">
+          <Text className="text-lawmake-footnote text-neutral-500">
+            전체 {summary.total} · 가결 {summary.passed} · 계류 {summary.pending} · 폐기{' '}
+            {summary.discarded}
+          </Text>
+        </View>
+      )}
+
       {/* Bill List */}
       <FlatList
         data={bills}
         keyExtractor={(item) => item.id}
         renderItem={renderBill}
-        contentContainerStyle={{ paddingTop: 8, paddingBottom: insets.bottom + 16 }}
+        contentContainerStyle={{
+          paddingTop: 12,
+          paddingBottom: insets.bottom + 16,
+        }}
         onEndReached={() => {
           if (hasNextPage && !isFetchingNextPage) {
             fetchNextPage();
@@ -180,10 +193,7 @@ export default function BillsScreen() {
           ) : null
         }
         ListEmptyComponent={
-          <EmptyState
-            title="법안이 없습니다"
-            description="검색 조건을 변경해보세요"
-          />
+          <EmptyState title="법안이 없습니다" description="검색 조건을 변경해보세요" />
         }
       />
     </View>
