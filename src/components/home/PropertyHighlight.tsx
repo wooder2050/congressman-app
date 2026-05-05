@@ -1,10 +1,10 @@
 import { useRouter } from 'expo-router';
-import { Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 import { MemberPhoto } from '@/components/MemberPhoto';
-import { Badge } from '@/components/ui/Badge';
 import { Card, PressableCard } from '@/components/ui/Card';
-import { SectionHeader } from '@/components/ui/SectionHeader';
+import { Section } from '@/components/ui/Section';
+import { StatusBadge } from '@/components/ui/StatusBadge';
 import type { PropertyStatsResponse } from '@/types';
 
 interface Props {
@@ -13,7 +13,11 @@ interface Props {
 
 /**
  * 홈 화면 부동산 보유 현황 섹션.
- * 다주택자 / 고가주택 / 과다보유 통계 + 다주택 TOP 3.
+ *
+ * 변경 (PR4):
+ * - 통계 3개를 PressableCard로 토큰화 (작은 폰트 → callout/title2)
+ * - 다주택 TOP 3은 Card + Pressable row 패턴 (다른 랭킹과 일관)
+ * - StatusBadge error tone
  */
 export function PropertyHighlight({ data }: Props) {
   const router = useRouter();
@@ -65,51 +69,58 @@ export function PropertyHighlight({ data }: Props) {
   topMultiHome.sort((a, b) => b.count - a.count);
 
   return (
-    <View className="mt-5 px-5">
-      <SectionHeader title="부동산 보유 현황" onMore={() => router.push('/property')} />
-      <View className="mt-3 flex-row gap-2">
-        <PressableCard
-          className="flex-1 items-center py-3"
-          onPress={() => router.push('/property')}
-        >
-          <Text className="text-lg font-bold text-red-600">{multiHomeCount}</Text>
-          <Text className="text-[10px] text-neutral-400">다주택자</Text>
-        </PressableCard>
-        <PressableCard
-          className="flex-1 items-center py-3"
-          onPress={() => router.push('/property')}
-        >
-          <Text className="text-lg font-bold text-amber-600">{expensiveCount}</Text>
-          <Text className="text-[10px] text-neutral-400">고가주택</Text>
-        </PressableCard>
-        <PressableCard
-          className="flex-1 items-center py-3"
-          onPress={() => router.push('/property')}
-        >
-          <Text className="text-lg font-bold text-violet-600">{excessiveCount}</Text>
-          <Text className="text-[10px] text-neutral-400">과다보유</Text>
-        </PressableCard>
-      </View>
-      {topMultiHome.length > 0 && (
-        <Card className="mt-2">
-          <Text className="mb-2 text-xs font-semibold text-red-600">다주택 TOP 3</Text>
-          {topMultiHome.slice(0, 3).map((m, i) => (
-            <PressableCard
-              key={m.memberId}
-              className="mb-1.5 flex-row items-center gap-2 border-0 p-2"
-              style={{ elevation: 0 }}
-              onPress={() => router.push(`/members/${m.memberId}`)}
-            >
-              <Text className="w-5 text-center text-xs font-bold text-red-500">{i + 1}</Text>
-              <MemberPhoto uri={m.photoUrl} size={32} partyColor={m.partyColor} />
-              <View className="flex-1">
-                <Text className="text-sm font-medium text-neutral-800">{m.name}</Text>
-              </View>
-              <Badge label={`${m.count}채`} color="#DC2626" textColor="#FFFFFF" />
-            </PressableCard>
-          ))}
-        </Card>
-      )}
+    <View className="mt-lawmake-xl px-lawmake-lg">
+      <Section title="부동산 보유 현황" onMore={() => router.push('/property')}>
+        <View className="flex-row gap-lawmake-md">
+          <StatCard label="다주택자" value={multiHomeCount} colorClass="text-error" />
+          <StatCard label="고가주택" value={expensiveCount} colorClass="text-warning-dark" />
+          <StatCard label="과다보유" value={excessiveCount} colorClass="text-info-dark" />
+        </View>
+        {topMultiHome.length > 0 && (
+          <Card className="mt-lawmake-md p-0">
+            <Text className="px-lawmake-lg pb-lawmake-sm pt-lawmake-md text-lawmake-subhead font-semibold text-error">
+              다주택 TOP 3
+            </Text>
+            {topMultiHome.slice(0, 3).map((m, i) => {
+              const isLast = i === Math.min(2, topMultiHome.length - 1);
+              return (
+                <Pressable
+                  key={m.memberId}
+                  onPress={() => router.push(`/members/${m.memberId}`)}
+                  className={`flex-row items-center gap-lawmake-md px-lawmake-lg py-lawmake-md active:bg-neutral-50 ${
+                    !isLast ? 'border-b border-neutral-100' : ''
+                  }`}
+                >
+                  <Text className="w-6 text-center text-lawmake-callout font-bold text-error">
+                    {i + 1}
+                  </Text>
+                  <MemberPhoto uri={m.photoUrl} size={36} partyColor={m.partyColor} />
+                  <Text className="flex-1 text-lawmake-body text-neutral-900">{m.name}</Text>
+                  <StatusBadge label={`${m.count}채`} tone="error" />
+                </Pressable>
+              );
+            })}
+          </Card>
+        )}
+      </Section>
     </View>
+  );
+}
+
+function StatCard({
+  label,
+  value,
+  colorClass,
+}: {
+  label: string;
+  value: number;
+  colorClass: string;
+}) {
+  const router = useRouter();
+  return (
+    <PressableCard className="flex-1 items-center" onPress={() => router.push('/property')}>
+      <Text className={`text-lawmake-title2 font-bold ${colorClass}`}>{value}</Text>
+      <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-500">{label}</Text>
+    </PressableCard>
   );
 }
