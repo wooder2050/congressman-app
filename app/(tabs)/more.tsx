@@ -2,18 +2,25 @@ import { useRouter } from 'expo-router';
 import {
   Award,
   BookOpen,
+  Bookmark,
   Building2,
   CalendarDays,
   ChevronRight,
   GitCompare,
   Home,
   Info,
+  LogIn,
+  LogOut,
+  MapPin,
   type LucideIcon,
   Newspaper,
+  User,
   Vote,
 } from 'lucide-react-native';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import { useAuth } from '@/lib/auth-context';
 
 type MenuItem = {
   icon: LucideIcon;
@@ -88,12 +95,103 @@ const MENU_ITEMS: MenuItem[] = [
 export default function MoreScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { session, signOut } = useAuth();
+  const userEmail = session?.user?.email ?? null;
+
+  const handleSignOut = () => {
+    Alert.alert('로그아웃', '로그아웃 하시겠습니까?', [
+      { text: '취소', style: 'cancel' },
+      {
+        text: '로그아웃',
+        style: 'destructive',
+        onPress: async () => {
+          await signOut();
+        },
+      },
+    ]);
+  };
 
   return (
     <ScrollView
       className="flex-1 bg-neutral-50"
       contentContainerStyle={{ paddingBottom: insets.bottom + 16 }}
     >
+      {/* 계정 영역 */}
+      <View className="mt-2 border-b border-neutral-100 bg-white">
+        {session ? (
+          <>
+            <View className="flex-row items-center gap-3 px-5 py-4">
+              <View className="h-10 w-10 items-center justify-center rounded-full bg-primary-light">
+                <User size={18} color="#2563EB" />
+              </View>
+              <View className="flex-1">
+                <Text className="text-sm font-semibold text-neutral-900">
+                  {userEmail ?? '로그인됨'}
+                </Text>
+                <Text className="text-xs text-neutral-400">Google 계정</Text>
+              </View>
+              <Pressable onPress={handleSignOut} hitSlop={8}>
+                <LogOut size={18} color="#9CA3AF" />
+              </Pressable>
+            </View>
+          </>
+        ) : (
+          <Pressable
+            className="flex-row items-center gap-4 px-5 py-4 active:bg-neutral-50"
+            onPress={() => router.push('/sign-in' as never)}
+          >
+            <View className="h-10 w-10 items-center justify-center rounded-xl bg-primary-light">
+              <LogIn size={20} color="#2563EB" />
+            </View>
+            <View className="flex-1">
+              <Text className="text-sm font-semibold text-neutral-800">로그인</Text>
+              <Text className="mt-0.5 text-xs text-neutral-400">
+                즐겨찾기 · 내 지역구 활동 보기
+              </Text>
+            </View>
+            <ChevronRight size={18} color="#d4d4d4" />
+          </Pressable>
+        )}
+      </View>
+
+      {/* 개인 메뉴 (로그인 시) */}
+      {session && (
+        <View className="mt-2">
+          <Pressable
+            className="flex-row items-center gap-4 border-b border-neutral-100 bg-white px-5 py-4 active:bg-neutral-50"
+            onPress={() => router.push('/bookmarks' as never)}
+          >
+            <View className="h-10 w-10 items-center justify-center rounded-xl bg-primary-light">
+              <Bookmark size={20} color="#2563EB" />
+            </View>
+            <View className="flex-1">
+              <Text className="text-sm font-semibold text-neutral-800">즐겨찾기</Text>
+              <Text className="mt-0.5 text-xs text-neutral-400">
+                의원 · 법안 즐겨찾기 모아보기
+              </Text>
+            </View>
+            <ChevronRight size={18} color="#d4d4d4" />
+          </Pressable>
+
+          <Pressable
+            className="flex-row items-center gap-4 border-b border-neutral-100 bg-white px-5 py-4 active:bg-neutral-50"
+            onPress={() => router.push('/my-district' as never)}
+          >
+            <View className="h-10 w-10 items-center justify-center rounded-xl bg-primary-light">
+              <MapPin size={20} color="#2563EB" />
+            </View>
+            <View className="flex-1">
+              <Text className="text-sm font-semibold text-neutral-800">내 지역구</Text>
+              <Text className="mt-0.5 text-xs text-neutral-400">
+                내 지역 의원의 의정활동
+              </Text>
+            </View>
+            <ChevronRight size={18} color="#d4d4d4" />
+          </Pressable>
+        </View>
+      )}
+
+      {/* 일반 메뉴 */}
       <View className="mt-2">
         {MENU_ITEMS.map((item) => (
           <Pressable
