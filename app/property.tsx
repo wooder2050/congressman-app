@@ -100,23 +100,23 @@ export default function PropertyScreen() {
       keyExtractor={(item) => item.member.memberId}
       contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: insets.bottom + 16, gap: 8 }}
       ListHeaderComponent={
-        <Text className="py-2 text-xs text-neutral-400">
+        <Text className="py-lawmake-sm text-lawmake-caption text-neutral-400">
           본인/배우자 명의 주거용 건물 2채 이상 ({grouped.multiHome.length}명)
         </Text>
       }
       renderItem={({ item }) => (
         <PressableCard
-          className="flex-row items-center gap-3"
+          className="flex-row items-center gap-lawmake-sm"
           onPress={() => router.push(`/members/${item.member.memberId}`)}
         >
           <MemberPhoto uri={item.member.photoUrl} size={40} partyColor={item.member.partyColor} />
           <View className="flex-1">
-            <Text className="text-sm font-semibold text-neutral-800">{item.member.name}</Text>
-            <Text className="text-xs text-neutral-400">{item.member.district}</Text>
+            <Text className="text-lawmake-footnote font-semibold text-neutral-800">{item.member.name}</Text>
+            <Text className="text-lawmake-caption text-neutral-400">{item.member.district}</Text>
           </View>
           <View className="items-end">
             <Badge label={`${item.count}채`} color="#DC2626" textColor="#FFFFFF" />
-            <Text className="mt-0.5 text-xs text-neutral-400">{formatAmount(item.totalAmount)}원</Text>
+            <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-400">{formatAmount(item.totalAmount)}원</Text>
           </View>
         </PressableCard>
       )}
@@ -129,23 +129,23 @@ export default function PropertyScreen() {
       keyExtractor={(item, i) => `${item.member.memberId}-${i}`}
       contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: insets.bottom + 16, gap: 8 }}
       ListHeaderComponent={
-        <Text className="py-2 text-xs text-neutral-400">
+        <Text className="py-lawmake-sm text-lawmake-caption text-neutral-400">
           단일 주택 신고가액 15억원 이상 ({grouped.expensiveHome.length}건)
         </Text>
       }
       renderItem={({ item }) => (
         <PressableCard
-          className="flex-row items-center gap-3"
+          className="flex-row items-center gap-lawmake-sm"
           onPress={() => router.push(`/members/${item.member.memberId}`)}
         >
           <MemberPhoto uri={item.member.photoUrl} size={40} partyColor={item.member.partyColor} />
           <View className="flex-1">
-            <Text className="text-sm font-semibold text-neutral-800">{item.member.name}</Text>
-            <Text className="mt-0.5 text-xs text-neutral-400" numberOfLines={1}>
+            <Text className="text-lawmake-footnote font-semibold text-neutral-800">{item.member.name}</Text>
+            <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-400" numberOfLines={1}>
               {item.item}
             </Text>
           </View>
-          <Text className="text-sm font-bold text-primary">{formatAmount(item.amount)}원</Text>
+          <Text className="text-lawmake-footnote font-bold text-primary">{formatAmount(item.amount)}원</Text>
         </PressableCard>
       )}
     />
@@ -157,53 +157,53 @@ export default function PropertyScreen() {
       keyExtractor={(item) => item.member.memberId}
       contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: insets.bottom + 16, gap: 8 }}
       ListHeaderComponent={
-        <Text className="py-2 text-xs text-neutral-400">
+        <Text className="py-lawmake-sm text-lawmake-caption text-neutral-400">
           부동산(건물+토지) 총 30억원 이상 ({grouped.excessiveProperty.length}명)
         </Text>
       }
       renderItem={({ item }) => (
         <PressableCard
-          className="flex-row items-center gap-3"
+          className="flex-row items-center gap-lawmake-sm"
           onPress={() => router.push(`/members/${item.member.memberId}`)}
         >
           <MemberPhoto uri={item.member.photoUrl} size={40} partyColor={item.member.partyColor} />
           <View className="flex-1">
-            <Text className="text-sm font-semibold text-neutral-800">{item.member.name}</Text>
-            <Text className="text-xs text-neutral-400">{item.member.district}</Text>
+            <Text className="text-lawmake-footnote font-semibold text-neutral-800">{item.member.name}</Text>
+            <Text className="text-lawmake-caption text-neutral-400">{item.member.district}</Text>
           </View>
-          <Text className="text-sm font-bold text-primary">{formatAmount(item.totalAmount)}원</Text>
+          <Text className="text-lawmake-footnote font-bold text-primary">{formatAmount(item.totalAmount)}원</Text>
         </PressableCard>
       )}
     />
   );
 
   return (
-    <View className="flex-1 bg-neutral-50">
+    <View className="flex-1 bg-surface-secondary">
       {/* Summary */}
-      <View className="bg-white px-5 pb-3 pt-2">
-        <Text className="text-xs leading-4 text-neutral-400">
+      <View className="bg-surface-primary px-lawmake-lg pb-lawmake-sm pt-lawmake-sm">
+        <Text className="text-lawmake-caption leading-4 text-neutral-400">
           2024년 재산신고 공개자료 기반. 재산신고 가액은 공시가격 기준이며 시세와 다를 수 있습니다.
         </Text>
       </View>
 
       {/* Summary Stats */}
-      <View className="flex-row gap-2 bg-white px-5 pb-4">
-        <Card className="flex-1 items-center py-3">
-          <Text className="text-lg font-bold text-neutral-900">{grouped.multiHome.length}</Text>
-          <Text className="text-[10px] text-neutral-400">다주택자</Text>
+      <View className="flex-row gap-lawmake-sm bg-surface-primary px-lawmake-lg pb-lawmake-md">
+        <Card className="flex-1 items-center py-lawmake-sm">
+          <Text className="text-lawmake-headline font-bold text-neutral-900">{grouped.multiHome.length}</Text>
+          <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-400">다주택자</Text>
         </Card>
-        <Card className="flex-1 items-center py-3">
-          <Text className="text-lg font-bold text-neutral-900">{grouped.expensiveHome.length}</Text>
-          <Text className="text-[10px] text-neutral-400">고가주택</Text>
+        <Card className="flex-1 items-center py-lawmake-sm">
+          <Text className="text-lawmake-headline font-bold text-neutral-900">{grouped.expensiveHome.length}</Text>
+          <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-400">고가주택</Text>
         </Card>
-        <Card className="flex-1 items-center py-3">
-          <Text className="text-lg font-bold text-neutral-900">{grouped.excessiveProperty.length}</Text>
-          <Text className="text-[10px] text-neutral-400">과다보유</Text>
+        <Card className="flex-1 items-center py-lawmake-sm">
+          <Text className="text-lawmake-headline font-bold text-neutral-900">{grouped.excessiveProperty.length}</Text>
+          <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-400">과다보유</Text>
         </Card>
       </View>
 
       {/* Category Filter */}
-      <View className="flex-row gap-2 px-5 py-3">
+      <View className="flex-row gap-lawmake-sm px-lawmake-lg py-lawmake-sm">
         {CATEGORY_FILTERS.map((f) => (
           <FilterChip
             key={f.value}

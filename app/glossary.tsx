@@ -140,15 +140,15 @@ export default function GlossaryScreen() {
   }, [category, search]);
 
   return (
-    <View className="flex-1 bg-neutral-50">
-      <View className="bg-white px-5 pb-3 pt-4">
+    <View className="flex-1 bg-surface-secondary">
+      <View className="bg-surface-primary px-lawmake-lg pb-lawmake-sm pt-lawmake-md">
         <Pressable onPress={() => router.back()} hitSlop={12}>
-          <Text className="text-sm text-primary">뒤로</Text>
+          <Text className="text-lawmake-footnote text-primary">뒤로</Text>
         </Pressable>
-        <Text className="mt-2 text-lg font-bold text-neutral-900">용어 사전</Text>
+        <Text className="mt-lawmake-sm text-lawmake-title2 font-bold text-neutral-900">용어 사전</Text>
       </View>
 
-      <View className="bg-white px-5 pb-3">
+      <View className="bg-surface-primary px-lawmake-lg pb-lawmake-sm">
         <SearchInput
           placeholder="용어 검색"
           value={search}
@@ -157,7 +157,7 @@ export default function GlossaryScreen() {
         />
       </View>
 
-      <View className="bg-white px-5 pb-3">
+      <View className="bg-surface-primary px-lawmake-lg pb-lawmake-sm">
         <FlatList
           data={CATEGORIES}
           horizontal
@@ -181,15 +181,15 @@ export default function GlossaryScreen() {
         ItemSeparatorComponent={() => <View className="h-2" />}
         renderItem={({ item }) => (
           <Card>
-            <View className="flex-row items-center gap-2">
-              <Text className="text-sm font-bold text-neutral-900">{item.term}</Text>
-              <View className="rounded-md bg-primary-light px-1.5 py-0.5">
-                <Text className="text-[10px] font-medium text-primary">
+            <View className="flex-row items-center gap-lawmake-sm">
+              <Text className="text-lawmake-footnote font-bold text-neutral-900">{item.term}</Text>
+              <View className="rounded-lawmake-sm bg-primary-light px-lawmake-xs py-0.5">
+                <Text className="text-lawmake-caption font-medium text-primary">
                   {item.category}
                 </Text>
               </View>
             </View>
-            <Text className="mt-1.5 text-sm leading-5 text-neutral-600">
+            <Text className="mt-lawmake-xs text-lawmake-footnote leading-5 text-neutral-600">
               {item.definition}
             </Text>
           </Card>

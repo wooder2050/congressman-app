@@ -23,32 +23,32 @@ export default function MemberHistoryScreen() {
 
   return (
     <ScrollView
-      className="flex-1 bg-neutral-50"
+      className="flex-1 bg-surface-secondary"
       contentContainerStyle={{ paddingBottom: insets.bottom + 32 }}
     >
-      {/* Back button */}
-      <View className="bg-white px-5 pb-3 pt-4">
+      {/* Header */}
+      <View className="bg-surface-primary px-lawmake-lg pb-lawmake-md pt-lawmake-md">
         <Pressable onPress={() => router.back()} hitSlop={12}>
-          <Text className="text-sm text-primary">뒤로</Text>
+          <Text className="text-lawmake-footnote text-primary">뒤로</Text>
         </Pressable>
-        <Text className="mt-2 text-lg font-bold text-neutral-900">역대 활동 비교</Text>
+        <Text className="mt-lawmake-sm text-lawmake-title2 font-bold text-neutral-900">역대 활동 비교</Text>
       </View>
 
-      <View className="mt-3 gap-3 px-5">
+      <View className="mt-lawmake-sm gap-lawmake-sm px-lawmake-lg">
         {data.map((term) => (
           <Card key={term.termId}>
-            <Text className="text-base font-bold text-neutral-900">{term.termName}</Text>
+            <Text className="text-lawmake-callout font-bold text-neutral-900">{term.termName}</Text>
 
-            <View className="mt-3 gap-2">
+            <View className="mt-lawmake-sm gap-lawmake-sm">
               {/* Attendance */}
               <View>
                 <View className="flex-row items-center justify-between">
-                  <Text className="text-xs text-neutral-500">출석률</Text>
-                  <Text className="text-sm font-semibold text-primary">
+                  <Text className="text-lawmake-caption text-neutral-500">출석률</Text>
+                  <Text className="text-lawmake-footnote font-semibold text-primary">
                     {formatPercent(term.attendanceRate)}
                   </Text>
                 </View>
-                <View className="mt-1 h-2 overflow-hidden rounded-full bg-neutral-100">
+                <View className="mt-lawmake-xs h-2 overflow-hidden rounded-full bg-neutral-100">
                   <View
                     className="h-full rounded-full bg-primary"
                     style={{ width: `${term.attendanceRate}%` }}
@@ -57,17 +57,17 @@ export default function MemberHistoryScreen() {
               </View>
 
               {/* Bills Proposed */}
-              <View className="flex-row items-center justify-between pt-1">
-                <Text className="text-xs text-neutral-500">발의 법안</Text>
-                <Text className="text-sm font-semibold text-neutral-800">
+              <View className="flex-row items-center justify-between pt-lawmake-xs">
+                <Text className="text-lawmake-caption text-neutral-500">발의 법안</Text>
+                <Text className="text-lawmake-footnote font-semibold text-neutral-800">
                   {term.billsProposed}건
                 </Text>
               </View>
 
               {/* Bills Passed */}
               <View className="flex-row items-center justify-between">
-                <Text className="text-xs text-neutral-500">가결 법안</Text>
-                <Text className="text-sm font-semibold text-green-600">
+                <Text className="text-lawmake-caption text-neutral-500">가결 법안</Text>
+                <Text className="text-lawmake-footnote font-semibold text-success">
                   {term.billsPassed}건
                 </Text>
               </View>
@@ -75,8 +75,8 @@ export default function MemberHistoryScreen() {
               {/* Pass Rate */}
               {term.billsProposed > 0 && (
                 <View className="flex-row items-center justify-between">
-                  <Text className="text-xs text-neutral-500">가결률</Text>
-                  <Text className="text-sm font-semibold text-neutral-600">
+                  <Text className="text-lawmake-caption text-neutral-500">가결률</Text>
+                  <Text className="text-lawmake-footnote font-semibold text-neutral-600">
                     {formatPercent((term.billsPassed / term.billsProposed) * 100)}
                   </Text>
                 </View>

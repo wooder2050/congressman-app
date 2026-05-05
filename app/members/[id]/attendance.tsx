@@ -38,7 +38,7 @@ function AttendanceDonut({ rate }: { rate: number }) {
             borderLeftColor: pct >= 100 ? '#2563EB' : 'transparent',
           }}
         />
-        <Text className="text-2xl font-bold text-primary">{formatPercent(rate)}</Text>
+        <Text className="text-lawmake-title1 font-bold text-primary">{formatPercent(rate)}</Text>
       </View>
     </View>
   );
@@ -77,47 +77,47 @@ export default function AttendanceDetailScreen() {
 
   return (
     <ScrollView
-      className="flex-1 bg-neutral-50"
+      className="flex-1 bg-surface-secondary"
       contentContainerStyle={{ paddingBottom: insets.bottom + 32 }}
     >
       {/* Attendance Summary */}
-      <View className="bg-white px-5 pb-5 pt-4">
+      <View className="bg-surface-primary px-lawmake-lg pb-lawmake-lg pt-lawmake-md">
         <AttendanceDonut rate={attendance.rate} />
 
-        <View className="mt-4 flex-row justify-around">
+        <View className="mt-lawmake-md flex-row justify-around">
           <View className="items-center">
-            <Text className="text-lg font-bold text-neutral-900">{attendance.attended}</Text>
-            <Text className="text-[10px] text-neutral-400">출석</Text>
+            <Text className="text-lawmake-headline font-bold text-neutral-900">{attendance.attended}</Text>
+            <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-400">출석</Text>
           </View>
           <View className="items-center">
-            <Text className="text-lg font-bold text-neutral-900">{attendance.absent}</Text>
-            <Text className="text-[10px] text-neutral-400">결석</Text>
+            <Text className="text-lawmake-headline font-bold text-neutral-900">{attendance.absent}</Text>
+            <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-400">결석</Text>
           </View>
           <View className="items-center">
-            <Text className="text-lg font-bold text-neutral-900">{attendance.leave}</Text>
-            <Text className="text-[10px] text-neutral-400">청가</Text>
+            <Text className="text-lawmake-headline font-bold text-neutral-900">{attendance.leave}</Text>
+            <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-400">청가</Text>
           </View>
           <View className="items-center">
-            <Text className="text-lg font-bold text-neutral-900">{attendance.travel}</Text>
-            <Text className="text-[10px] text-neutral-400">출장</Text>
+            <Text className="text-lawmake-headline font-bold text-neutral-900">{attendance.travel}</Text>
+            <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-400">출장</Text>
           </View>
           <View className="items-center">
-            <Text className="text-lg font-bold text-neutral-900">{attendance.totalSessions}</Text>
-            <Text className="text-[10px] text-neutral-400">전체</Text>
+            <Text className="text-lawmake-headline font-bold text-neutral-900">{attendance.totalSessions}</Text>
+            <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-400">전체</Text>
           </View>
         </View>
       </View>
 
       {/* Absence Breakdown */}
       {absence && absence.length > 0 && (
-        <View className="mt-3 px-5">
+        <View className="mt-lawmake-sm px-lawmake-lg">
           <Card>
-            <Text className="text-sm font-semibold text-neutral-800">결석 사유 내역</Text>
-            <View className="mt-3 gap-2">
+            <Text className="text-lawmake-subhead font-semibold text-neutral-800">결석 사유 내역</Text>
+            <View className="mt-lawmake-sm gap-lawmake-sm">
               {absence.map((a) => (
                 <View key={a.type} className="flex-row items-center justify-between">
-                  <Text className="text-sm text-neutral-600">{a.type}</Text>
-                  <Text className="text-sm font-bold text-neutral-800">{a.count}회</Text>
+                  <Text className="text-lawmake-footnote text-neutral-600">{a.type}</Text>
+                  <Text className="text-lawmake-footnote font-bold text-neutral-800">{a.count}회</Text>
                 </View>
               ))}
             </View>
@@ -127,22 +127,22 @@ export default function AttendanceDetailScreen() {
 
       {/* Monthly Attendance */}
       {monthly && monthly.length > 0 && (
-        <View className="mt-3 px-5">
+        <View className="mt-lawmake-sm px-lawmake-lg">
           <Card>
-            <Text className="text-sm font-semibold text-neutral-800">월별 출석 현황</Text>
-            <View className="mt-3 gap-2">
+            <Text className="text-lawmake-subhead font-semibold text-neutral-800">월별 출석 현황</Text>
+            <View className="mt-lawmake-sm gap-lawmake-sm">
               {monthly.map((m) => {
                 const total = m.attended + m.absent;
                 const pct = total > 0 ? (m.attended / total) * 100 : 0;
                 return (
                   <View key={m.month}>
                     <View className="flex-row items-center justify-between">
-                      <Text className="text-xs text-neutral-500">{m.month}</Text>
-                      <Text className="text-xs text-neutral-500">
+                      <Text className="text-lawmake-caption text-neutral-500">{m.month}</Text>
+                      <Text className="text-lawmake-caption text-neutral-500">
                         {m.attended}/{total} ({pct.toFixed(0)}%)
                       </Text>
                     </View>
-                    <View className="mt-1 h-2 overflow-hidden rounded-full bg-neutral-100">
+                    <View className="mt-lawmake-xs h-2 overflow-hidden rounded-full bg-neutral-100">
                       <View
                         className="h-full rounded-full bg-primary"
                         style={{ width: `${pct}%` }}
@@ -158,30 +158,30 @@ export default function AttendanceDetailScreen() {
 
       {/* Recent Vote Records */}
       {votesData && votesData.votes.length > 0 && (
-        <View className="mt-3 px-5">
+        <View className="mt-lawmake-sm px-lawmake-lg">
           <Card>
-            <Text className="text-sm font-semibold text-neutral-800">
+            <Text className="text-lawmake-subhead font-semibold text-neutral-800">
               최근 표결 참여 ({votesData.total}건)
             </Text>
             {/* Vote Summary */}
             {votesData.summary && (
-              <View className="mt-2 flex-row gap-3 border-b border-neutral-100 pb-2">
-                <Text className="text-xs text-green-600">찬성 {votesData.summary.yes}</Text>
-                <Text className="text-xs text-red-600">반대 {votesData.summary.no}</Text>
-                <Text className="text-xs text-neutral-500">기권 {votesData.summary.abstain}</Text>
-                <Text className="text-xs text-neutral-400">불참 {votesData.summary.absent}</Text>
+              <View className="mt-lawmake-sm flex-row gap-lawmake-sm border-b border-neutral-100 pb-lawmake-sm">
+                <Text className="text-lawmake-caption text-success">찬성 {votesData.summary.yes}</Text>
+                <Text className="text-lawmake-caption text-error">반대 {votesData.summary.no}</Text>
+                <Text className="text-lawmake-caption text-neutral-500">기권 {votesData.summary.abstain}</Text>
+                <Text className="text-lawmake-caption text-neutral-400">불참 {votesData.summary.absent}</Text>
               </View>
             )}
-            <View className="mt-2 gap-2">
+            <View className="mt-lawmake-sm gap-lawmake-sm">
               {votesData.votes.slice(0, 20).map((v) => {
                 const result = MEMBER_VOTE_RESULT_MAP[v.memberResult];
                 return (
                   <View key={v.voteId} className="flex-row items-center justify-between">
-                    <View className="flex-1 pr-2">
-                      <Text className="text-xs text-neutral-700" numberOfLines={1}>
+                    <View className="flex-1 pr-lawmake-sm">
+                      <Text className="text-lawmake-caption text-neutral-700" numberOfLines={1}>
                         {v.billName}
                       </Text>
-                      <Text className="text-[10px] text-neutral-400">
+                      <Text className="text-lawmake-caption text-neutral-400">
                         {formatDate(v.procDate)}
                       </Text>
                     </View>

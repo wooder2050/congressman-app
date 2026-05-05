@@ -25,20 +25,20 @@ export default function CommitteesScreen() {
 
   return (
     <ScrollView
-      className="flex-1 bg-neutral-50"
+      className="flex-1 bg-surface-secondary"
       contentContainerStyle={{ paddingBottom: insets.bottom + 32 }}
     >
-      <View className="bg-white px-5 pb-3 pt-4">
+      <View className="bg-surface-primary px-lawmake-lg pb-lawmake-md pt-lawmake-md">
         <Pressable onPress={() => router.back()} hitSlop={12}>
-          <Text className="text-sm text-primary">뒤로</Text>
+          <Text className="text-lawmake-footnote text-primary">뒤로</Text>
         </Pressable>
-        <Text className="mt-2 text-lg font-bold text-neutral-900">상임위원회</Text>
-        <Text className="mt-0.5 text-xs text-neutral-400">
+        <Text className="mt-lawmake-sm text-lawmake-title2 font-bold text-neutral-900">상임위원회</Text>
+        <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-400">
           제22대 국회 {data?.length ?? 0}개 위원회
         </Text>
       </View>
 
-      <View className="mt-3 gap-2 px-5">
+      <View className="mt-lawmake-sm gap-lawmake-sm px-lawmake-lg">
         {data?.map((committee) => (
           <PressableCard
             key={committee.name}
@@ -49,31 +49,31 @@ export default function CommitteesScreen() {
               })
             }
           >
-            <Text className="text-sm font-bold text-neutral-900">{committee.name}</Text>
+            <Text className="text-lawmake-subhead font-bold text-neutral-900">{committee.name}</Text>
 
-            <View className="mt-2 flex-row gap-4">
+            <View className="mt-lawmake-sm flex-row gap-lawmake-md">
               <View>
-                <Text className="text-xs text-neutral-400">법안 수</Text>
-                <Text className="text-sm font-semibold text-neutral-800">
+                <Text className="text-lawmake-caption text-neutral-400">법안 수</Text>
+                <Text className="text-lawmake-footnote font-semibold text-neutral-800">
                   {committee.billTotal}
                 </Text>
               </View>
               <View>
-                <Text className="text-xs text-neutral-400">가결률</Text>
-                <Text className="text-sm font-semibold text-green-600">
+                <Text className="text-lawmake-caption text-neutral-400">가결률</Text>
+                <Text className="text-lawmake-footnote font-semibold text-success">
                   {formatPercent(committee.passRate)}
                 </Text>
               </View>
               <View>
-                <Text className="text-xs text-neutral-400">위원 수</Text>
-                <Text className="text-sm font-semibold text-neutral-800">
+                <Text className="text-lawmake-caption text-neutral-400">위원 수</Text>
+                <Text className="text-lawmake-footnote font-semibold text-neutral-800">
                   {committee.memberCount}명
                 </Text>
               </View>
             </View>
 
             {committee.chair && (
-              <View className="mt-2 flex-row items-center gap-2 border-t border-neutral-100 pt-2">
+              <View className="mt-lawmake-sm flex-row items-center gap-lawmake-sm border-t border-neutral-100 pt-lawmake-sm">
                 <View
                   className="h-7 w-7 overflow-hidden rounded-full bg-neutral-100"
                   style={{ borderWidth: 1, borderColor: committee.chair.partyColor }}
@@ -84,15 +84,15 @@ export default function CommitteesScreen() {
                     contentFit="cover"
                   />
                 </View>
-                <Text className="text-xs text-neutral-500">
+                <Text className="text-lawmake-caption text-neutral-500">
                   위원장 {committee.chair.name} ({committee.chair.partyName})
                 </Text>
               </View>
             )}
 
             {committee.nextSchedule && (
-              <View className="mt-2 rounded-lg bg-primary-light px-2.5 py-1.5">
-                <Text className="text-[11px] text-primary">
+              <View className="mt-lawmake-sm rounded-lawmake-md bg-primary-light px-lawmake-sm py-lawmake-xs">
+                <Text className="text-lawmake-caption text-primary">
                   다음 회의: {formatDate(committee.nextSchedule.meetingDate)}{' '}
                   {committee.nextSchedule.meetingTime}
                 </Text>

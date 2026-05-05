@@ -41,41 +41,41 @@ export default function ScheduleScreen() {
 
   const renderSchedule = useCallback(
     ({ item }: { item: Schedule }) => (
-      <Card className="mx-5 mb-2">
-        <View className="flex-row items-start gap-3">
-          <View className="h-10 w-10 items-center justify-center rounded-lg bg-primary-light">
+      <Card className="mx-lawmake-lg mb-lawmake-sm">
+        <View className="flex-row items-start gap-lawmake-sm">
+          <View className="h-10 w-10 items-center justify-center rounded-lawmake-md bg-primary-light">
             <CalendarDays size={18} color="#2563EB" />
           </View>
           <View className="flex-1">
-            <View className="flex-row items-center gap-1.5">
+            <View className="flex-row items-center gap-lawmake-xs">
               <Badge
                 label={item.type === 'plenary' ? '본회의' : '위원회'}
                 color={item.type === 'plenary' ? '#111111' : '#E5E5E5'}
                 textColor={item.type === 'plenary' ? '#FFFFFF' : '#595959'}
               />
               {item.committeeName && item.type === 'committee' && (
-                <Text className="text-[11px] text-neutral-400">
+                <Text className="text-lawmake-caption text-neutral-400">
                   {item.committeeName}
                 </Text>
               )}
             </View>
-            <Text className="mt-1 text-sm font-semibold text-neutral-800">
+            <Text className="mt-lawmake-xs text-lawmake-footnote font-semibold text-neutral-800">
               {item.title || item.committeeName}
             </Text>
-            <Text className="mt-0.5 text-xs text-neutral-400">
+            <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-400">
               {formatDate(item.meetingDate)} {item.meetingTime}
             </Text>
             {item.agenda && (
-              <Text className="mt-1 text-xs text-neutral-500" numberOfLines={2}>
+              <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-500" numberOfLines={2}>
                 {item.agenda}
               </Text>
             )}
             {item.linkUrl && (
               <Pressable
-                className="mt-1"
+                className="mt-lawmake-xs"
                 onPress={() => Linking.openURL(item.linkUrl)}
               >
-                <Text className="text-xs text-primary">상세보기</Text>
+                <Text className="text-lawmake-caption text-primary">상세보기</Text>
               </Pressable>
             )}
           </View>
@@ -89,16 +89,16 @@ export default function ScheduleScreen() {
   if (error) return <ErrorState onRetry={refetch} />;
 
   return (
-    <View className="flex-1 bg-neutral-50">
-      <View className="bg-white px-5 pb-3 pt-4">
+    <View className="flex-1 bg-surface-secondary">
+      <View className="bg-surface-primary px-lawmake-lg pb-lawmake-sm pt-lawmake-md">
         <Pressable onPress={() => router.back()} hitSlop={12}>
-          <Text className="text-sm text-primary">뒤로</Text>
+          <Text className="text-lawmake-footnote text-primary">뒤로</Text>
         </Pressable>
-        <Text className="mt-2 text-lg font-bold text-neutral-900">국회 일정</Text>
+        <Text className="mt-lawmake-sm text-lawmake-title2 font-bold text-neutral-900">국회 일정</Text>
       </View>
 
       {/* Type Filter */}
-      <View className="bg-white px-5 pb-3">
+      <View className="bg-surface-primary px-lawmake-lg pb-lawmake-sm">
         <FlatList
           data={TYPE_FILTERS}
           horizontal

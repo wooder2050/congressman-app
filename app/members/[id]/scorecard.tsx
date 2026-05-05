@@ -43,48 +43,48 @@ export default function MemberScorecardScreen() {
 
   return (
     <ScrollView
-      className="flex-1 bg-neutral-50"
+      className="flex-1 bg-surface-secondary"
       contentContainerStyle={{ paddingBottom: insets.bottom + 32 }}
     >
       {/* Profile + Grade */}
-      <View className="items-center bg-white px-5 pb-6 pt-4">
+      <View className="items-center bg-surface-primary px-lawmake-lg pb-lawmake-xl pt-lawmake-md">
         <MemberPhoto uri={scorecard.photoUrl} size={72} partyColor={scorecard.party.color} />
-        <Text className="mt-2 text-lg font-bold text-neutral-900">{scorecard.name}</Text>
+        <Text className="mt-lawmake-sm text-lawmake-headline font-bold text-neutral-900">{scorecard.name}</Text>
         <PartyBadge name={scorecard.party.name} color={scorecard.party.color} />
-        <Text className="mt-0.5 text-xs text-neutral-400">{scorecard.district}</Text>
+        <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-400">{scorecard.district}</Text>
 
         <View
-          className="mt-4 h-20 w-20 items-center justify-center rounded-full"
+          className="mt-lawmake-md h-20 w-20 items-center justify-center rounded-full"
           style={{ backgroundColor: grade.bgColor }}
         >
-          <Text className="text-3xl font-bold" style={{ color: grade.color }}>
+          <Text className="text-lawmake-large font-bold" style={{ color: grade.color }}>
             {scorecard.grade}
           </Text>
         </View>
-        <Text className="mt-2 text-2xl font-bold text-neutral-900">
+        <Text className="mt-lawmake-sm text-lawmake-title1 font-bold text-neutral-900">
           {scorecard.totalScore.toFixed(1)}점
         </Text>
-        <Text className="mt-0.5 text-xs text-neutral-400">
+        <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-400">
           전체 {scorecard.overallRank}위
         </Text>
       </View>
 
       {/* Score Breakdown */}
-      <View className="mt-3 px-5 gap-2">
+      <View className="mt-lawmake-sm gap-lawmake-sm px-lawmake-lg">
         {/* Attendance */}
         <Card>
           <View className="flex-row items-center justify-between">
-            <Text className="text-sm font-semibold text-neutral-800">출석률</Text>
-            <Text className="text-sm font-bold text-primary">
+            <Text className="text-lawmake-subhead font-semibold text-neutral-800">출석률</Text>
+            <Text className="text-lawmake-footnote font-bold text-primary">
               {scorecard.attendance.score.toFixed(1)} / 30
             </Text>
           </View>
           <ScoreBar score={scorecard.attendance.score} maxScore={30} color="#2563EB" />
-          <View className="mt-2 flex-row justify-between">
-            <Text className="text-xs text-neutral-400">
+          <View className="mt-lawmake-sm flex-row justify-between">
+            <Text className="text-lawmake-caption text-neutral-400">
               {formatPercent(scorecard.attendance.rate)}
             </Text>
-            <Text className="text-xs text-neutral-400">
+            <Text className="text-lawmake-caption text-neutral-400">
               {scorecard.attendance.rank}위 / {scorecard.attendance.totalMembers}명
             </Text>
           </View>
@@ -93,42 +93,42 @@ export default function MemberScorecardScreen() {
         {/* Vote Participation */}
         <Card>
           <View className="flex-row items-center justify-between">
-            <Text className="text-sm font-semibold text-neutral-800">표결 참여율</Text>
-            <Text className="text-sm font-bold text-primary">
+            <Text className="text-lawmake-subhead font-semibold text-neutral-800">표결 참여율</Text>
+            <Text className="text-lawmake-footnote font-bold text-primary">
               {scorecard.voteParticipation.score.toFixed(1)} / 25
             </Text>
           </View>
           <ScoreBar score={scorecard.voteParticipation.score} maxScore={25} color="#16A34A" />
-          <View className="mt-2 flex-row justify-between">
-            <Text className="text-xs text-neutral-400">
+          <View className="mt-lawmake-sm flex-row justify-between">
+            <Text className="text-lawmake-caption text-neutral-400">
               {formatPercent(scorecard.voteParticipation.rate)}
             </Text>
-            <Text className="text-xs text-neutral-400">
+            <Text className="text-lawmake-caption text-neutral-400">
               {scorecard.voteParticipation.rank}위 / {scorecard.voteParticipation.totalMembers}명
             </Text>
           </View>
-          <View className="mt-2 flex-row gap-3 border-t border-neutral-100 pt-2">
-            <Text className="text-xs text-green-600">찬성 {scorecard.voteParticipation.yes}</Text>
-            <Text className="text-xs text-red-600">반대 {scorecard.voteParticipation.no}</Text>
-            <Text className="text-xs text-neutral-500">기권 {scorecard.voteParticipation.abstain}</Text>
-            <Text className="text-xs text-neutral-400">불참 {scorecard.voteParticipation.absent}</Text>
+          <View className="mt-lawmake-sm flex-row gap-lawmake-sm border-t border-neutral-100 pt-lawmake-sm">
+            <Text className="text-lawmake-caption text-success">찬성 {scorecard.voteParticipation.yes}</Text>
+            <Text className="text-lawmake-caption text-error">반대 {scorecard.voteParticipation.no}</Text>
+            <Text className="text-lawmake-caption text-neutral-500">기권 {scorecard.voteParticipation.abstain}</Text>
+            <Text className="text-lawmake-caption text-neutral-400">불참 {scorecard.voteParticipation.absent}</Text>
           </View>
         </Card>
 
         {/* Bill Proposal */}
         <Card>
           <View className="flex-row items-center justify-between">
-            <Text className="text-sm font-semibold text-neutral-800">법안 발의</Text>
-            <Text className="text-sm font-bold text-primary">
+            <Text className="text-lawmake-subhead font-semibold text-neutral-800">법안 발의</Text>
+            <Text className="text-lawmake-footnote font-bold text-primary">
               {scorecard.billProposal.score.toFixed(1)} / 25
             </Text>
           </View>
           <ScoreBar score={scorecard.billProposal.score} maxScore={25} color="#CA8A04" />
-          <View className="mt-2 flex-row justify-between">
-            <Text className="text-xs text-neutral-400">
+          <View className="mt-lawmake-sm flex-row justify-between">
+            <Text className="text-lawmake-caption text-neutral-400">
               대표 {scorecard.billProposal.representativeCount}건 / 공동 {scorecard.billProposal.coCount}건
             </Text>
-            <Text className="text-xs text-neutral-400">
+            <Text className="text-lawmake-caption text-neutral-400">
               {scorecard.billProposal.rank}위 / {scorecard.billProposal.totalMembers}명
             </Text>
           </View>
@@ -137,17 +137,17 @@ export default function MemberScorecardScreen() {
         {/* Bill Pass Rate */}
         <Card>
           <View className="flex-row items-center justify-between">
-            <Text className="text-sm font-semibold text-neutral-800">법안 통과율</Text>
-            <Text className="text-sm font-bold text-primary">
+            <Text className="text-lawmake-subhead font-semibold text-neutral-800">법안 통과율</Text>
+            <Text className="text-lawmake-footnote font-bold text-primary">
               {scorecard.billPassRate.score.toFixed(1)} / 20
             </Text>
           </View>
           <ScoreBar score={scorecard.billPassRate.score} maxScore={20} color="#EA580C" />
-          <View className="mt-2 flex-row justify-between">
-            <Text className="text-xs text-neutral-400">
+          <View className="mt-lawmake-sm flex-row justify-between">
+            <Text className="text-lawmake-caption text-neutral-400">
               {scorecard.billPassRate.passedCount}/{scorecard.billPassRate.totalRepresentative}건 ({formatPercent(scorecard.billPassRate.rate)})
             </Text>
-            <Text className="text-xs text-neutral-400">
+            <Text className="text-lawmake-caption text-neutral-400">
               {scorecard.billPassRate.rank}위 / {scorecard.billPassRate.totalMembers}명
             </Text>
           </View>
@@ -155,25 +155,25 @@ export default function MemberScorecardScreen() {
 
         {/* Recent Activity */}
         <Card>
-          <Text className="text-sm font-semibold text-neutral-800">최근 30일 활동</Text>
-          <View className="mt-3 flex-row justify-around">
+          <Text className="text-lawmake-subhead font-semibold text-neutral-800">최근 30일 활동</Text>
+          <View className="mt-lawmake-sm flex-row justify-around">
             <View className="items-center">
-              <Text className="text-lg font-bold text-neutral-900">
+              <Text className="text-lawmake-headline font-bold text-neutral-900">
                 {scorecard.recentActivity.last30Days.bills}
               </Text>
-              <Text className="text-[10px] text-neutral-400">법안 발의</Text>
+              <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-400">법안 발의</Text>
             </View>
             <View className="items-center">
-              <Text className="text-lg font-bold text-neutral-900">
+              <Text className="text-lawmake-headline font-bold text-neutral-900">
                 {scorecard.recentActivity.last30Days.votesAttended}
               </Text>
-              <Text className="text-[10px] text-neutral-400">표결 참여</Text>
+              <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-400">표결 참여</Text>
             </View>
             <View className="items-center">
-              <Text className="text-lg font-bold text-neutral-900">
+              <Text className="text-lawmake-headline font-bold text-neutral-900">
                 {scorecard.recentActivity.last30Days.votes}
               </Text>
-              <Text className="text-[10px] text-neutral-400">표결 전체</Text>
+              <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-400">표결 전체</Text>
             </View>
           </View>
         </Card>

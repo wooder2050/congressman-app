@@ -28,19 +28,19 @@ function VoteResultBar({ yes, no, abstain }: { yes: number; no: number; abstain:
   if (total === 0) return null;
 
   return (
-    <View className="mt-3">
-      <View className="flex-row gap-4">
-        <Text className="text-sm text-neutral-500">
-          찬성 <Text className="font-bold text-green-600">{yes}</Text>
+    <View className="mt-lawmake-sm">
+      <View className="flex-row gap-lawmake-md">
+        <Text className="text-lawmake-footnote text-neutral-500">
+          찬성 <Text className="font-bold text-success">{yes}</Text>
         </Text>
-        <Text className="text-sm text-neutral-500">
-          반대 <Text className="font-bold text-red-600">{no}</Text>
+        <Text className="text-lawmake-footnote text-neutral-500">
+          반대 <Text className="font-bold text-error">{no}</Text>
         </Text>
-        <Text className="text-sm text-neutral-500">
+        <Text className="text-lawmake-footnote text-neutral-500">
           기권 <Text className="font-bold text-neutral-400">{abstain}</Text>
         </Text>
       </View>
-      <View className="mt-1.5 h-2 flex-row overflow-hidden rounded-full">
+      <View className="mt-lawmake-xs h-2 flex-row overflow-hidden rounded-full">
         <View style={{ width: `${(yes / total) * 100}%`, backgroundColor: '#16A34A' }} />
         <View style={{ width: `${(no / total) * 100}%`, backgroundColor: '#EF4444' }} />
         <View style={{ width: `${(abstain / total) * 100}%`, backgroundColor: '#D4D4D4' }} />
@@ -67,19 +67,19 @@ function FeaturedBillCard({
   const Wrapper = onPress ? PressableCard : Card;
 
   return (
-    <Wrapper className="mb-3" onPress={onPress}>
+    <Wrapper className="mb-lawmake-sm" onPress={onPress}>
       <View className="flex-row items-start justify-between">
-        <Text className="flex-1 text-base font-bold text-neutral-900" numberOfLines={2}>
+        <Text className="flex-1 text-lawmake-callout font-bold text-neutral-900" numberOfLines={2}>
           {bill.title}
         </Text>
-        <Badge label={status.label} color={status.color} textColor={status.textColor} className="ml-2" />
+        <Badge label={status.label} color={status.color} textColor={status.textColor} className="ml-lawmake-sm" />
       </View>
 
       {bill.proposer && (
-        <Text className="mt-1 text-xs text-neutral-400">{bill.proposer}</Text>
+        <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-400">{bill.proposer}</Text>
       )}
 
-      <Text className="mt-2.5 text-sm leading-5 text-neutral-600">
+      <Text className="mt-lawmake-sm text-lawmake-footnote leading-5 text-neutral-600">
         {bill.description}
       </Text>
 
@@ -92,27 +92,27 @@ function FeaturedBillCard({
       )}
 
       {hasArticle && (
-        <View className="mt-3">
-          <Text className="text-sm font-semibold text-primary">자세히 읽기 →</Text>
+        <View className="mt-lawmake-sm">
+          <Text className="text-lawmake-footnote font-semibold text-primary">자세히 읽기 →</Text>
         </View>
       )}
 
       {!hasArticle && bill.sources && bill.sources.length > 0 && (
-        <View className="mt-3 border-t border-neutral-100 pt-3">
+        <View className="mt-lawmake-sm border-t border-neutral-100 pt-lawmake-sm">
           {bill.sources.filter((s) => s.type === 'youtube').length > 0 && (
-            <View className="mb-2">
-              <Text className="mb-1 text-xs font-semibold text-neutral-400">관련 영상</Text>
+            <View className="mb-lawmake-sm">
+              <Text className="mb-lawmake-xs text-lawmake-caption font-semibold text-neutral-400">관련 영상</Text>
               {bill.sources
                 .filter((s) => s.type === 'youtube')
                 .map((source, i) => (
                   <PressableCard
                     key={i}
-                    className="mb-1 flex-row items-center gap-1.5 border-0 p-1.5"
+                    className="mb-1 flex-row items-center gap-lawmake-xs border-0 p-1.5"
                     style={{ elevation: 0 }}
                     onPress={() => Linking.openURL(source.url)}
                   >
-                    <Text className="text-xs text-red-500">▶</Text>
-                    <Text className="flex-1 text-xs text-primary" numberOfLines={1}>
+                    <Text className="text-lawmake-caption text-error">▶</Text>
+                    <Text className="flex-1 text-lawmake-caption text-primary" numberOfLines={1}>
                       {source.title}
                     </Text>
                   </PressableCard>
@@ -121,7 +121,7 @@ function FeaturedBillCard({
           )}
           {bill.sources.filter((s) => s.type !== 'youtube').length > 0 && (
             <View>
-              <Text className="mb-1 text-xs font-semibold text-neutral-400">관련 기사</Text>
+              <Text className="mb-lawmake-xs text-lawmake-caption font-semibold text-neutral-400">관련 기사</Text>
               {bill.sources
                 .filter((s) => s.type !== 'youtube')
                 .map((source, i) => (
@@ -131,7 +131,7 @@ function FeaturedBillCard({
                     style={{ elevation: 0 }}
                     onPress={() => Linking.openURL(source.url)}
                   >
-                    <Text className="text-xs text-primary" numberOfLines={1}>
+                    <Text className="text-lawmake-caption text-primary" numberOfLines={1}>
                       {source.title}
                     </Text>
                   </PressableCard>
@@ -162,18 +162,18 @@ function HighlightCard({
   const Wrapper = onPress ? PressableCard : Card;
 
   return (
-    <Wrapper className="mb-3" onPress={onPress}>
-      <View className="flex-row items-center gap-2">
-        <Text className="text-lg">{cat.emoji}</Text>
-        <Text className="text-sm font-bold text-neutral-900">{highlight.title}</Text>
+    <Wrapper className="mb-lawmake-sm" onPress={onPress}>
+      <View className="flex-row items-center gap-lawmake-sm">
+        <Text className="text-lawmake-headline">{cat.emoji}</Text>
+        <Text className="text-lawmake-footnote font-bold text-neutral-900">{highlight.title}</Text>
         <Badge label={cat.label} color="#E5E5E5" textColor="#595959" />
       </View>
-      <Text className="mt-1.5 text-sm leading-5 text-neutral-600">
+      <Text className="mt-lawmake-xs text-lawmake-footnote leading-5 text-neutral-600">
         {highlight.description}
       </Text>
       {hasArticle && (
-        <View className="mt-2">
-          <Text className="text-xs font-semibold text-primary">자세히 읽기 →</Text>
+        <View className="mt-lawmake-sm">
+          <Text className="text-lawmake-caption font-semibold text-primary">자세히 읽기 →</Text>
         </View>
       )}
     </Wrapper>
@@ -189,25 +189,25 @@ export default function WeeklyDetailScreen() {
 
   return (
     <ScrollView
-      className="flex-1 bg-neutral-50"
+      className="flex-1 bg-surface-secondary"
       contentContainerStyle={{ paddingBottom: insets.bottom + 16 }}
     >
       {/* Header */}
-      <View className="bg-white px-5 pb-5 pt-2">
-        <Text className="text-2xl font-bold text-neutral-900">
+      <View className="bg-surface-primary px-lawmake-lg pb-lawmake-lg pt-lawmake-sm">
+        <Text className="text-lawmake-large font-bold text-neutral-900">
           {article.title} 주간 국회 뉴스
         </Text>
-        <Text className="mt-1 text-sm text-neutral-400">{article.period}</Text>
-        <Text className="mt-3 text-sm leading-5 text-neutral-600">{article.summary}</Text>
+        <Text className="mt-lawmake-xs text-lawmake-footnote text-neutral-400">{article.period}</Text>
+        <Text className="mt-lawmake-sm text-lawmake-footnote leading-5 text-neutral-600">{article.summary}</Text>
 
         {article.tags.length > 0 && (
-          <View className="mt-3 flex-row flex-wrap gap-1.5">
+          <View className="mt-lawmake-sm flex-row flex-wrap gap-lawmake-xs">
             {article.tags.map((tag) => (
               <View
                 key={tag}
-                className="rounded-full bg-neutral-100 px-2.5 py-0.5"
+                className="rounded-full bg-neutral-100 px-lawmake-sm py-0.5"
               >
-                <Text className="text-xs text-neutral-500">{tag}</Text>
+                <Text className="text-lawmake-caption text-neutral-500">{tag}</Text>
               </View>
             ))}
           </View>
@@ -216,29 +216,29 @@ export default function WeeklyDetailScreen() {
 
       {/* Stats */}
       {article.stats && (
-        <View className="flex-row px-4 pt-4">
+        <View className="flex-row px-lawmake-md pt-lawmake-md">
           {article.stats.billsPassed != null && (
             <Card className="mx-1 flex-1 items-center">
-              <Text className="text-2xl font-bold text-teal-600">
+              <Text className="text-lawmake-title1 font-bold text-success">
                 {article.stats.billsPassed}건
               </Text>
-              <Text className="mt-1 text-xs text-neutral-400">법안 통과</Text>
+              <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-400">법안 통과</Text>
             </Card>
           )}
           {article.stats.votesHeld != null && (
             <Card className="mx-1 flex-1 items-center">
-              <Text className="text-2xl font-bold text-primary">
+              <Text className="text-lawmake-title1 font-bold text-primary">
                 {article.stats.votesHeld}건
               </Text>
-              <Text className="mt-1 text-xs text-neutral-400">본회의 표결</Text>
+              <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-400">본회의 표결</Text>
             </Card>
           )}
           {article.stats.committeeMeetings != null && (
             <Card className="mx-1 flex-1 items-center">
-              <Text className="text-2xl font-bold text-neutral-900">
+              <Text className="text-lawmake-title1 font-bold text-neutral-900">
                 {article.stats.committeeMeetings}건
               </Text>
-              <Text className="mt-1 text-xs text-neutral-400">위원회 회의</Text>
+              <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-400">위원회 회의</Text>
             </Card>
           )}
         </View>
@@ -246,8 +246,8 @@ export default function WeeklyDetailScreen() {
 
       {/* Featured Bills */}
       {article.featuredBills.length > 0 && (
-        <View className="mt-5 px-5">
-          <Text className="mb-3 text-xl font-bold text-neutral-900">주목할 만한 법안</Text>
+        <View className="mt-lawmake-lg px-lawmake-lg">
+          <Text className="mb-lawmake-sm text-lawmake-title2 font-bold text-neutral-900">주목할 만한 법안</Text>
           {article.featuredBills.map((bill, i) => (
             <FeaturedBillCard key={i} bill={bill} weeklyId={article.id} />
           ))}
@@ -256,8 +256,8 @@ export default function WeeklyDetailScreen() {
 
       {/* Highlights */}
       {article.highlights.length > 0 && (
-        <View className="mt-5 px-5">
-          <Text className="mb-3 text-xl font-bold text-neutral-900">이번 주 하이라이트</Text>
+        <View className="mt-lawmake-lg px-lawmake-lg">
+          <Text className="mb-lawmake-sm text-lawmake-title2 font-bold text-neutral-900">이번 주 하이라이트</Text>
           {article.highlights.map((h, i) => (
             <HighlightCard key={i} highlight={h} weeklyId={article.id} />
           ))}
@@ -266,11 +266,11 @@ export default function WeeklyDetailScreen() {
 
       {/* Analysis */}
       {article.analysis && (
-        <View className="mt-5 px-5">
-          <Text className="mb-3 text-xl font-bold text-neutral-900">이번 주 분석</Text>
+        <View className="mt-lawmake-lg px-lawmake-lg">
+          <Text className="mb-lawmake-sm text-lawmake-title2 font-bold text-neutral-900">이번 주 분석</Text>
           <Card>
-            <Text className="text-sm leading-5 text-neutral-700">{article.analysis}</Text>
-            <Text className="mt-3 text-xs text-neutral-400">
+            <Text className="text-lawmake-footnote leading-5 text-neutral-700">{article.analysis}</Text>
+            <Text className="mt-lawmake-sm text-lawmake-caption text-neutral-400">
               위 분석은 해당 주의 입법 동향을 객관적으로 정리한 내용입니다.
             </Text>
           </Card>

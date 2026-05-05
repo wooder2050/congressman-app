@@ -22,26 +22,33 @@ export default function VoteGuideScreen() {
 
   return (
     <ScrollView
-      className="flex-1 bg-neutral-50"
-      contentContainerStyle={{ padding: 16, paddingBottom: insets.bottom + 24, gap: 12 }}
+      className="flex-1 bg-surface-secondary"
+      contentContainerStyle={{
+        padding: 16,
+        paddingBottom: insets.bottom + 24,
+        gap: 12,
+      }}
     >
       {/* 일정 */}
       <Card>
-        <View className="flex-row items-center gap-2">
-          <Calendar size={18} color="#F43F5E" />
-          <Text className="text-sm font-bold text-neutral-900">투표 일정</Text>
+        <View className="flex-row items-center gap-lawmake-sm">
+          <Calendar size={18} color="#EF4444" />
+          <Text className="text-lawmake-headline text-neutral-900">투표 일정</Text>
         </View>
-        <View className="mt-3 gap-2.5">
+        <View className="mt-lawmake-md gap-lawmake-sm">
           {SCHEDULES.map((s) => (
-            <View key={s.label} className="rounded-lg bg-rose-50 px-3 py-2.5">
-              <Text className="text-xs font-bold text-rose-700">{s.label}</Text>
-              <View className="mt-1 flex-row items-center gap-1.5">
+            <View
+              key={s.label}
+              className="rounded-lawmake-md bg-error-light px-lawmake-md py-lawmake-sm"
+            >
+              <Text className="text-lawmake-subhead font-bold text-error-dark">{s.label}</Text>
+              <View className="mt-lawmake-xs flex-row items-center gap-lawmake-xs">
                 <Calendar size={12} color="#9F1239" />
-                <Text className="text-xs text-rose-900">{s.date}</Text>
+                <Text className="text-lawmake-footnote text-error-dark">{s.date}</Text>
               </View>
-              <View className="mt-0.5 flex-row items-center gap-1.5">
+              <View className="mt-lawmake-xs flex-row items-center gap-lawmake-xs">
                 <Clock size={12} color="#9F1239" />
-                <Text className="text-xs text-rose-900">{s.time}</Text>
+                <Text className="text-lawmake-footnote text-error-dark">{s.time}</Text>
               </View>
             </View>
           ))}
@@ -50,22 +57,26 @@ export default function VoteGuideScreen() {
 
       {/* 투표용지 */}
       <Card>
-        <View className="flex-row items-center gap-2">
-          <FileText size={18} color="#3B82F6" />
-          <Text className="text-sm font-bold text-neutral-900">투표용지 (최대 7장)</Text>
+        <View className="flex-row items-center gap-lawmake-sm">
+          <FileText size={18} color="#2563EB" />
+          <Text className="text-lawmake-headline text-neutral-900">
+            투표용지 (최대 7장)
+          </Text>
         </View>
-        <Text className="mt-2 text-xs text-neutral-600">
+        <Text className="mt-lawmake-sm text-lawmake-footnote text-neutral-600">
           유권자는 자신의 선거구에 따라 최대 7장의 투표용지를 받습니다.
         </Text>
-        <View className="mt-3 gap-2">
+        <View className="mt-lawmake-md gap-lawmake-sm">
           {BALLOTS.map((b, i) => (
-            <View key={b.name} className="flex-row gap-3">
-              <View className="h-6 w-6 items-center justify-center rounded-full bg-blue-100">
-                <Text className="text-[10px] font-bold text-blue-700">{i + 1}</Text>
+            <View key={b.name} className="flex-row gap-lawmake-md">
+              <View className="h-6 w-6 items-center justify-center rounded-full bg-info-light">
+                <Text className="text-lawmake-caption font-bold text-info-dark">{i + 1}</Text>
               </View>
               <View className="flex-1">
-                <Text className="text-sm font-semibold text-neutral-900">{b.name}</Text>
-                <Text className="text-[11px] text-neutral-500">{b.desc}</Text>
+                <Text className="text-lawmake-body font-semibold text-neutral-900">
+                  {b.name}
+                </Text>
+                <Text className="text-lawmake-caption text-neutral-500">{b.desc}</Text>
               </View>
             </View>
           ))}
@@ -74,18 +85,18 @@ export default function VoteGuideScreen() {
 
       {/* 투표 장소 */}
       <Card>
-        <View className="flex-row items-center gap-2">
-          <MapPin size={18} color="#10B981" />
-          <Text className="text-sm font-bold text-neutral-900">투표 장소</Text>
+        <View className="flex-row items-center gap-lawmake-sm">
+          <MapPin size={18} color="#16A34A" />
+          <Text className="text-lawmake-headline text-neutral-900">투표 장소</Text>
         </View>
-        <View className="mt-2 gap-1.5">
-          <Text className="text-xs leading-5 text-neutral-700">
+        <View className="mt-lawmake-sm gap-lawmake-xs">
+          <Text className="text-lawmake-footnote leading-5 text-neutral-700">
             • <Text className="font-semibold">사전투표</Text>: 전국 어느 사전투표소든 가능
           </Text>
-          <Text className="text-xs leading-5 text-neutral-700">
+          <Text className="text-lawmake-footnote leading-5 text-neutral-700">
             • <Text className="font-semibold">본투표</Text>: 본인 주소지 관할 투표소만 가능
           </Text>
-          <Text className="text-xs leading-5 text-neutral-700">
+          <Text className="text-lawmake-footnote leading-5 text-neutral-700">
             • 자세한 위치는 중앙선거관리위원회 홈페이지 또는 본인의 투표 안내문 참고
           </Text>
         </View>
@@ -93,21 +104,21 @@ export default function VoteGuideScreen() {
 
       {/* 준비물 */}
       <Card>
-        <View className="flex-row items-center gap-2">
+        <View className="flex-row items-center gap-lawmake-sm">
           <Vote size={18} color="#8B5CF6" />
-          <Text className="text-sm font-bold text-neutral-900">준비물</Text>
+          <Text className="text-lawmake-headline text-neutral-900">준비물</Text>
         </View>
-        <View className="mt-2 gap-1.5">
-          <Text className="text-xs leading-5 text-neutral-700">
+        <View className="mt-lawmake-sm gap-lawmake-xs">
+          <Text className="text-lawmake-footnote leading-5 text-neutral-700">
             • 신분증 (주민등록증, 운전면허증, 여권 등 사진이 부착된 관공서 발급 증명서)
           </Text>
-          <Text className="text-xs leading-5 text-neutral-700">
+          <Text className="text-lawmake-footnote leading-5 text-neutral-700">
             • 모바일 신분증 사용 가능
           </Text>
         </View>
       </Card>
 
-      <Text className="mt-2 px-2 text-[10px] text-neutral-400">
+      <Text className="mt-lawmake-sm px-lawmake-sm text-lawmake-caption text-neutral-400">
         ※ 본 안내는 일반 정보이며, 정확한 사항은 중앙선거관리위원회 공식 안내를 확인해주세요.
       </Text>
     </ScrollView>

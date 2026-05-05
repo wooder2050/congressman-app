@@ -20,40 +20,40 @@ function WeeklyCard({ article }: { article: WeeklyArticle }) {
 
   return (
     <PressableCard
-      className="mx-5 mb-3"
+      className="mx-lawmake-lg mb-lawmake-sm"
       onPress={() => router.push(`/weekly/${article.id}`)}
     >
       <View className="flex-row items-center justify-between">
-        <Text className="text-lg font-bold text-neutral-900">{article.title}</Text>
-        <Text className="text-xs text-neutral-400">{article.period}</Text>
+        <Text className="text-lawmake-headline font-bold text-neutral-900">{article.title}</Text>
+        <Text className="text-lawmake-caption text-neutral-400">{article.period}</Text>
       </View>
 
-      <Text className="mt-2 text-sm leading-5 text-neutral-600" numberOfLines={2}>
+      <Text className="mt-lawmake-sm text-lawmake-footnote leading-5 text-neutral-600" numberOfLines={2}>
         {article.summary}
       </Text>
 
       {article.stats && (
-        <View className="mt-3 flex-row gap-3">
+        <View className="mt-lawmake-sm flex-row gap-lawmake-sm">
           {article.stats.billsPassed != null && (
-            <View className="flex-row items-center gap-1">
+            <View className="flex-row items-center gap-lawmake-xs">
               <FileText size={12} color="#2563EB" />
-              <Text className="text-xs text-neutral-500">
+              <Text className="text-lawmake-caption text-neutral-500">
                 통과 {article.stats.billsPassed}
               </Text>
             </View>
           )}
           {article.stats.votesHeld != null && (
-            <View className="flex-row items-center gap-1">
+            <View className="flex-row items-center gap-lawmake-xs">
               <VoteIcon size={12} color="#2563EB" />
-              <Text className="text-xs text-neutral-500">
+              <Text className="text-lawmake-caption text-neutral-500">
                 표결 {article.stats.votesHeld}
               </Text>
             </View>
           )}
           {article.stats.committeeMeetings != null && (
-            <View className="flex-row items-center gap-1">
+            <View className="flex-row items-center gap-lawmake-xs">
               <Calendar size={12} color="#2563EB" />
-              <Text className="text-xs text-neutral-500">
+              <Text className="text-lawmake-caption text-neutral-500">
                 위원회 {article.stats.committeeMeetings}
               </Text>
             </View>
@@ -62,17 +62,17 @@ function WeeklyCard({ article }: { article: WeeklyArticle }) {
       )}
 
       {article.featuredBills.length > 0 && (
-        <View className="mt-3 gap-1.5">
+        <View className="mt-lawmake-sm gap-lawmake-xs">
           {article.featuredBills.slice(0, 3).map((bill, i) => {
             const status = BILL_STATUS_COLORS[bill.status];
             return (
-              <View key={i} className="flex-row items-center gap-2">
+              <View key={i} className="flex-row items-center gap-lawmake-sm">
                 <Badge
                   label={status.label}
                   color={status.color}
                   textColor={status.textColor}
                 />
-                <Text className="flex-1 text-xs text-neutral-700" numberOfLines={1}>
+                <Text className="flex-1 text-lawmake-caption text-neutral-700" numberOfLines={1}>
                   {bill.title}
                 </Text>
               </View>
@@ -82,9 +82,9 @@ function WeeklyCard({ article }: { article: WeeklyArticle }) {
       )}
 
       {article.tags.length > 0 && (
-        <View className="mt-3 flex-row flex-wrap gap-1.5">
+        <View className="mt-lawmake-sm flex-row flex-wrap gap-lawmake-xs">
           {article.tags.slice(0, 4).map((tag) => (
-            <Text key={tag} className="text-xs text-primary">
+            <Text key={tag} className="text-lawmake-caption text-primary">
               #{tag}
             </Text>
           ))}
@@ -100,7 +100,7 @@ export default function WeeklyListScreen() {
 
   return (
     <FlatList
-      className="flex-1 bg-neutral-50"
+      className="flex-1 bg-surface-secondary"
       data={articles}
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => <WeeklyCard article={item} />}

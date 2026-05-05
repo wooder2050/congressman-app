@@ -42,19 +42,25 @@ export default function LocalElectionRegionScreen() {
   }, {});
 
   return (
-    <View className="flex-1 bg-neutral-50">
-      <View className="bg-white px-5 py-4">
-        <Text className="text-lg font-bold text-neutral-900">{decodedSido}</Text>
-        <Text className="mt-0.5 text-xs text-neutral-500">총 {data.races.length}개 선거구</Text>
+    <View className="flex-1 bg-surface-secondary">
+      <View className="bg-surface-primary px-lawmake-lg py-lawmake-md">
+        <Text className="text-lawmake-title2 text-neutral-900">{decodedSido}</Text>
+        <Text className="mt-lawmake-xs text-lawmake-footnote text-neutral-500">
+          총 {data.races.length}개 선거구
+        </Text>
       </View>
 
       <FlatList
         data={Object.entries(grouped) as [LocalElectionType, typeof data.races][]}
         keyExtractor={([type]) => type}
-        contentContainerStyle={{ padding: 16, paddingBottom: insets.bottom + 16, gap: 16 }}
+        contentContainerStyle={{
+          padding: 16,
+          paddingBottom: insets.bottom + 16,
+          gap: 20,
+        }}
         renderItem={({ item: [type, races] }) => (
-          <View className="gap-2">
-            <Text className="text-xs font-bold text-neutral-700">
+          <View className="gap-lawmake-sm">
+            <Text className="text-lawmake-subhead font-bold text-neutral-700">
               {TYPE_LABELS[type]} · {races.length}개
             </Text>
             {races.map((race) => (
@@ -63,16 +69,16 @@ export default function LocalElectionRegionScreen() {
                 onPress={() => router.push(`/local-elections/${id}/races/${race.id}` as never)}
               >
                 <View className="flex-row items-center justify-between">
-                  <View className="flex-1 pr-2">
-                    <Text className="text-sm font-bold text-neutral-900">
+                  <View className="flex-1 pr-lawmake-sm">
+                    <Text className="text-lawmake-callout font-bold text-neutral-900">
                       {race.displayName}
                     </Text>
-                    <Text className="mt-0.5 text-[11px] text-neutral-500">
+                    <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-500">
                       후보자 {race.candidateCount}명
                       {race.seatCount > 1 ? ` · ${race.seatCount}명 선출` : ''}
                     </Text>
                   </View>
-                  <ChevronRight size={18} color="#9CA3AF" />
+                  <ChevronRight size={18} color="#A3A3A3" />
                 </View>
               </PressableCard>
             ))}

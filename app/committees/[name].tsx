@@ -40,32 +40,32 @@ export default function CommitteeDetailScreen() {
 
   return (
     <ScrollView
-      className="flex-1 bg-neutral-50"
+      className="flex-1 bg-surface-secondary"
       contentContainerStyle={{ paddingBottom: insets.bottom + 32 }}
     >
       {/* Header */}
-      <View className="bg-white px-5 pb-4 pt-4">
+      <View className="bg-surface-primary px-lawmake-lg pb-lawmake-md pt-lawmake-md">
         <Pressable onPress={() => router.back()} hitSlop={12}>
-          <Text className="text-sm text-primary">뒤로</Text>
+          <Text className="text-lawmake-footnote text-primary">뒤로</Text>
         </Pressable>
-        <Text className="mt-2 text-lg font-bold text-neutral-900">{detail.name}</Text>
+        <Text className="mt-lawmake-sm text-lawmake-title2 font-bold text-neutral-900">{detail.name}</Text>
 
-        <View className="mt-3 flex-row gap-4">
+        <View className="mt-lawmake-sm flex-row gap-lawmake-md">
           <View>
-            <Text className="text-xs text-neutral-400">법안 수</Text>
-            <Text className="text-base font-bold text-neutral-900">
+            <Text className="text-lawmake-caption text-neutral-400">법안 수</Text>
+            <Text className="text-lawmake-callout font-bold text-neutral-900">
               {detail.billTotal}
             </Text>
           </View>
           <View>
-            <Text className="text-xs text-neutral-400">가결</Text>
-            <Text className="text-base font-bold text-green-600">
+            <Text className="text-lawmake-caption text-neutral-400">가결</Text>
+            <Text className="text-lawmake-callout font-bold text-success">
               {detail.billPassed}
             </Text>
           </View>
           <View>
-            <Text className="text-xs text-neutral-400">가결률</Text>
-            <Text className="text-base font-bold text-primary">
+            <Text className="text-lawmake-caption text-neutral-400">가결률</Text>
+            <Text className="text-lawmake-callout font-bold text-primary">
               {formatPercent(detail.passRate)}
             </Text>
           </View>
@@ -73,13 +73,13 @@ export default function CommitteeDetailScreen() {
       </View>
 
       {/* Members */}
-      <View className="mt-3 px-5">
+      <View className="mt-lawmake-sm px-lawmake-lg">
         <SectionHeader title={`위원 (${detail.members.length}명)`} />
-        <View className="mt-2 gap-1">
+        <View className="mt-lawmake-sm gap-1">
           {detail.members.map((m) => (
             <Pressable
               key={m.memberId}
-              className="flex-row items-center gap-3 rounded-xl bg-white px-4 py-2.5 active:bg-neutral-50"
+              className="flex-row items-center gap-lawmake-sm rounded-lawmake-lg bg-surface-primary px-lawmake-md py-lawmake-sm active:bg-neutral-50"
               onPress={() => router.push(`/members/${m.memberId}`)}
             >
               <View
@@ -93,8 +93,8 @@ export default function CommitteeDetailScreen() {
                 />
               </View>
               <View className="flex-1">
-                <Text className="text-sm font-medium text-neutral-800">{m.name}</Text>
-                <Text className="text-[11px] text-neutral-400">{m.partyName}</Text>
+                <Text className="text-lawmake-footnote font-medium text-neutral-800">{m.name}</Text>
+                <Text className="text-lawmake-caption text-neutral-400">{m.partyName}</Text>
               </View>
               {m.role && m.role !== '위원' && (
                 <Badge label={m.role} color="#2563EB" textColor="#FFFFFF" />
@@ -106,13 +106,13 @@ export default function CommitteeDetailScreen() {
 
       {/* Upcoming Schedules */}
       {detail.upcomingSchedules.length > 0 && (
-        <View className="mt-5 px-5">
+        <View className="mt-lawmake-lg px-lawmake-lg">
           <SectionHeader title="예정 회의" />
-          <View className="mt-2 gap-2">
+          <View className="mt-lawmake-sm gap-lawmake-sm">
             {detail.upcomingSchedules.map((s, i) => (
               <Card key={i}>
-                <Text className="text-sm font-medium text-neutral-800">{s.title}</Text>
-                <Text className="mt-0.5 text-xs text-neutral-400">
+                <Text className="text-lawmake-footnote font-medium text-neutral-800">{s.title}</Text>
+                <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-400">
                   {formatDate(s.meetingDate)} {s.meetingTime}
                 </Text>
               </Card>
@@ -123,23 +123,23 @@ export default function CommitteeDetailScreen() {
 
       {/* Meeting Minutes */}
       {minutes && minutes.items.length > 0 && (
-        <View className="mt-5 px-5">
+        <View className="mt-lawmake-lg px-lawmake-lg">
           <SectionHeader title="회의록" />
-          <View className="mt-2 gap-2">
+          <View className="mt-lawmake-sm gap-lawmake-sm">
             {minutes.items.map((m) => (
               <Card key={m.id}>
-                <Text className="text-sm font-semibold text-neutral-800">
+                <Text className="text-lawmake-footnote font-semibold text-neutral-800">
                   {m.title}
                 </Text>
-                <Text className="mt-0.5 text-xs text-neutral-400">
+                <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-400">
                   {formatDate(m.confDate)} | {m.conferNum}
                 </Text>
                 {m.agendas.length > 0 && (
-                  <View className="mt-2 gap-1">
+                  <View className="mt-lawmake-sm gap-1">
                     {m.agendas.slice(0, 3).map((a, i) => (
-                      <View key={i} className="flex-row items-center gap-2">
+                      <View key={i} className="flex-row items-center gap-lawmake-sm">
                         <Text
-                          className="flex-1 text-xs text-neutral-500"
+                          className="flex-1 text-lawmake-caption text-neutral-500"
                           numberOfLines={1}
                         >
                           {a.subName}
@@ -149,7 +149,7 @@ export default function CommitteeDetailScreen() {
                             onPress={() => Linking.openURL(a.vodLinkUrl!)}
                             hitSlop={8}
                           >
-                            <Text className="text-[10px] text-primary">영상</Text>
+                            <Text className="text-lawmake-caption text-primary">영상</Text>
                           </Pressable>
                         )}
                         {a.pdfLinkUrl && (
@@ -157,7 +157,7 @@ export default function CommitteeDetailScreen() {
                             onPress={() => Linking.openURL(a.pdfLinkUrl!)}
                             hitSlop={8}
                           >
-                            <Text className="text-[10px] text-primary">PDF</Text>
+                            <Text className="text-lawmake-caption text-primary">PDF</Text>
                           </Pressable>
                         )}
                       </View>
@@ -170,18 +170,18 @@ export default function CommitteeDetailScreen() {
 
           {/* Pagination */}
           {minutes.totalPages > 1 && (
-            <View className="mt-3 flex-row items-center justify-center gap-3">
+            <View className="mt-lawmake-sm flex-row items-center justify-center gap-lawmake-sm">
               <Pressable
                 disabled={minutesPage <= 1}
                 onPress={() => setMinutesPage((p) => p - 1)}
               >
                 <Text
-                  className={`text-sm font-medium ${minutesPage <= 1 ? 'text-neutral-300' : 'text-primary'}`}
+                  className={`text-lawmake-footnote font-medium ${minutesPage <= 1 ? 'text-neutral-300' : 'text-primary'}`}
                 >
                   이전
                 </Text>
               </Pressable>
-              <Text className="text-xs text-neutral-400">
+              <Text className="text-lawmake-caption text-neutral-400">
                 {minutesPage} / {minutes.totalPages}
               </Text>
               <Pressable
@@ -189,7 +189,7 @@ export default function CommitteeDetailScreen() {
                 onPress={() => setMinutesPage((p) => p + 1)}
               >
                 <Text
-                  className={`text-sm font-medium ${minutesPage >= minutes.totalPages ? 'text-neutral-300' : 'text-primary'}`}
+                  className={`text-lawmake-footnote font-medium ${minutesPage >= minutes.totalPages ? 'text-neutral-300' : 'text-primary'}`}
                 >
                   다음
                 </Text>
