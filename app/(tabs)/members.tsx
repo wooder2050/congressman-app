@@ -56,7 +56,7 @@ export default function MembersScreen() {
         (m) =>
           m.name.toLowerCase().includes(q) ||
           m.term.district.toLowerCase().includes(q) ||
-          m.term.party.name.toLowerCase().includes(q)
+          m.term.party.name.toLowerCase().includes(q),
       );
     }
 
@@ -66,7 +66,7 @@ export default function MembersScreen() {
   const renderMember = useCallback(
     ({ item }: { item: MemberWithTerm }) => (
       <Pressable
-        className="flex-row items-center gap-3 border-b border-neutral-100 bg-white px-5 py-3 active:bg-neutral-50"
+        className="flex-row items-center gap-lawmake-md border-b border-neutral-100 bg-surface-primary px-lawmake-lg py-lawmake-md active:bg-neutral-50"
         onPress={() => router.push(`/members/${item.id}`)}
       >
         <View
@@ -81,26 +81,31 @@ export default function MembersScreen() {
           />
         </View>
         <View className="flex-1">
-          <View className="flex-row items-center gap-2">
-            <Text className="text-sm font-semibold text-neutral-900">{item.name}</Text>
+          <View className="flex-row items-center gap-lawmake-sm">
+            <Text className="text-lawmake-body font-semibold text-neutral-900">{item.name}</Text>
             <PartyBadge name={item.term.party.shortName} color={item.term.party.color} />
           </View>
-          <Text className="mt-0.5 text-xs text-neutral-400">
-            {item.term.district} | {item.electedCount}선
+          <Text className="mt-lawmake-xs text-lawmake-footnote text-neutral-500">
+            {item.term.district} · {item.electedCount}선
           </Text>
         </View>
       </Pressable>
     ),
-    [router]
+    [router],
   );
 
   if (isLoading) return <LoadingSpinner />;
   if (error) return <ErrorState onRetry={refetch} />;
 
   return (
-    <View className="flex-1 bg-neutral-50">
+    <View className="flex-1 bg-surface-secondary">
+      {/* Large Title */}
+      <View className="bg-surface-primary px-lawmake-lg pb-lawmake-md pt-lawmake-md">
+        <Text className="text-lawmake-large text-neutral-900">의원</Text>
+      </View>
+
       {/* Search */}
-      <View className="bg-white px-5 pb-3">
+      <View className="bg-surface-primary px-lawmake-lg pb-lawmake-md">
         <SearchInput
           placeholder="의원명, 지역구, 정당 검색"
           value={search}
@@ -110,13 +115,16 @@ export default function MembersScreen() {
       </View>
 
       {/* Party Filters */}
-      <View className="bg-white px-5 pb-3">
+      <View className="bg-surface-primary pb-lawmake-md">
         <FlatList
           data={PARTY_FILTERS}
           horizontal
           showsHorizontalScrollIndicator={false}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={{ gap: 6 }}
+          contentContainerStyle={{
+            paddingHorizontal: 16,
+            gap: 8,
+          }}
           renderItem={({ item }) => (
             <FilterChip
               label={item.label}
@@ -128,8 +136,8 @@ export default function MembersScreen() {
       </View>
 
       {/* Count */}
-      <View className="px-5 py-2">
-        <Text className="text-xs text-neutral-400">
+      <View className="border-t border-neutral-100 bg-surface-secondary px-lawmake-lg py-lawmake-sm">
+        <Text className="text-lawmake-footnote text-neutral-500">
           총 {filteredMembers.length}명
         </Text>
       </View>
@@ -141,10 +149,7 @@ export default function MembersScreen() {
         renderItem={renderMember}
         contentContainerStyle={{ paddingBottom: insets.bottom + 16 }}
         ListEmptyComponent={
-          <EmptyState
-            title="검색 결과가 없습니다"
-            description="다른 검색어로 시도해보세요"
-          />
+          <EmptyState title="검색 결과가 없습니다" description="다른 검색어로 시도해보세요" />
         }
       />
     </View>
