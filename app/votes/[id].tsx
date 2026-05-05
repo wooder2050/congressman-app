@@ -1,4 +1,5 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useCallback, useMemo, useState } from 'react';
 import { FlatList, Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -7,13 +8,12 @@ import { EmptyState } from '@/components/EmptyState';
 import { ErrorState } from '@/components/ErrorState';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { MemberPhoto } from '@/components/MemberPhoto';
-import { Badge } from '@/components/ui/Badge';
 import { Card } from '@/components/ui/Card';
-import { MEMBER_VOTE_RESULT_MAP, VOTE_RESULT_MAP } from '@/constants/maps';
+import { Header } from '@/components/ui/Header';
+import { StatusBadge, type StatusTone } from '@/components/ui/StatusBadge';
 import { useLawmakeQuery } from '@/hooks/useLawmakeQuery';
 import { formatDate, formatNumber } from '@/lib/format';
 import type { VoteMemberResult } from '@/types';
-import { useCallback, useMemo, useState } from 'react';
 
 const VOTE_FILTERS = [
   { id: 'all', label: '전체' },
@@ -23,18 +23,28 @@ const VOTE_FILTERS = [
   { id: 'absent', label: '불참' },
 ];
 
+const VOTE_RESULT_TONE: Record<string, { label: string; tone: StatusTone }> = {
+  passed: { label: '원안가결', tone: 'success' },
+  amended: { label: '수정가결', tone: 'info' },
+  rejected: { label: '부결', tone: 'error' },
+  discarded: { label: '폐기', tone: 'neutral' },
+  other: { label: '기타', tone: 'neutral' },
+};
+
+const MEMBER_VOTE_TONE: Record<string, { label: string; tone: StatusTone }> = {
+  yes: { label: '찬성', tone: 'success' },
+  no: { label: '반대', tone: 'error' },
+  abstain: { label: '기권', tone: 'warning' },
+  absent: { label: '불참', tone: 'neutral' },
+};
+
 export default function VoteDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [filter, setFilter] = useState('all');
 
-  const {
-    data,
-    isLoading,
-    error,
-    refetch,
-  } = useLawmakeQuery(getVoteMemberVotes, [id]);
+  const { data, isLoading, error, refetch } = useLawmakeQuery(getVoteMemberVotes, [id]);
 
   const filteredMembers = useMemo(() => {
     if (!data?.memberVotes) return [];
@@ -44,34 +54,24 @@ export default function VoteDetailScreen() {
 
   const renderMember = useCallback(
     ({ item }: { item: VoteMemberResult }) => {
-      const result = MEMBER_VOTE_RESULT_MAP[item.result];
+      const result = MEMBER_VOTE_TONE[item.result] ?? MEMBER_VOTE_TONE.absent;
       return (
         <Pressable
-          className="flex-row items-center gap-3 border-b border-neutral-100 bg-white px-5 py-2.5"
+          className="flex-row items-center gap-lawmake-md border-b border-neutral-100 bg-surface-primary px-lawmake-lg py-lawmake-md active:bg-neutral-50"
           onPress={() => router.push(`/members/${item.memberId}`)}
         >
-          <MemberPhoto
-            uri={item.photoUrl}
-            size={36}
-            partyColor={item.partyColor}
-          />
+          <MemberPhoto uri={item.photoUrl} size={36} partyColor={item.partyColor} />
           <View className="flex-1">
-            <Text className="text-sm font-medium text-neutral-800">
-              {item.memberName}
-            </Text>
-            <Text className="text-[11px] text-neutral-400">
-              {item.partyName} | {item.district}
+            <Text className="text-lawmake-body text-neutral-900">{item.memberName}</Text>
+            <Text className="mt-lawmake-xs text-lawmake-footnote text-neutral-500">
+              {item.partyName} · {item.district}
             </Text>
           </View>
-          <Badge
-            label={result.label}
-            color={result.color}
-            textColor={result.textColor}
-          />
+          <StatusBadge label={result.label} tone={result.tone} />
         </Pressable>
       );
     },
-    [router]
+    [router],
   );
 
   if (isLoading) return <LoadingSpinner />;
@@ -79,104 +79,78 @@ export default function VoteDetailScreen() {
   if (!data) return <EmptyState title="표결 정보를 찾을 수 없습니다" />;
 
   const { vote, memberVotes } = data;
-  const resultInfo = VOTE_RESULT_MAP[vote.resultCode];
+  const result = VOTE_RESULT_TONE[vote.resultCode] ?? VOTE_RESULT_TONE.other;
   const total = vote.yesCount + vote.noCount + vote.abstainCount;
 
   // Group by party
   const partyVotes = memberVotes.reduce(
     (acc, m) => {
       if (!acc[m.partyName]) {
-        acc[m.partyName] = { yes: 0, no: 0, abstain: 0, absent: 0, color: m.partyColor };
+        acc[m.partyName] = {
+          yes: 0,
+          no: 0,
+          abstain: 0,
+          absent: 0,
+          color: m.partyColor,
+        };
       }
       acc[m.partyName][m.result]++;
       return acc;
     },
-    {} as Record<string, { yes: number; no: number; abstain: number; absent: number; color: string }>
+    {} as Record<
+      string,
+      { yes: number; no: number; abstain: number; absent: number; color: string }
+    >,
   );
 
   return (
-    <View className="flex-1 bg-neutral-50">
-      {/* Header */}
-      <View className="bg-white px-5 pb-4 pt-4">
-        <Pressable onPress={() => router.back()} hitSlop={12}>
-          <Text className="text-sm text-primary">뒤로</Text>
-        </Pressable>
+    <View className="flex-1 bg-surface-secondary">
+      <Header />
 
-        <View className="mt-2 flex-row items-start">
-          <Badge
-            label={resultInfo.label}
-            color={resultInfo.color}
-            textColor={resultInfo.textColor}
-          />
-        </View>
-        <Text className="mt-2 text-base font-bold leading-5 text-neutral-900">
+      {/* Title block */}
+      <View className="bg-surface-primary px-lawmake-lg pb-lawmake-lg pt-lawmake-sm">
+        <StatusBadge label={result.label} tone={result.tone} />
+        <Text className="mt-lawmake-md text-lawmake-title2 leading-7 text-neutral-900">
           {vote.billName}
         </Text>
-        <Text className="mt-1.5 text-xs text-neutral-400">
-          {formatDate(vote.procDate)} | 참석 {formatNumber(vote.voteTotal)}/
+        <Text className="mt-lawmake-sm text-lawmake-footnote text-neutral-500">
+          {formatDate(vote.procDate)} · 참석 {formatNumber(vote.voteTotal)}/
           {formatNumber(vote.memberTotal)}명
         </Text>
       </View>
 
-      {/* Vote Summary */}
-      <Card className="mx-5 mt-3">
-        {/* Vote bar */}
-        <View className="h-4 flex-row overflow-hidden rounded-full">
+      {/* Vote summary */}
+      <Card className="mx-lawmake-lg mt-lawmake-md">
+        <View className="h-3 flex-row overflow-hidden rounded-full bg-neutral-100">
           <View
-            className="items-center justify-center bg-green-500"
+            className="h-full bg-success"
             style={{ width: `${total > 0 ? (vote.yesCount / total) * 100 : 0}%` }}
-          >
-            {vote.yesCount > 0 && (
-              <Text className="text-[9px] font-bold text-white">{vote.yesCount}</Text>
-            )}
-          </View>
+          />
           <View
-            className="items-center justify-center bg-red-500"
+            className="h-full bg-error"
             style={{ width: `${total > 0 ? (vote.noCount / total) * 100 : 0}%` }}
-          >
-            {vote.noCount > 0 && (
-              <Text className="text-[9px] font-bold text-white">{vote.noCount}</Text>
-            )}
-          </View>
+          />
           <View
-            className="items-center justify-center bg-neutral-400"
+            className="h-full bg-neutral-400"
             style={{ width: `${total > 0 ? (vote.abstainCount / total) * 100 : 0}%` }}
-          >
-            {vote.abstainCount > 0 && (
-              <Text className="text-[9px] font-bold text-white">
-                {vote.abstainCount}
-              </Text>
-            )}
-          </View>
+          />
         </View>
 
-        <View className="mt-3 flex-row justify-around">
-          <View className="items-center">
-            <Text className="text-lg font-bold text-green-600">{vote.yesCount}</Text>
-            <Text className="text-[10px] text-neutral-400">찬성</Text>
-          </View>
-          <View className="items-center">
-            <Text className="text-lg font-bold text-red-600">{vote.noCount}</Text>
-            <Text className="text-[10px] text-neutral-400">반대</Text>
-          </View>
-          <View className="items-center">
-            <Text className="text-lg font-bold text-neutral-500">
-              {vote.abstainCount}
-            </Text>
-            <Text className="text-[10px] text-neutral-400">기권</Text>
-          </View>
-          <View className="items-center">
-            <Text className="text-lg font-bold text-neutral-300">
-              {vote.memberTotal - vote.voteTotal}
-            </Text>
-            <Text className="text-[10px] text-neutral-400">불참</Text>
-          </View>
+        <View className="mt-lawmake-md flex-row justify-around">
+          <SummaryStat label="찬성" value={vote.yesCount} colorClass="text-success" />
+          <SummaryStat label="반대" value={vote.noCount} colorClass="text-error" />
+          <SummaryStat label="기권" value={vote.abstainCount} colorClass="text-warning-dark" />
+          <SummaryStat
+            label="불참"
+            value={vote.memberTotal - vote.voteTotal}
+            colorClass="text-neutral-400"
+          />
         </View>
       </Card>
 
-      {/* Party Breakdown */}
-      <Card className="mx-5 mt-2">
-        <Text className="mb-2 text-xs font-semibold text-neutral-500">
+      {/* Party breakdown */}
+      <Card className="mx-lawmake-lg mt-lawmake-sm">
+        <Text className="mb-lawmake-sm text-lawmake-subhead font-semibold text-neutral-700">
           정당별 투표 현황
         </Text>
         {Object.entries(partyVotes)
@@ -188,26 +162,28 @@ export default function VoteDetailScreen() {
           .map(([party, votes]) => {
             const partyTotal = votes.yes + votes.no + votes.abstain + votes.absent;
             return (
-              <View key={party} className="mb-2">
+              <View key={party} className="mb-lawmake-sm">
                 <View className="flex-row items-center justify-between">
-                  <View className="flex-row items-center gap-1.5">
+                  <View className="flex-row items-center gap-lawmake-sm">
                     <View
                       className="h-2.5 w-2.5 rounded-full"
                       style={{ backgroundColor: votes.color }}
                     />
-                    <Text className="text-xs font-medium text-neutral-700">{party}</Text>
+                    <Text className="text-lawmake-footnote font-medium text-neutral-700">
+                      {party}
+                    </Text>
                   </View>
-                  <Text className="text-[10px] text-neutral-400">{partyTotal}명</Text>
+                  <Text className="text-lawmake-caption text-neutral-500">{partyTotal}명</Text>
                 </View>
-                <View className="mt-1 h-2 flex-row overflow-hidden rounded-full bg-neutral-100">
+                <View className="mt-lawmake-xs h-1.5 flex-row overflow-hidden rounded-full bg-neutral-100">
                   <View
-                    className="bg-green-500"
+                    className="bg-success"
                     style={{
                       width: `${partyTotal > 0 ? (votes.yes / partyTotal) * 100 : 0}%`,
                     }}
                   />
                   <View
-                    className="bg-red-500"
+                    className="bg-error"
                     style={{
                       width: `${partyTotal > 0 ? (votes.no / partyTotal) * 100 : 0}%`,
                     }}
@@ -224,14 +200,14 @@ export default function VoteDetailScreen() {
           })}
       </Card>
 
-      {/* Filter */}
-      <View className="mt-2 px-5">
+      {/* Filter chips */}
+      <View className="mt-lawmake-md">
         <FlatList
           data={VOTE_FILTERS}
           horizontal
           showsHorizontalScrollIndicator={false}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={{ gap: 6, paddingVertical: 8 }}
+          contentContainerStyle={{ paddingHorizontal: 16, gap: 8 }}
           renderItem={({ item }) => {
             let count = 0;
             if (item.id === 'all') count = memberVotes.length;
@@ -240,18 +216,17 @@ export default function VoteDetailScreen() {
             else if (item.id === 'abstain') count = vote.abstainCount;
             else count = vote.memberTotal - vote.voteTotal;
 
+            const active = filter === item.id;
             return (
               <Pressable
-                className={`rounded-full border px-3 py-1.5 ${
-                  filter === item.id
-                    ? 'border-primary bg-primary-light'
-                    : 'border-neutral-200 bg-white'
+                className={`rounded-full border px-lawmake-md py-lawmake-sm ${
+                  active ? 'border-primary bg-primary-light' : 'border-neutral-200 bg-surface-primary'
                 }`}
                 onPress={() => setFilter(item.id)}
               >
                 <Text
-                  className={`text-xs font-medium ${
-                    filter === item.id ? 'text-primary' : 'text-neutral-600'
+                  className={`text-lawmake-footnote font-medium ${
+                    active ? 'text-primary' : 'text-neutral-600'
                   }`}
                 >
                   {item.label} {count}
@@ -262,13 +237,33 @@ export default function VoteDetailScreen() {
         />
       </View>
 
-      {/* Member List */}
+      {/* Member list */}
       <FlatList
         data={filteredMembers}
         keyExtractor={(item) => item.memberId}
         renderItem={renderMember}
-        contentContainerStyle={{ paddingBottom: insets.bottom + 16 }}
+        contentContainerStyle={{
+          paddingTop: 8,
+          paddingBottom: insets.bottom + 16,
+        }}
       />
+    </View>
+  );
+}
+
+function SummaryStat({
+  label,
+  value,
+  colorClass,
+}: {
+  label: string;
+  value: number;
+  colorClass: string;
+}) {
+  return (
+    <View className="items-center">
+      <Text className={`text-lawmake-title2 font-bold ${colorClass}`}>{value}</Text>
+      <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-500">{label}</Text>
     </View>
   );
 }
