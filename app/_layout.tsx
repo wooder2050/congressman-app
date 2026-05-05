@@ -13,6 +13,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 
 import { OfflineBanner } from '@/components/OfflineBanner';
+import { AuthProvider } from '@/lib/auth-context';
 import { QueryProvider } from '@/lib/providers';
 
 SplashScreen.preventAutoHideAsync();
@@ -37,6 +38,7 @@ export default function RootLayout() {
 
   return (
     <QueryProvider>
+      <AuthProvider>
       <OfflineBanner />
       <Stack
         screenOptions={{
@@ -54,6 +56,19 @@ export default function RootLayout() {
         }}
       >
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen
+          name="sign-in"
+          options={{ headerShown: true, title: '로그인' }}
+        />
+        <Stack.Screen name="auth/callback" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="bookmarks"
+          options={{ headerShown: true, title: '즐겨찾기' }}
+        />
+        <Stack.Screen
+          name="my-district"
+          options={{ headerShown: true, title: '내 지역구' }}
+        />
         <Stack.Screen
           name="members/[id]"
           options={{ headerShown: true, title: '의원 상세' }}
@@ -119,6 +134,26 @@ export default function RootLayout() {
           options={{ headerShown: true, title: '선거 상세' }}
         />
         <Stack.Screen
+          name="local-elections/[id]/index"
+          options={{ headerShown: true, title: '지방선거' }}
+        />
+        <Stack.Screen
+          name="local-elections/[id]/races/index"
+          options={{ headerShown: true, title: '선거구 검색' }}
+        />
+        <Stack.Screen
+          name="local-elections/[id]/races/[raceId]"
+          options={{ headerShown: true, title: '선거구 상세' }}
+        />
+        <Stack.Screen
+          name="local-elections/[id]/regions/[sido]"
+          options={{ headerShown: true, title: '지역별 선거구' }}
+        />
+        <Stack.Screen
+          name="local-elections/[id]/vote"
+          options={{ headerShown: true, title: '투표 안내' }}
+        />
+        <Stack.Screen
           name="about"
           options={{ headerShown: true, title: '앱 정보' }}
         />
@@ -136,6 +171,7 @@ export default function RootLayout() {
         />
       </Stack>
       <StatusBar style="dark" />
+      </AuthProvider>
     </QueryProvider>
   );
 }

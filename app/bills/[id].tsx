@@ -5,6 +5,7 @@ import { Linking, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { getBill } from '@/api/bills';
+import { BookmarkButton } from '@/components/BookmarkButton';
 import { EmptyState } from '@/components/EmptyState';
 import { ErrorState } from '@/components/ErrorState';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
@@ -36,9 +37,12 @@ export default function BillDetailScreen() {
     >
       {/* Header */}
       <View className="bg-white px-5 pb-5 pt-4">
-        <Pressable onPress={() => router.back()} hitSlop={12}>
-          <Text className="text-sm text-primary">뒤로</Text>
-        </Pressable>
+        <View className="flex-row items-center justify-between">
+          <Pressable onPress={() => router.back()} hitSlop={12}>
+            <Text className="text-sm text-primary">뒤로</Text>
+          </Pressable>
+          <BookmarkButton type="bill" id={id} />
+        </View>
 
         <View className="mt-3 flex-row items-start">
           <Badge
