@@ -12,10 +12,19 @@ import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import { SectionHeader } from '@/components/ui/SectionHeader';
-import { BILL_STATUS_MAP } from '@/constants/maps';
+import { Header } from '@/components/ui/Header';
+import { Section } from '@/components/ui/Section';
+import { StatusBadge, type StatusTone } from '@/components/ui/StatusBadge';
 import { useLawmakeQuery } from '@/hooks/useLawmakeQuery';
 import { formatDate } from '@/lib/format';
+import type { Bill } from '@/types';
+
+const BILL_STATUS_TONE: Record<Bill['status'], { label: string; tone: StatusTone }> = {
+  passed: { label: '가결', tone: 'success' },
+  pending: { label: '계류', tone: 'neutral' },
+  discarded: { label: '폐기', tone: 'error' },
+  committee: { label: '위원회', tone: 'info' },
+};
 
 export default function BillDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -28,211 +37,229 @@ export default function BillDetailScreen() {
   if (error) return <ErrorState onRetry={refetch} />;
   if (!bill) return <EmptyState title="법안 정보를 찾을 수 없습니다" />;
 
-  const statusInfo = BILL_STATUS_MAP[bill.status];
+  const status = BILL_STATUS_TONE[bill.status] ?? BILL_STATUS_TONE.pending;
 
   return (
-    <ScrollView
-      className="flex-1 bg-neutral-50"
-      contentContainerStyle={{ paddingBottom: insets.bottom + 32 }}
-    >
-      {/* Header */}
-      <View className="bg-white px-5 pb-5 pt-4">
-        <View className="flex-row items-center justify-between">
-          <Pressable onPress={() => router.back()} hitSlop={12}>
-            <Text className="text-sm text-primary">뒤로</Text>
-          </Pressable>
-          <BookmarkButton type="bill" id={id} />
+    <View className="flex-1 bg-surface-secondary">
+      <Header rightAction={<BookmarkButton type="bill" id={id} />} />
+      <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom + 32 }}>
+        {/* Title block */}
+        <View className="bg-surface-primary px-lawmake-lg pb-lawmake-xl pt-lawmake-sm">
+          <View className="flex-row items-center gap-lawmake-sm">
+            <StatusBadge label={status.label} tone={status.tone} />
+            {bill.topic && <Badge label={bill.topic} />}
+          </View>
+          <Text className="mt-lawmake-md text-lawmake-title1 leading-7 text-neutral-900">
+            {bill.title}
+          </Text>
+          <Text className="mt-lawmake-sm text-lawmake-footnote text-neutral-500">
+            {bill.proposerName} · {formatDate(bill.proposedDate)}
+          </Text>
         </View>
 
-        <View className="mt-3 flex-row items-start">
-          <Badge
-            label={statusInfo.label}
-            color={statusInfo.color}
-            textColor={statusInfo.textColor}
-          />
-          {bill.topic && <Badge label={bill.topic} className="ml-1.5" />}
-        </View>
-        <Text className="mt-2 text-lg font-bold leading-6 text-neutral-900">
-          {bill.title}
-        </Text>
-        <Text className="mt-2 text-xs text-neutral-400">
-          {bill.proposerName} | {formatDate(bill.proposedDate)}
-        </Text>
-      </View>
-
-      {/* AI Summary */}
-      {bill.structuredSummary && (
-        <View className="mt-3 px-5">
-          <SectionHeader title="AI 요약" />
-          <Card className="mt-2">
-            <View className="gap-3">
-              <View>
-                <Text className="text-xs font-semibold text-primary">현행</Text>
-                <Text className="mt-0.5 text-sm leading-5 text-neutral-700">
-                  {bill.structuredSummary.situation}
-                </Text>
-              </View>
-              <View>
-                <Text className="text-xs font-semibold text-red-500">문제점</Text>
-                <Text className="mt-0.5 text-sm leading-5 text-neutral-700">
-                  {bill.structuredSummary.problem}
-                </Text>
-              </View>
-              <View>
-                <Text className="text-xs font-semibold text-green-600">개정안</Text>
-                <Text className="mt-0.5 text-sm leading-5 text-neutral-700">
-                  {bill.structuredSummary.change}
-                </Text>
-              </View>
-              <View>
-                <Text className="text-xs font-semibold text-amber-600">기대효과</Text>
-                <Text className="mt-0.5 text-sm leading-5 text-neutral-700">
-                  {bill.structuredSummary.impact}
-                </Text>
-              </View>
-            </View>
-          </Card>
-        </View>
-      )}
-
-      {/* Simple Summary */}
-      {!bill.structuredSummary && bill.simpleSummary && (
-        <View className="mt-3 px-5">
-          <SectionHeader title="요약" />
-          <Card className="mt-2">
-            <Text className="text-sm leading-5 text-neutral-700">
-              {bill.simpleSummary}
-            </Text>
-          </Card>
-        </View>
-      )}
-
-      {/* Progress */}
-      {bill.progress && (
-        <View className="mt-5 px-5">
-          <SectionHeader title="심사 경과" />
-          <Card className="mt-2">
-            <View className="gap-3">
-              {/* Committee */}
-              <View className="flex-row items-center gap-3">
-                <View
-                  className={`h-3 w-3 rounded-full ${bill.progress.committeeResultDate ? 'bg-green-500' : bill.progress.committeeDate ? 'bg-amber-400' : 'bg-neutral-200'}`}
-                />
-                <View className="flex-1">
-                  <Text className="text-sm font-medium text-neutral-800">
-                    위원회 심사
-                  </Text>
-                  {bill.progress.committeeDate && (
-                    <Text className="text-xs text-neutral-400">
-                      접수 {formatDate(bill.progress.committeeDate)}
-                      {bill.progress.committeeResult &&
-                        ` | ${bill.progress.committeeResult}`}
-                    </Text>
-                  )}
-                </View>
-              </View>
-
-              {/* Law Committee */}
-              <View className="flex-row items-center gap-3">
-                <View
-                  className={`h-3 w-3 rounded-full ${bill.progress.lawResult ? 'bg-green-500' : bill.progress.lawSubmitDate ? 'bg-amber-400' : 'bg-neutral-200'}`}
-                />
-                <View className="flex-1">
-                  <Text className="text-sm font-medium text-neutral-800">
-                    법제사법위원회
-                  </Text>
-                  {bill.progress.lawSubmitDate && (
-                    <Text className="text-xs text-neutral-400">
-                      회부 {formatDate(bill.progress.lawSubmitDate)}
-                      {bill.progress.lawResult && ` | ${bill.progress.lawResult}`}
-                    </Text>
-                  )}
-                </View>
-              </View>
-
-              {/* Plenary */}
-              <View className="flex-row items-center gap-3">
-                <View
-                  className={`h-3 w-3 rounded-full ${bill.progress.plenaryDate ? 'bg-green-500' : 'bg-neutral-200'}`}
-                />
-                <View className="flex-1">
-                  <Text className="text-sm font-medium text-neutral-800">본회의</Text>
-                  {bill.progress.plenaryDate && (
-                    <Text className="text-xs text-neutral-400">
-                      의결 {formatDate(bill.progress.plenaryDate)}
-                    </Text>
-                  )}
-                </View>
-              </View>
-            </View>
-          </Card>
-        </View>
-      )}
-
-      {/* Proposers */}
-      {bill.proposers && bill.proposers.length > 0 && (
-        <View className="mt-5 px-5">
-          <SectionHeader title={`발의자 (${bill.proposers.length}명)`} />
-          <View className="mt-2 gap-1">
-            {bill.proposers.map((p) => (
-              <Pressable
-                key={p.memberId}
-                className="flex-row items-center gap-3 rounded-xl bg-white px-4 py-2.5 active:bg-neutral-50"
-                onPress={() => router.push(`/members/${p.memberId}`)}
-              >
-                <View
-                  className="h-9 w-9 overflow-hidden rounded-full bg-neutral-100"
-                  style={{ borderWidth: 1.5, borderColor: p.partyColor }}
-                >
-                  <Image
-                    source={{ uri: p.photoUrl }}
-                    style={{ width: 33, height: 33 }}
-                    contentFit="cover"
+        {/* AI Summary */}
+        {bill.structuredSummary && (
+          <View className="mt-lawmake-md px-lawmake-lg">
+            <Section title="AI 요약">
+              <Card>
+                <View className="gap-lawmake-md">
+                  <SummaryItem
+                    label="현행"
+                    color="text-primary"
+                    text={bill.structuredSummary.situation}
+                  />
+                  <SummaryItem
+                    label="문제점"
+                    color="text-error"
+                    text={bill.structuredSummary.problem}
+                  />
+                  <SummaryItem
+                    label="개정안"
+                    color="text-success"
+                    text={bill.structuredSummary.change}
+                  />
+                  <SummaryItem
+                    label="기대효과"
+                    color="text-warning-dark"
+                    text={bill.structuredSummary.impact}
                   />
                 </View>
-                <View className="flex-1">
-                  <Text className="text-sm font-medium text-neutral-800">
-                    {p.memberName}
-                  </Text>
-                  <Text className="text-[11px] text-neutral-400">
-                    {p.partyName} | {p.district}
-                  </Text>
-                </View>
-                {p.role === 'representative' && (
-                  <Badge label="대표발의" color="#2563EB" textColor="#FFFFFF" />
-                )}
-              </Pressable>
-            ))}
+              </Card>
+            </Section>
           </View>
-        </View>
-      )}
-
-      {/* Links */}
-      <View className="mt-5 flex-row gap-2 px-5">
-        {bill.pdfUrl && (
-          <Button
-            variant="outline"
-            size="sm"
-            onPress={() => Linking.openURL(bill.pdfUrl!)}
-            className="flex-1"
-          >
-            <View className="flex-row items-center gap-1.5">
-              <FileText size={14} color="#525252" />
-              <Text className="text-xs font-medium text-neutral-700">PDF 보기</Text>
-            </View>
-          </Button>
         )}
-        {bill.hasVote && (
-          <Button
-            variant="primary"
-            size="sm"
-            onPress={() => router.push(`/votes/${bill.id}`)}
-            className="flex-1"
-          >
-            표결 결과 보기
-          </Button>
+
+        {/* Simple Summary */}
+        {!bill.structuredSummary && bill.simpleSummary && (
+          <View className="mt-lawmake-md px-lawmake-lg">
+            <Section title="요약">
+              <Card>
+                <Text className="text-lawmake-body text-neutral-700">{bill.simpleSummary}</Text>
+              </Card>
+            </Section>
+          </View>
+        )}
+
+        {/* Progress */}
+        {bill.progress && (
+          <View className="mt-lawmake-xl px-lawmake-lg">
+            <Section title="심사 경과">
+              <Card>
+                <View className="gap-lawmake-md">
+                  <ProgressStep
+                    label="위원회 심사"
+                    state={
+                      bill.progress.committeeResultDate
+                        ? 'done'
+                        : bill.progress.committeeDate
+                          ? 'active'
+                          : 'pending'
+                    }
+                    detail={
+                      bill.progress.committeeDate
+                        ? `접수 ${formatDate(bill.progress.committeeDate)}${bill.progress.committeeResult ? ` · ${bill.progress.committeeResult}` : ''}`
+                        : undefined
+                    }
+                  />
+                  <ProgressStep
+                    label="법제사법위원회"
+                    state={
+                      bill.progress.lawResult
+                        ? 'done'
+                        : bill.progress.lawSubmitDate
+                          ? 'active'
+                          : 'pending'
+                    }
+                    detail={
+                      bill.progress.lawSubmitDate
+                        ? `회부 ${formatDate(bill.progress.lawSubmitDate)}${bill.progress.lawResult ? ` · ${bill.progress.lawResult}` : ''}`
+                        : undefined
+                    }
+                  />
+                  <ProgressStep
+                    label="본회의"
+                    state={bill.progress.plenaryDate ? 'done' : 'pending'}
+                    detail={
+                      bill.progress.plenaryDate
+                        ? `의결 ${formatDate(bill.progress.plenaryDate)}`
+                        : undefined
+                    }
+                  />
+                </View>
+              </Card>
+            </Section>
+          </View>
+        )}
+
+        {/* Proposers */}
+        {bill.proposers && bill.proposers.length > 0 && (
+          <View className="mt-lawmake-xl px-lawmake-lg">
+            <Section title={`발의자 ${bill.proposers.length}명`}>
+              <Card className="p-0">
+                {bill.proposers.map((p, i) => {
+                  const isLast = i === bill.proposers!.length - 1;
+                  return (
+                    <Pressable
+                      key={p.memberId}
+                      onPress={() => router.push(`/members/${p.memberId}`)}
+                      className={`flex-row items-center gap-lawmake-md px-lawmake-lg py-lawmake-md active:bg-neutral-50 ${
+                        !isLast ? 'border-b border-neutral-100' : ''
+                      }`}
+                    >
+                      <View
+                        className="h-10 w-10 overflow-hidden rounded-full bg-neutral-100"
+                        style={{ borderWidth: 1.5, borderColor: p.partyColor }}
+                      >
+                        <Image
+                          source={{ uri: p.photoUrl }}
+                          style={{ width: 37, height: 37 }}
+                          contentFit="cover"
+                        />
+                      </View>
+                      <View className="flex-1">
+                        <Text className="text-lawmake-body text-neutral-900">{p.memberName}</Text>
+                        <Text className="mt-lawmake-xs text-lawmake-footnote text-neutral-500">
+                          {p.partyName} · {p.district}
+                        </Text>
+                      </View>
+                      {p.role === 'representative' && (
+                        <StatusBadge label="대표발의" tone="primary" />
+                      )}
+                    </Pressable>
+                  );
+                })}
+              </Card>
+            </Section>
+          </View>
+        )}
+
+        {/* Links */}
+        <View className="mt-lawmake-xl flex-row gap-lawmake-sm px-lawmake-lg">
+          {bill.pdfUrl && (
+            <Button
+              variant="outline"
+              size="sm"
+              onPress={() => Linking.openURL(bill.pdfUrl!)}
+              className="flex-1"
+            >
+              <View className="flex-row items-center gap-lawmake-xs">
+                <FileText size={14} color="#525252" />
+                <Text className="text-lawmake-footnote font-medium text-neutral-700">
+                  PDF 보기
+                </Text>
+              </View>
+            </Button>
+          )}
+          {bill.hasVote && (
+            <Button
+              variant="primary"
+              size="sm"
+              onPress={() => router.push(`/votes/${bill.id}`)}
+              className="flex-1"
+            >
+              <View className="flex-row items-center gap-lawmake-xs">
+                <ExternalLink size={14} color="#FFFFFF" />
+                <Text className="text-lawmake-footnote font-semibold text-white">
+                  표결 결과 보기
+                </Text>
+              </View>
+            </Button>
+          )}
+        </View>
+      </ScrollView>
+    </View>
+  );
+}
+
+function SummaryItem({ label, color, text }: { label: string; color: string; text: string }) {
+  return (
+    <View>
+      <Text className={`text-lawmake-subhead font-semibold ${color}`}>{label}</Text>
+      <Text className="mt-lawmake-xs text-lawmake-body text-neutral-700">{text}</Text>
+    </View>
+  );
+}
+
+function ProgressStep({
+  label,
+  state,
+  detail,
+}: {
+  label: string;
+  state: 'done' | 'active' | 'pending';
+  detail?: string;
+}) {
+  const dotClass =
+    state === 'done' ? 'bg-success' : state === 'active' ? 'bg-warning' : 'bg-neutral-200';
+  return (
+    <View className="flex-row items-center gap-lawmake-md">
+      <View className={`h-3 w-3 rounded-full ${dotClass}`} />
+      <View className="flex-1">
+        <Text className="text-lawmake-callout font-medium text-neutral-900">{label}</Text>
+        {detail && (
+          <Text className="mt-lawmake-xs text-lawmake-footnote text-neutral-500">{detail}</Text>
         )}
       </View>
-    </ScrollView>
+    </View>
   );
 }
