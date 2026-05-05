@@ -48,22 +48,22 @@ export default function CompareScreen() {
 
   return (
     <ScrollView
-      className="flex-1 bg-neutral-50"
+      className="flex-1 bg-surface-secondary"
       contentContainerStyle={{ paddingBottom: insets.bottom + 32 }}
     >
-      <View className="bg-white px-5 pb-4 pt-4">
+      <View className="bg-surface-primary px-lawmake-lg pb-lawmake-md pt-lawmake-md">
         <Pressable onPress={() => router.back()} hitSlop={12}>
-          <Text className="text-sm text-primary">뒤로</Text>
+          <Text className="text-lawmake-footnote text-primary">뒤로</Text>
         </Pressable>
-        <Text className="mt-2 text-lg font-bold text-neutral-900">의원 비교</Text>
-        <Text className="mt-0.5 text-xs text-neutral-400">
+        <Text className="mt-lawmake-sm text-lawmake-title2 font-bold text-neutral-900">의원 비교</Text>
+        <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-400">
           최대 {MAX_COMPARE}명까지 비교할 수 있습니다
         </Text>
       </View>
 
       {/* Selected Members */}
       {selected.length > 0 && (
-        <View className="flex-row gap-2 px-5 py-3">
+        <View className="flex-row gap-lawmake-sm px-lawmake-lg py-lawmake-sm">
           {selected.map((m) => (
             <Pressable
               key={m.id}
@@ -85,7 +85,7 @@ export default function CompareScreen() {
                   <X size={12} color="white" />
                 </View>
               </View>
-              <Text className="mt-1 text-[10px] text-neutral-600">{m.name}</Text>
+              <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-600">{m.name}</Text>
             </Pressable>
           ))}
         </View>
@@ -93,11 +93,11 @@ export default function CompareScreen() {
 
       {/* Search */}
       {selected.length < MAX_COMPARE && (
-        <View className="px-5">
-          <View className="flex-row items-center rounded-xl border border-neutral-200 bg-white px-3">
+        <View className="px-lawmake-lg">
+          <View className="flex-row items-center rounded-lawmake-lg border border-neutral-200 bg-surface-primary px-lawmake-sm">
             <Search size={18} color="#a3a3a3" />
             <TextInput
-              className="ml-2 flex-1 py-2.5 text-sm text-neutral-800"
+              className="ml-lawmake-sm flex-1 py-lawmake-sm text-lawmake-footnote text-neutral-800"
               placeholder="의원명 검색"
               placeholderTextColor="#a3a3a3"
               value={search}
@@ -106,11 +106,11 @@ export default function CompareScreen() {
           </View>
 
           {searchResults.length > 0 && (
-            <View className="mt-1 rounded-xl border border-neutral-200 bg-white">
+            <View className="mt-1 rounded-lawmake-lg border border-neutral-200 bg-surface-primary">
               {searchResults.map((m) => (
                 <Pressable
                   key={m.id}
-                  className="flex-row items-center gap-3 border-b border-neutral-100 px-4 py-2.5 active:bg-neutral-50"
+                  className="flex-row items-center gap-lawmake-sm border-b border-neutral-100 px-lawmake-md py-lawmake-sm active:bg-neutral-50"
                   onPress={() => addMember(m)}
                 >
                   <View
@@ -123,8 +123,8 @@ export default function CompareScreen() {
                       contentFit="cover"
                     />
                   </View>
-                  <Text className="text-sm text-neutral-800">{m.name}</Text>
-                  <Text className="text-xs text-neutral-400">
+                  <Text className="text-lawmake-footnote text-neutral-800">{m.name}</Text>
+                  <Text className="text-lawmake-caption text-neutral-400">
                     {m.term.party.shortName}
                   </Text>
                 </Pressable>
@@ -136,14 +136,14 @@ export default function CompareScreen() {
 
       {/* Comparison Cards */}
       {selected.length >= 2 && (
-        <View className="mt-4 px-5">
+        <View className="mt-lawmake-md px-lawmake-lg">
           <ComparisonView members={selected} />
         </View>
       )}
 
       {selected.length < 2 && selected.length > 0 && (
-        <View className="mt-8 items-center px-5">
-          <Text className="text-sm text-neutral-400">
+        <View className="mt-lawmake-xl items-center px-lawmake-lg">
+          <Text className="text-lawmake-footnote text-neutral-400">
             비교할 의원을 {2 - selected.length}명 더 선택해주세요
           </Text>
         </View>
@@ -154,7 +154,7 @@ export default function CompareScreen() {
 
 function ComparisonView({ members }: { members: MemberWithTerm[] }) {
   return (
-    <View className="gap-3">
+    <View className="gap-lawmake-sm">
       {members.map((m) => (
         <ComparisonCard key={m.id} member={m} />
       ))}
@@ -173,7 +173,7 @@ function ComparisonCard({ member }: { member: MemberWithTerm }) {
 
   return (
     <Card>
-      <View className="flex-row items-center gap-3">
+      <View className="flex-row items-center gap-lawmake-sm">
         <View
           className="h-10 w-10 overflow-hidden rounded-full bg-neutral-100"
           style={{ borderWidth: 2, borderColor: member.term.party.color }}
@@ -185,25 +185,25 @@ function ComparisonCard({ member }: { member: MemberWithTerm }) {
           />
         </View>
         <View>
-          <Text className="text-sm font-bold text-neutral-900">{member.name}</Text>
-          <Text className="text-xs text-neutral-400">
+          <Text className="text-lawmake-footnote font-bold text-neutral-900">{member.name}</Text>
+          <Text className="text-lawmake-caption text-neutral-400">
             {member.term.party.shortName} | {member.term.district}
           </Text>
         </View>
       </View>
 
-      <View className="mt-3 flex-row justify-around border-t border-neutral-100 pt-3">
+      <View className="mt-lawmake-sm flex-row justify-around border-t border-neutral-100 pt-lawmake-sm">
         <View className="items-center">
-          <Text className="text-lg font-bold text-primary">
+          <Text className="text-lawmake-headline font-bold text-primary">
             {attendance ? formatPercent(attendance.rate) : '-'}
           </Text>
-          <Text className="text-[10px] text-neutral-400">출석률</Text>
+          <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-400">출석률</Text>
         </View>
         <View className="items-center">
-          <Text className="text-lg font-bold text-neutral-800">
+          <Text className="text-lawmake-headline font-bold text-neutral-800">
             {billsData ? billsData.total : '-'}
           </Text>
-          <Text className="text-[10px] text-neutral-400">발의 법안</Text>
+          <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-400">발의 법안</Text>
         </View>
       </View>
     </Card>

@@ -78,50 +78,50 @@ export default function GuideScreen() {
 
   return (
     <ScrollView
-      className="flex-1 bg-neutral-50"
+      className="flex-1 bg-surface-secondary"
       contentContainerStyle={{ paddingBottom: insets.bottom + 32 }}
     >
-      <View className="bg-white px-5 pb-3 pt-4">
+      <View className="bg-surface-primary px-lawmake-lg pb-lawmake-sm pt-lawmake-md">
         <Pressable onPress={() => router.back()} hitSlop={12}>
-          <Text className="text-sm text-primary">뒤로</Text>
+          <Text className="text-lawmake-footnote text-primary">뒤로</Text>
         </Pressable>
-        <Text className="mt-2 text-lg font-bold text-neutral-900">입법 가이드</Text>
-        <Text className="mt-0.5 text-xs text-neutral-400">
+        <Text className="mt-lawmake-sm text-lawmake-title2 font-bold text-neutral-900">입법 가이드</Text>
+        <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-400">
           국회 입법 과정을 쉽게 알아보세요
         </Text>
       </View>
 
       {/* Process Steps */}
-      <View className="mt-3 px-5">
-        <Text className="mb-2 text-base font-bold text-neutral-900">
+      <View className="mt-lawmake-sm px-lawmake-lg">
+        <Text className="mb-lawmake-sm text-lawmake-callout font-bold text-neutral-900">
           법률안 처리 과정
         </Text>
-        <View className="gap-3">
+        <View className="gap-lawmake-sm">
           {PROCESS_STEPS.map((step, i) => (
             <Card key={step.step}>
-              <View className="flex-row items-center gap-3">
+              <View className="flex-row items-center gap-lawmake-sm">
                 <View className="h-8 w-8 items-center justify-center rounded-full bg-primary">
-                  <Text className="text-sm font-bold text-white">{step.step}</Text>
+                  <Text className="text-lawmake-footnote font-bold text-white">{step.step}</Text>
                 </View>
-                <Text className="text-base font-bold text-neutral-900">
+                <Text className="text-lawmake-callout font-bold text-neutral-900">
                   {step.title}
                 </Text>
               </View>
-              <Text className="mt-2 text-sm leading-5 text-neutral-600">
+              <Text className="mt-lawmake-sm text-lawmake-footnote leading-5 text-neutral-600">
                 {step.description}
               </Text>
-              <View className="mt-2 gap-1">
+              <View className="mt-lawmake-sm gap-1">
                 {step.details.map((d, j) => (
-                  <View key={j} className="flex-row gap-2">
-                    <Text className="text-xs text-neutral-400">-</Text>
-                    <Text className="flex-1 text-xs leading-4 text-neutral-500">
+                  <View key={j} className="flex-row gap-lawmake-sm">
+                    <Text className="text-lawmake-caption text-neutral-400">-</Text>
+                    <Text className="flex-1 text-lawmake-caption leading-4 text-neutral-500">
                       {d}
                     </Text>
                   </View>
                 ))}
               </View>
               {i < PROCESS_STEPS.length - 1 && (
-                <View className="mt-3 items-center">
+                <View className="mt-lawmake-sm items-center">
                   <View className="h-4 w-0.5 bg-neutral-200" />
                 </View>
               )}
@@ -131,13 +131,13 @@ export default function GuideScreen() {
       </View>
 
       {/* Bill Types */}
-      <View className="mt-5 px-5">
-        <Text className="mb-2 text-base font-bold text-neutral-900">법안 유형</Text>
-        <View className="gap-2">
+      <View className="mt-lawmake-lg px-lawmake-lg">
+        <Text className="mb-lawmake-sm text-lawmake-callout font-bold text-neutral-900">법안 유형</Text>
+        <View className="gap-lawmake-sm">
           {BILL_TYPES.map((bt) => (
             <Card key={bt.type}>
-              <Text className="text-sm font-bold text-neutral-800">{bt.type}</Text>
-              <Text className="mt-1 text-xs leading-4 text-neutral-500">
+              <Text className="text-lawmake-footnote font-bold text-neutral-800">{bt.type}</Text>
+              <Text className="mt-lawmake-xs text-lawmake-caption leading-4 text-neutral-500">
                 {bt.description}
               </Text>
             </Card>

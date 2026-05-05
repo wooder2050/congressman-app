@@ -37,34 +37,34 @@ export default function WeeklyArticleScreen() {
     const status = BILL_STATUS_COLORS[bill.status];
     return (
       <ScrollView
-        className="flex-1 bg-neutral-50"
+        className="flex-1 bg-surface-secondary"
         contentContainerStyle={{ paddingBottom: insets.bottom + 16 }}
       >
         {/* Header */}
-        <View className="bg-white px-5 pb-5 pt-2">
+        <View className="bg-surface-primary px-lawmake-lg pb-lawmake-lg pt-lawmake-sm">
           <Badge label={status.label} color={status.color} textColor={status.textColor} />
-          <Text className="mt-2 text-2xl font-bold text-neutral-900">{bill.title}</Text>
-          <Text className="mt-1 text-xs text-neutral-400">{weekly.period}</Text>
+          <Text className="mt-lawmake-sm text-lawmake-large font-bold text-neutral-900">{bill.title}</Text>
+          <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-400">{weekly.period}</Text>
           {bill.proposer && (
-            <Text className="mt-1 text-xs text-neutral-500">{bill.proposer}</Text>
+            <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-500">{bill.proposer}</Text>
           )}
-          <Text className="mt-3 text-sm leading-5 text-neutral-600">{bill.description}</Text>
+          <Text className="mt-lawmake-sm text-lawmake-footnote leading-5 text-neutral-600">{bill.description}</Text>
 
           {bill.voteResult && (
-            <View className="mt-4">
-              <View className="flex-row gap-4">
-                <Text className="text-sm text-neutral-500">
-                  찬성 <Text className="font-bold text-green-600">{bill.voteResult.yes}</Text>
+            <View className="mt-lawmake-md">
+              <View className="flex-row gap-lawmake-md">
+                <Text className="text-lawmake-footnote text-neutral-500">
+                  찬성 <Text className="font-bold text-success">{bill.voteResult.yes}</Text>
                 </Text>
-                <Text className="text-sm text-neutral-500">
-                  반대 <Text className="font-bold text-red-600">{bill.voteResult.no}</Text>
+                <Text className="text-lawmake-footnote text-neutral-500">
+                  반대 <Text className="font-bold text-error">{bill.voteResult.no}</Text>
                 </Text>
-                <Text className="text-sm text-neutral-500">
+                <Text className="text-lawmake-footnote text-neutral-500">
                   기권{' '}
                   <Text className="font-bold text-neutral-400">{bill.voteResult.abstain}</Text>
                 </Text>
               </View>
-              <View className="mt-1.5 h-2.5 flex-row overflow-hidden rounded-full">
+              <View className="mt-lawmake-xs h-2.5 flex-row overflow-hidden rounded-full">
                 {(() => {
                   const total =
                     bill.voteResult.yes + bill.voteResult.no + bill.voteResult.abstain;
@@ -97,29 +97,29 @@ export default function WeeklyArticleScreen() {
         </View>
 
         {/* Article Body */}
-        <View className="mt-4 px-5">
+        <View className="mt-lawmake-md px-lawmake-lg">
           {bill.article.map((section, i) => (
-            <Card key={i} className="mb-3">
-              <Text className="text-base font-bold text-neutral-900">{section.heading}</Text>
-              <Text className="mt-2 text-sm leading-6 text-neutral-600">{section.body}</Text>
+            <Card key={i} className="mb-lawmake-sm">
+              <Text className="text-lawmake-callout font-bold text-neutral-900">{section.heading}</Text>
+              <Text className="mt-lawmake-sm text-lawmake-footnote leading-6 text-neutral-600">{section.body}</Text>
             </Card>
           ))}
         </View>
 
         {/* Sources */}
         {bill.sources && bill.sources.length > 0 && (
-          <View className="mt-2 px-5">
-            <Text className="mb-2 text-base font-bold text-neutral-900">관련 자료</Text>
+          <View className="mt-lawmake-sm px-lawmake-lg">
+            <Text className="mb-lawmake-sm text-lawmake-callout font-bold text-neutral-900">관련 자료</Text>
             {bill.sources
               .filter((s) => s.type === 'youtube')
               .map((source, i) => (
                 <PressableCard
                   key={`yt-${i}`}
-                  className="mb-2 flex-row items-center gap-2"
+                  className="mb-lawmake-sm flex-row items-center gap-lawmake-sm"
                   onPress={() => Linking.openURL(source.url)}
                 >
-                  <Text className="text-red-500">▶</Text>
-                  <Text className="flex-1 text-sm text-primary" numberOfLines={2}>
+                  <Text className="text-error">▶</Text>
+                  <Text className="flex-1 text-lawmake-footnote text-primary" numberOfLines={2}>
                     {source.title}
                   </Text>
                 </PressableCard>
@@ -129,10 +129,10 @@ export default function WeeklyArticleScreen() {
               .map((source, i) => (
                 <PressableCard
                   key={`a-${i}`}
-                  className="mb-2"
+                  className="mb-lawmake-sm"
                   onPress={() => Linking.openURL(source.url)}
                 >
-                  <Text className="text-sm text-primary" numberOfLines={2}>
+                  <Text className="text-lawmake-footnote text-primary" numberOfLines={2}>
                     {source.title}
                   </Text>
                 </PressableCard>
@@ -152,28 +152,28 @@ export default function WeeklyArticleScreen() {
     };
     return (
       <ScrollView
-        className="flex-1 bg-neutral-50"
+        className="flex-1 bg-surface-secondary"
         contentContainerStyle={{ paddingBottom: insets.bottom + 16 }}
       >
         {/* Header */}
-        <View className="bg-white px-5 pb-5 pt-2">
-          <View className="flex-row items-center gap-2">
-            <Text className="text-lg">{cat.emoji}</Text>
+        <View className="bg-surface-primary px-lawmake-lg pb-lawmake-lg pt-lawmake-sm">
+          <View className="flex-row items-center gap-lawmake-sm">
+            <Text className="text-lawmake-headline">{cat.emoji}</Text>
             <Badge label={cat.label} color="#E5E5E5" textColor="#595959" />
           </View>
-          <Text className="mt-2 text-2xl font-bold text-neutral-900">{highlight.title}</Text>
-          <Text className="mt-1 text-xs text-neutral-400">{weekly.period}</Text>
-          <Text className="mt-3 text-sm leading-5 text-neutral-600">
+          <Text className="mt-lawmake-sm text-lawmake-large font-bold text-neutral-900">{highlight.title}</Text>
+          <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-400">{weekly.period}</Text>
+          <Text className="mt-lawmake-sm text-lawmake-footnote leading-5 text-neutral-600">
             {highlight.description}
           </Text>
         </View>
 
         {/* Article Body */}
-        <View className="mt-4 px-5">
+        <View className="mt-lawmake-md px-lawmake-lg">
           {highlight.article.map((section, i) => (
-            <Card key={i} className="mb-3">
-              <Text className="text-base font-bold text-neutral-900">{section.heading}</Text>
-              <Text className="mt-2 text-sm leading-6 text-neutral-600">{section.body}</Text>
+            <Card key={i} className="mb-lawmake-sm">
+              <Text className="text-lawmake-callout font-bold text-neutral-900">{section.heading}</Text>
+              <Text className="mt-lawmake-sm text-lawmake-footnote leading-6 text-neutral-600">{section.body}</Text>
             </Card>
           ))}
         </View>

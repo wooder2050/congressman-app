@@ -50,8 +50,8 @@ function CandidateCardComponent({ candidate }: { candidate: ElectionCandidate })
   const careers = candidate.career?.split('\n').filter(Boolean) ?? [];
 
   return (
-    <Card className="mt-2">
-      <View className="flex-row gap-3">
+    <Card className="mt-lawmake-sm">
+      <View className="flex-row gap-lawmake-sm">
         {candidate.photoUrl ? (
           <Image
             source={{ uri: candidate.photoUrl }}
@@ -63,29 +63,29 @@ function CandidateCardComponent({ candidate }: { candidate: ElectionCandidate })
             className="h-14 w-14 items-center justify-center rounded-full"
             style={{ backgroundColor: partyColor }}
           >
-            <Text className="text-base font-bold text-white">{candidate.name.slice(0, 2)}</Text>
+            <Text className="text-lawmake-callout font-bold text-white">{candidate.name.slice(0, 2)}</Text>
           </View>
         )}
         <View className="flex-1">
-          <View className="flex-row items-center gap-2">
+          <View className="flex-row items-center gap-lawmake-sm">
             {candidate.candidateNumber && (
               <View
                 className="h-5 w-5 items-center justify-center rounded-full"
                 style={{ backgroundColor: partyColor }}
               >
-                <Text className="text-[10px] font-bold text-white">{candidate.candidateNumber}</Text>
+                <Text className="text-lawmake-caption font-bold text-white">{candidate.candidateNumber}</Text>
               </View>
             )}
-            <Text className="text-base font-bold text-neutral-900">{candidate.name}</Text>
+            <Text className="text-lawmake-callout font-bold text-neutral-900">{candidate.name}</Text>
           </View>
-          <View className="mt-0.5 flex-row items-center gap-1.5">
+          <View className="mt-lawmake-xs flex-row items-center gap-lawmake-xs">
             <Badge label={candidate.party?.name ?? '무소속'} color={partyColor} textColor="#FFFFFF" />
             {candidate.birthDate && (
-              <Text className="text-[10px] text-neutral-400">{candidate.birthDate}생</Text>
+              <Text className="text-lawmake-caption text-neutral-400">{candidate.birthDate}생</Text>
             )}
           </View>
           {candidate.slogan && (
-            <Text className="mt-1 text-xs italic text-neutral-500" numberOfLines={2}>
+            <Text className="mt-lawmake-xs text-lawmake-caption italic text-neutral-500" numberOfLines={2}>
               "{candidate.slogan}"
             </Text>
           )}
@@ -93,10 +93,10 @@ function CandidateCardComponent({ candidate }: { candidate: ElectionCandidate })
       </View>
 
       {careers.length > 0 && (
-        <View className="mt-3">
-          <Text className="text-[10px] font-semibold text-neutral-400">주요 경력</Text>
+        <View className="mt-lawmake-sm">
+          <Text className="text-lawmake-caption font-semibold text-neutral-400">주요 경력</Text>
           {careers.slice(0, 4).map((c) => (
-            <Text key={c} className="mt-0.5 text-xs text-neutral-600">
+            <Text key={c} className="mt-lawmake-xs text-lawmake-caption text-neutral-600">
               · {c}
             </Text>
           ))}
@@ -104,32 +104,32 @@ function CandidateCardComponent({ candidate }: { candidate: ElectionCandidate })
       )}
 
       {candidate.education && (
-        <View className="mt-2">
-          <Text className="text-[10px] font-semibold text-neutral-400">학력</Text>
-          <Text className="mt-0.5 text-xs text-neutral-600">{candidate.education}</Text>
+        <View className="mt-lawmake-sm">
+          <Text className="text-lawmake-caption font-semibold text-neutral-400">학력</Text>
+          <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-600">{candidate.education}</Text>
         </View>
       )}
 
       {candidate.assets && (
-        <View className="mt-2">
-          <Text className="text-[10px] font-semibold text-neutral-400">재산</Text>
-          <Text className="mt-0.5 text-xs text-neutral-600">{candidate.assets}</Text>
+        <View className="mt-lawmake-sm">
+          <Text className="text-lawmake-caption font-semibold text-neutral-400">재산</Text>
+          <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-600">{candidate.assets}</Text>
         </View>
       )}
 
       {candidate.pledges.length > 0 && (
-        <View className="mt-3">
-          <Text className="text-[10px] font-semibold text-neutral-400">핵심 공약</Text>
+        <View className="mt-lawmake-sm">
+          <Text className="text-lawmake-caption font-semibold text-neutral-400">핵심 공약</Text>
           {candidate.pledges.map((p) => (
-            <View key={p.title} className="mt-1.5 rounded-lg bg-neutral-50 px-3 py-2">
-              <View className="flex-row items-center gap-1.5">
+            <View key={p.title} className="mt-lawmake-xs rounded-lawmake-md bg-surface-secondary px-lawmake-sm py-lawmake-sm">
+              <View className="flex-row items-center gap-lawmake-xs">
                 {p.category && (
-                  <Text className="text-[10px] text-neutral-400">[{p.category}]</Text>
+                  <Text className="text-lawmake-caption text-neutral-400">[{p.category}]</Text>
                 )}
-                <Text className="text-xs font-medium text-neutral-800">{p.title}</Text>
+                <Text className="text-lawmake-caption font-medium text-neutral-800">{p.title}</Text>
               </View>
               {p.description && (
-                <Text className="mt-0.5 text-[11px] leading-4 text-neutral-500">
+                <Text className="mt-lawmake-xs text-lawmake-caption leading-4 text-neutral-500">
                   {p.description}
                 </Text>
               )}
@@ -164,26 +164,26 @@ export default function ElectionDetailScreen() {
 
   return (
     <ScrollView
-      className="flex-1 bg-neutral-50"
+      className="flex-1 bg-surface-secondary"
       contentContainerStyle={{ paddingBottom: insets.bottom + 32 }}
     >
       {/* Header */}
-      <View className="bg-white px-5 pb-5 pt-3">
-        <View className="flex-row items-center gap-2">
+      <View className="bg-surface-primary px-lawmake-lg pb-lawmake-lg pt-lawmake-md">
+        <View className="flex-row items-center gap-lawmake-sm">
           <Badge label={status.label} color={status.color} textColor="#FFFFFF" />
           <Badge label={dday} color="#DC2626" textColor="#FFFFFF" />
         </View>
-        <Text className="mt-2 text-xl font-bold text-neutral-900">{election.name}</Text>
-        <Text className="mt-1 text-sm text-neutral-500">
+        <Text className="mt-lawmake-sm text-lawmake-title2 font-bold text-neutral-900">{election.name}</Text>
+        <Text className="mt-lawmake-xs text-lawmake-footnote text-neutral-500">
           투표일 {formatDate(election.electionDate)} · {election.districts.length}개 선거구
         </Text>
         {election.description && (
-          <Text className="mt-2 text-xs leading-4 text-neutral-400">{election.description}</Text>
+          <Text className="mt-lawmake-sm text-lawmake-caption leading-4 text-neutral-400">{election.description}</Text>
         )}
       </View>
 
       {/* Region Groups */}
-      <View className="mt-3 gap-2 px-5">
+      <View className="mt-lawmake-sm gap-lawmake-sm px-lawmake-lg">
         {regionGroups.map(([region, districts]) => {
           const isExpanded = expandedRegion === region;
           const totalCandidates = districts.reduce((s, d) => s + d.candidates.length, 0);
@@ -192,19 +192,19 @@ export default function ElectionDetailScreen() {
             <Card key={region} className="overflow-hidden p-0">
               {/* Region Header */}
               <Pressable
-                className="flex-row items-center justify-between px-4 py-3 active:bg-neutral-50"
+                className="flex-row items-center justify-between px-lawmake-md py-lawmake-sm active:bg-neutral-50"
                 onPress={() => {
                   setExpandedRegion(isExpanded ? null : region);
                   setExpandedDistrict(null);
                 }}
               >
-                <View className="flex-row items-center gap-2">
-                  <View className="h-7 w-7 items-center justify-center rounded-lg bg-neutral-100">
-                    <Text className="text-xs font-bold text-neutral-600">{region.slice(0, 1)}</Text>
+                <View className="flex-row items-center gap-lawmake-sm">
+                  <View className="h-7 w-7 items-center justify-center rounded-lawmake-md bg-neutral-100">
+                    <Text className="text-lawmake-caption font-bold text-neutral-600">{region.slice(0, 1)}</Text>
                   </View>
                   <View>
-                    <Text className="text-sm font-bold text-neutral-800">{region}</Text>
-                    <Text className="text-[10px] text-neutral-400">
+                    <Text className="text-lawmake-footnote font-bold text-neutral-800">{region}</Text>
+                    <Text className="text-lawmake-caption text-neutral-400">
                       {districts.length}개 선거구
                       {totalCandidates > 0 && ` · 후보 ${totalCandidates}명`}
                     </Text>
@@ -226,7 +226,7 @@ export default function ElectionDetailScreen() {
                   return (
                     <View key={d.id} className="border-t border-neutral-100">
                       <Pressable
-                        className="flex-row items-center gap-2 px-4 py-3 active:bg-neutral-50"
+                        className="flex-row items-center gap-lawmake-sm px-lawmake-md py-lawmake-sm active:bg-neutral-50"
                         onPress={() => setExpandedDistrict(isDistrictExpanded ? null : d.id)}
                       >
                         <View
@@ -234,10 +234,10 @@ export default function ElectionDetailScreen() {
                           style={{ backgroundColor: partyColor }}
                         />
                         <View className="flex-1">
-                          <Text className="text-sm font-semibold text-neutral-800">
+                          <Text className="text-lawmake-footnote font-semibold text-neutral-800">
                             {d.district}
                           </Text>
-                          <Text className="text-[10px] text-neutral-400">
+                          <Text className="text-lawmake-caption text-neutral-400">
                             {d.vacancyReason}
                             {d.previousMember && d.previousMember.name !== '공석'
                               ? ` · 전임 ${d.previousMember.name}`
@@ -255,11 +255,11 @@ export default function ElectionDetailScreen() {
                       </Pressable>
 
                       {isDistrictExpanded && (
-                        <View className="bg-neutral-50 px-4 pb-3">
+                        <View className="bg-surface-secondary px-lawmake-md pb-lawmake-sm">
                           {/* Previous Member */}
                           {d.previousMember && d.previousMember.name !== '공석' && (
                             <Pressable
-                              className="flex-row items-center gap-2 rounded-lg bg-white px-3 py-2"
+                              className="flex-row items-center gap-lawmake-sm rounded-lawmake-md bg-surface-primary px-lawmake-sm py-lawmake-sm"
                               onPress={() =>
                                 d.previousMember?.id &&
                                 router.push(`/members/${d.previousMember.id}`)
@@ -276,12 +276,12 @@ export default function ElectionDetailScreen() {
                                   className="h-7 w-7 items-center justify-center rounded-full"
                                   style={{ backgroundColor: partyColor }}
                                 >
-                                  <Text className="text-[10px] font-bold text-white">
+                                  <Text className="text-lawmake-caption font-bold text-white">
                                     {d.previousMember.name.slice(0, 1)}
                                   </Text>
                                 </View>
                               )}
-                              <Text className="text-xs text-neutral-600">
+                              <Text className="text-lawmake-caption text-neutral-600">
                                 {d.previousMember.name}
                               </Text>
                               {d.previousMember.party && (
@@ -291,14 +291,14 @@ export default function ElectionDetailScreen() {
                                   textColor="#FFFFFF"
                                 />
                               )}
-                              <Text className="text-[10px] text-neutral-400">전임</Text>
+                              <Text className="text-lawmake-caption text-neutral-400">전임</Text>
                             </Pressable>
                           )}
 
                           {/* Candidates */}
                           {d.candidates.length > 0 ? (
-                            <View className="mt-2">
-                              <Text className="text-xs font-semibold text-neutral-500">
+                            <View className="mt-lawmake-sm">
+                              <Text className="text-lawmake-caption font-semibold text-neutral-500">
                                 등록 후보 {d.candidates.length}명
                               </Text>
                               {d.candidates.map((c) => (
@@ -306,8 +306,8 @@ export default function ElectionDetailScreen() {
                               ))}
                             </View>
                           ) : (
-                            <View className="mt-2 items-center rounded-lg bg-white py-4">
-                              <Text className="text-xs text-neutral-400">
+                            <View className="mt-lawmake-sm items-center rounded-lawmake-md bg-surface-primary py-lawmake-md">
+                              <Text className="text-lawmake-caption text-neutral-400">
                                 아직 등록된 후보가 없습니다
                               </Text>
                             </View>

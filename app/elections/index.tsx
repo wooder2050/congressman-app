@@ -24,7 +24,7 @@ export default function ElectionsScreen() {
 
   return (
     <ScrollView
-      className="flex-1 bg-neutral-50"
+      className="flex-1 bg-surface-secondary"
       contentContainerStyle={{ padding: 20, paddingBottom: insets.bottom + 16, gap: 12 }}
     >
       {elections.map((election) => {
@@ -34,16 +34,16 @@ export default function ElectionsScreen() {
             key={election.id}
             onPress={() => router.push(`/elections/${election.id}`)}
           >
-            <View className="flex-row items-center gap-2">
+            <View className="flex-row items-center gap-lawmake-sm">
               <Badge label={status.label} color={status.color} textColor="#FFFFFF" />
-              <Text className="text-xs text-neutral-400">
+              <Text className="text-lawmake-caption text-neutral-400">
                 {formatDate(election.electionDate)}
               </Text>
             </View>
-            <Text className="mt-2 text-base font-bold text-neutral-900">
+            <Text className="mt-lawmake-sm text-lawmake-callout font-bold text-neutral-900">
               {election.name}
             </Text>
-            <Text className="mt-1 text-xs text-neutral-400">
+            <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-400">
               {election.districtCount}개 선거구
             </Text>
           </PressableCard>

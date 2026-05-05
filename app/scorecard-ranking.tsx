@@ -52,30 +52,30 @@ export default function ScorecardRankingScreen() {
     const grade = SCORECARD_GRADE_MAP[item.grade];
     return (
       <Pressable
-        className="flex-row items-center gap-3 border-b border-neutral-100 bg-white px-5 py-3 active:bg-neutral-50"
+        className="flex-row items-center gap-lawmake-sm border-b border-neutral-100 bg-surface-primary px-lawmake-lg py-lawmake-sm active:bg-neutral-50"
         onPress={() => router.push(`/members/${item.memberId}/scorecard`)}
       >
-        <Text className="w-7 text-center text-sm font-bold text-neutral-400">
+        <Text className="w-7 text-center text-lawmake-footnote font-bold text-neutral-400">
           {item.overallRank}
         </Text>
         <MemberPhoto uri={item.photoUrl} size={40} partyColor={item.party.color} />
         <View className="flex-1">
-          <View className="flex-row items-center gap-1.5">
-            <Text className="text-sm font-semibold text-neutral-800">{item.name}</Text>
+          <View className="flex-row items-center gap-lawmake-xs">
+            <Text className="text-lawmake-footnote font-semibold text-neutral-800">{item.name}</Text>
             <PartyBadge name={item.party.shortName} color={item.party.color} />
           </View>
-          <Text className="mt-0.5 text-xs text-neutral-400">{item.district}</Text>
+          <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-400">{item.district}</Text>
         </View>
         <View className="items-end">
           <View
             className="h-7 w-7 items-center justify-center rounded-full"
             style={{ backgroundColor: grade.bgColor }}
           >
-            <Text className="text-xs font-bold" style={{ color: grade.color }}>
+            <Text className="text-lawmake-caption font-bold" style={{ color: grade.color }}>
               {item.grade}
             </Text>
           </View>
-          <Text className="mt-0.5 text-xs font-medium text-neutral-500">
+          <Text className="mt-lawmake-xs text-lawmake-caption font-medium text-neutral-500">
             {item.totalScore.toFixed(1)}
           </Text>
         </View>
@@ -84,16 +84,16 @@ export default function ScorecardRankingScreen() {
   };
 
   return (
-    <View className="flex-1 bg-neutral-50">
+    <View className="flex-1 bg-surface-secondary">
       {/* Header Info */}
-      <View className="bg-white px-5 pb-3 pt-2">
-        <Text className="text-xs text-neutral-400">
+      <View className="bg-surface-primary px-lawmake-lg pb-lawmake-sm pt-lawmake-sm">
+        <Text className="text-lawmake-caption text-neutral-400">
           출석률(30) + 표결참여(25) + 법안발의(25) + 통과율(20) = 100점
         </Text>
       </View>
 
       {/* Grade Filter */}
-      <View className="flex-row gap-2 bg-white px-5 pb-3">
+      <View className="flex-row gap-lawmake-sm bg-surface-primary px-lawmake-lg pb-lawmake-sm">
         {GRADE_FILTERS.map((f) => (
           <FilterChip
             key={f.value}
@@ -105,8 +105,8 @@ export default function ScorecardRankingScreen() {
       </View>
 
       {/* Results count */}
-      <View className="px-5 py-2">
-        <Text className="text-xs text-neutral-400">{filtered.length}명</Text>
+      <View className="px-lawmake-lg py-lawmake-sm">
+        <Text className="text-lawmake-caption text-neutral-400">{filtered.length}명</Text>
       </View>
 
       <FlatList
