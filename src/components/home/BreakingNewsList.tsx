@@ -1,16 +1,19 @@
 import { useRouter } from 'expo-router';
 import { Text, View } from 'react-native';
 
-import { Badge } from '@/components/ui/Badge';
 import { PressableCard } from '@/components/ui/Card';
-import { SectionHeader } from '@/components/ui/SectionHeader';
+import { Section } from '@/components/ui/Section';
+import { StatusBadge, type StatusTone } from '@/components/ui/StatusBadge';
 import type { BreakingNewsItem } from '@/api/breaking-news';
 
-const BREAKING_CATEGORY_STYLE: Record<string, { label: string; color: string }> = {
-  committee: { label: '국회', color: '#F59E0B' },
-  election: { label: '선거', color: '#F43F5E' },
-  legislation: { label: '입법', color: '#3B82F6' },
-  politics: { label: '정치', color: '#8B5CF6' },
+const CATEGORY_INFO: Record<
+  string,
+  { label: string; tone: StatusTone }
+> = {
+  committee: { label: '국회', tone: 'warning' },
+  election: { label: '선거', tone: 'error' },
+  legislation: { label: '입법', tone: 'info' },
+  politics: { label: '정치', tone: 'primary' },
 };
 
 interface Props {
@@ -18,48 +21,72 @@ interface Props {
 }
 
 /**
- * 홈 화면 속보 섹션 (정치/선거/입법/국회 카테고리).
- * v1.1까지 사용된 디자인 그대로 유지 (PR1 refactor: 디자인 변경 없음).
+ * 홈 화면 속보 섹션.
+ *
+ * 변경 (PR3):
+ * - amber 배경/border/텍스트 과다 → 차분한 흰 카드
+ * - 카테고리 색상은 StatusBadge로 위임 (semantic tone)
+ * - 좌측 verticle 라이브 indicator로 "속보" 시각화 (절제된 강조)
+ * - 타이포 토큰화 (headline, body, caption)
  */
 export function BreakingNewsList({ items }: Props) {
   const router = useRouter();
   if (items.length === 0) return null;
 
   return (
-    <View className="mt-4 px-5 gap-3">
-      <SectionHeader title="속보" />
-      {items.map((item) => {
-        const cat = BREAKING_CATEGORY_STYLE[item.category] ?? BREAKING_CATEGORY_STYLE.politics;
-        return (
-          <PressableCard
-            key={item.id}
-            className="border-amber-200 bg-amber-50"
-            onPress={() => item.linkUrl && router.push(item.linkUrl as never)}
-          >
-            <View className="flex-row items-center gap-2">
-              <View className="h-2.5 w-2.5 rounded-full bg-amber-500" />
-              <Badge label={cat.label} color={cat.color} textColor="#FFFFFF" />
-              <Text className="ml-auto text-[10px] text-amber-600">{item.date}</Text>
-            </View>
-            <Text className="mt-1.5 text-sm font-bold text-amber-900">{item.title}</Text>
-            <Text className="mt-1 text-xs leading-4 text-amber-800" numberOfLines={3}>
-              {item.description}
-            </Text>
-            {item.items && item.items.length > 0 && (
-              <View className="mt-2 gap-1.5">
-                {item.items.slice(0, 3).map((detail) => (
-                  <View key={detail.label} className="rounded-lg bg-white/70 px-3 py-1.5">
-                    <Text className="text-[10px] font-semibold text-amber-700">
-                      {detail.label}
-                    </Text>
-                    <Text className="text-[11px] text-amber-900/70">{detail.value}</Text>
+    <View className="mt-lawmake-xl px-lawmake-lg">
+      <Section title="속보">
+        <View className="gap-lawmake-md">
+          {items.map((item) => {
+            const cat = CATEGORY_INFO[item.category] ?? CATEGORY_INFO.politics;
+            return (
+              <PressableCard
+                key={item.id}
+                onPress={() => item.linkUrl && router.push(item.linkUrl as never)}
+              >
+                <View className="flex-row items-center gap-lawmake-sm">
+                  <StatusBadge label={cat.label} tone={cat.tone} />
+                  <Text className="ml-auto text-lawmake-caption text-neutral-400">
+                    {item.date}
+                  </Text>
+                </View>
+                <Text
+                  className="mt-lawmake-sm text-lawmake-headline text-neutral-900"
+                  numberOfLines={2}
+                >
+                  {item.title}
+                </Text>
+                <Text
+                  className="mt-lawmake-xs text-lawmake-body text-neutral-600"
+                  numberOfLines={3}
+                >
+                  {item.description}
+                </Text>
+                {item.items && item.items.length > 0 && (
+                  <View className="mt-lawmake-md gap-lawmake-sm">
+                    {item.items.slice(0, 3).map((detail) => (
+                      <View
+                        key={detail.label}
+                        className="flex-row gap-lawmake-sm"
+                      >
+                        <Text className="text-lawmake-footnote font-semibold text-neutral-500">
+                          {detail.label}
+                        </Text>
+                        <Text
+                          className="flex-1 text-lawmake-footnote text-neutral-700"
+                          numberOfLines={2}
+                        >
+                          {detail.value}
+                        </Text>
+                      </View>
+                    ))}
                   </View>
-                ))}
-              </View>
-            )}
-          </PressableCard>
-        );
-      })}
+                )}
+              </PressableCard>
+            );
+          })}
+        </View>
+      </Section>
     </View>
   );
 }
