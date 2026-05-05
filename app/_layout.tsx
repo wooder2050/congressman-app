@@ -13,6 +13,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 
 import { OfflineBanner } from '@/components/OfflineBanner';
+import { AuthProvider } from '@/lib/auth-context';
 import { QueryProvider } from '@/lib/providers';
 
 SplashScreen.preventAutoHideAsync();
@@ -37,6 +38,7 @@ export default function RootLayout() {
 
   return (
     <QueryProvider>
+      <AuthProvider>
       <OfflineBanner />
       <Stack
         screenOptions={{
@@ -54,6 +56,19 @@ export default function RootLayout() {
         }}
       >
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen
+          name="sign-in"
+          options={{ headerShown: true, title: '로그인' }}
+        />
+        <Stack.Screen name="auth/callback" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="bookmarks"
+          options={{ headerShown: true, title: '즐겨찾기' }}
+        />
+        <Stack.Screen
+          name="my-district"
+          options={{ headerShown: true, title: '내 지역구' }}
+        />
         <Stack.Screen
           name="members/[id]"
           options={{ headerShown: true, title: '의원 상세' }}
@@ -156,6 +171,7 @@ export default function RootLayout() {
         />
       </Stack>
       <StatusBar style="dark" />
+      </AuthProvider>
     </QueryProvider>
   );
 }

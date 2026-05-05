@@ -8,6 +8,7 @@ import { getAttendance, getAbsenceDetails } from '@/api/attendance';
 import { getBills } from '@/api/bills';
 import { getMember, getMemberTerms, getMemberVotes, getAssets } from '@/api/members';
 import { getMemberScorecard } from '@/api/scorecard';
+import { BookmarkButton } from '@/components/BookmarkButton';
 import { EmptyState } from '@/components/EmptyState';
 import { ErrorState } from '@/components/ErrorState';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
@@ -83,6 +84,11 @@ export default function MemberDetailScreen() {
         >
           <Text className="text-sm text-primary">뒤로</Text>
         </Pressable>
+
+        {/* Bookmark button */}
+        <View className="absolute right-4 top-4 z-10">
+          <BookmarkButton type="member" id={id} />
+        </View>
 
         <View
           className="h-24 w-24 overflow-hidden rounded-full bg-neutral-100"
