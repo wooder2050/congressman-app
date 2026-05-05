@@ -12,11 +12,11 @@ import { Pressable, RefreshControl, ScrollView, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { getAttendanceRanking } from '@/api/attendance';
+import { getBreakingNews } from '@/api/breaking-news';
 import { getPropertyStats } from '@/api/property';
 import { getScorecardRanking } from '@/api/scorecard';
 import { getUpcomingSchedules } from '@/api/schedules';
 import { getHomeStats } from '@/api/stats';
-import { getActiveBreakingNews } from '@/data/breaking-news';
 import { EmptyState } from '@/components/EmptyState';
 import { ErrorState } from '@/components/ErrorState';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
@@ -59,8 +59,10 @@ export default function HomeScreen() {
 
   const { data: propertyData } = useLawmakeQuery(getPropertyStats, []);
 
+  const { data: breakingNewsData } = useLawmakeQuery(getBreakingNews, []);
+  const breakingNews = breakingNewsData ?? [];
+
   const latestWeekly = getLatestWeeklyArticle();
-  const breakingNews = getActiveBreakingNews();
 
   if (isLoading) return <LoadingSpinner />;
   if (error) return <ErrorState onRetry={refetch} />;
