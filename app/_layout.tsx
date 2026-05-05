@@ -119,6 +119,26 @@ export default function RootLayout() {
           options={{ headerShown: true, title: '선거 상세' }}
         />
         <Stack.Screen
+          name="local-elections/[id]/index"
+          options={{ headerShown: true, title: '지방선거' }}
+        />
+        <Stack.Screen
+          name="local-elections/[id]/races/index"
+          options={{ headerShown: true, title: '선거구 검색' }}
+        />
+        <Stack.Screen
+          name="local-elections/[id]/races/[raceId]"
+          options={{ headerShown: true, title: '선거구 상세' }}
+        />
+        <Stack.Screen
+          name="local-elections/[id]/regions/[sido]"
+          options={{ headerShown: true, title: '지역별 선거구' }}
+        />
+        <Stack.Screen
+          name="local-elections/[id]/vote"
+          options={{ headerShown: true, title: '투표 안내' }}
+        />
+        <Stack.Screen
           name="about"
           options={{ headerShown: true, title: '앱 정보' }}
         />

@@ -20,6 +20,7 @@ import { getHomeStats } from '@/api/stats';
 import { EmptyState } from '@/components/EmptyState';
 import { ErrorState } from '@/components/ErrorState';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { LocalElectionBanner } from '@/components/LocalElectionBanner';
 import { MemberPhoto } from '@/components/MemberPhoto';
 import { PartyBadge } from '@/components/PartyBadge';
 import { Badge } from '@/components/ui/Badge';
@@ -81,6 +82,11 @@ export default function HomeScreen() {
       <View className="bg-white px-5 pb-5 pt-2">
         <Text className="text-2xl font-bold text-neutral-900">제22대 국회</Text>
         <Text className="mt-1 text-sm text-neutral-400">국회 의정활동 한눈에 보기</Text>
+      </View>
+
+      {/* 6·3 지방선거 배너 */}
+      <View className="mt-4 px-5">
+        <LocalElectionBanner />
       </View>
 
       {/* Breaking News */}
