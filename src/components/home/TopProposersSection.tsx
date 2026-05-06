@@ -38,7 +38,11 @@ export function TopProposersSection({ proposers }: Props) {
                   !isLast ? 'border-b border-neutral-100' : ''
                 }`}
               >
-                <Text className="w-6 text-center text-lawmake-callout font-bold text-primary">
+                <Text
+                  className="w-8 text-center text-lawmake-callout font-bold text-primary"
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                >
                   {i + 1}
                 </Text>
                 <MemberPhoto uri={p.photoUrl} size={36} partyColor={p.party.color} />
