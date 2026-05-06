@@ -136,9 +136,9 @@ export default function VotesScreen() {
   if (error) return <ErrorState onRetry={refetch} />;
 
   return (
-    <View className="flex-1 bg-surface-secondary">
+    <View className="flex-1 bg-surface-secondary" style={{ paddingTop: insets.top }}>
       {/* Large Title */}
-      <View className="bg-surface-primary px-lawmake-lg pb-lawmake-md pt-lawmake-md">
+      <View className="bg-surface-primary px-lawmake-lg pb-lawmake-sm pt-lawmake-sm">
         <Text className="text-lawmake-large text-neutral-900">표결</Text>
       </View>
 

@@ -64,10 +64,10 @@ export default function MoreScreen() {
   return (
     <ScrollView
       className="flex-1 bg-surface-secondary"
-      contentContainerStyle={{ paddingBottom: insets.bottom + 16 }}
+      contentContainerStyle={{ paddingTop: insets.top, paddingBottom: insets.bottom + 16 }}
     >
       {/* Large Title */}
-      <View className="bg-surface-primary px-lawmake-lg pb-lawmake-md pt-lawmake-md">
+      <View className="bg-surface-primary px-lawmake-lg pb-lawmake-sm pt-lawmake-sm">
         <Text className="text-lawmake-large text-neutral-900">더보기</Text>
       </View>
 

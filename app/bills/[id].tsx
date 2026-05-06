@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { ExternalLink, FileText } from 'lucide-react-native';
 import { Linking, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -12,7 +12,6 @@ import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import { Header } from '@/components/ui/Header';
 import { Section } from '@/components/ui/Section';
 import { StatusBadge, type StatusTone } from '@/components/ui/StatusBadge';
 import { useLawmakeQuery } from '@/hooks/useLawmakeQuery';
@@ -41,7 +40,9 @@ export default function BillDetailScreen() {
 
   return (
     <View className="flex-1 bg-surface-secondary">
-      <Header rightAction={<BookmarkButton type="bill" id={id} />} />
+      <Stack.Screen
+        options={{ headerRight: () => <BookmarkButton type="bill" id={id} /> }}
+      />
       <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom + 32 }}>
         {/* Title block */}
         <View className="bg-surface-primary px-lawmake-lg pb-lawmake-xl pt-lawmake-sm">

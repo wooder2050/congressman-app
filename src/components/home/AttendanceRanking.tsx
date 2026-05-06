@@ -69,7 +69,11 @@ function RankCard({ label, labelTone, members, onPress }: RankCardProps) {
               !isLast ? 'border-b border-neutral-100' : ''
             }`}
           >
-            <Text className={`w-6 text-center text-lawmake-callout font-bold ${labelClass}`}>
+            <Text
+              className={`w-8 text-center text-lawmake-callout font-bold ${labelClass}`}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+            >
               {i + 1}
             </Text>
             <MemberPhoto uri={m.photoUrl} size={36} partyColor={m.party.color} />
