@@ -55,10 +55,10 @@ export default function HomeScreen() {
   if (!stats) return <EmptyState title="데이터가 없습니다" />;
 
   return (
-    <View className="flex-1">
+    <View className="flex-1" style={{ paddingTop: insets.top }}>
       <ScrollView
         className="flex-1 bg-neutral-50"
-        contentContainerStyle={{ paddingTop: insets.top, paddingBottom: insets.bottom + 16 }}
+        contentContainerStyle={{ paddingBottom: insets.bottom + 16 }}
         refreshControl={
           <RefreshControl refreshing={isRefetching} onRefresh={refetch} tintColor="#2563EB" />
         }

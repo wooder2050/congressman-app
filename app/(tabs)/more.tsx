@@ -1,13 +1,15 @@
 import { useRouter } from 'expo-router';
 import {
   Award,
+  BookMarked,
   BookOpen,
   Bookmark,
   Building2,
   CalendarDays,
+  CheckSquare,
   ChevronRight,
   GitCompare,
-  Home,
+  Home as HomeIcon,
   Info,
   LogIn,
   LogOut,
@@ -15,12 +17,12 @@ import {
   type LucideIcon,
   Newspaper,
   User,
-  Vote,
 } from 'lucide-react-native';
 import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useAuth } from '@/lib/auth-context';
+import { tapLight } from '@/lib/haptics';
 
 type MenuItem = {
   icon: LucideIcon;
@@ -32,13 +34,13 @@ type MenuItem = {
 const MENU_ITEMS: MenuItem[] = [
   { icon: Newspaper, label: '주간뉴스', description: '매주 국회 소식 한눈에', route: '/weekly' },
   { icon: Award, label: '의정활동 성적표', description: '의원 성적 랭킹 (S~D등급)', route: '/scorecard-ranking' },
-  { icon: Home, label: '부동산 보유 현황', description: '다주택자·고가주택·과다보유', route: '/property' },
-  { icon: Vote, label: '재보궐선거', description: '선거구·후보 정보', route: '/elections' },
+  { icon: HomeIcon, label: '부동산 보유 현황', description: '다주택자·고가주택·과다보유', route: '/property' },
+  { icon: CheckSquare, label: '재보궐선거', description: '선거구·후보 정보', route: '/elections' },
   { icon: Building2, label: '위원회', description: '17개 상임위원회 현황', route: '/committees' },
   { icon: CalendarDays, label: '일정', description: '본회의, 위원회 일정', route: '/schedule' },
   { icon: GitCompare, label: '의원 비교', description: '최대 4명 의원 비교', route: '/compare' },
   { icon: BookOpen, label: '입법 가이드', description: '국회 입법 과정 안내', route: '/guide' },
-  { icon: BookOpen, label: '용어 사전', description: '국회 용어 설명', route: '/glossary' },
+  { icon: BookMarked, label: '용어 사전', description: '국회 용어 설명', route: '/glossary' },
   { icon: Info, label: '앱 정보', description: 'lawmake.kr', route: '/about' },
 ];
 
@@ -76,7 +78,7 @@ export default function MoreScreen() {
         {session ? (
           <View className="flex-row items-center gap-lawmake-md px-lawmake-lg py-lawmake-md">
             <View className="h-10 w-10 items-center justify-center rounded-full bg-primary-light">
-              <User size={18} color="#2563EB" />
+              <User size={18} color="#2563EB" strokeWidth={1.75} />
             </View>
             <View className="flex-1">
               <Text className="text-lawmake-body font-semibold text-neutral-900" numberOfLines={1}>
@@ -87,7 +89,7 @@ export default function MoreScreen() {
               </Text>
             </View>
             <Pressable onPress={handleSignOut} hitSlop={8} className="p-2">
-              <LogOut size={18} color="#9CA3AF" />
+              <LogOut size={18} color="#9CA3AF" strokeWidth={1.75} />
             </Pressable>
           </View>
         ) : (
@@ -134,7 +136,7 @@ export default function MoreScreen() {
       </View>
 
       <View className="mt-lawmake-xxxl items-center">
-        <Text className="text-lawmake-caption text-neutral-400">lawmake v1.1.0</Text>
+        <Text className="text-lawmake-caption text-neutral-400">lawmake v1.3.0</Text>
       </View>
     </ScrollView>
   );
@@ -155,19 +157,22 @@ function MenuRow({
 }) {
   return (
     <Pressable
-      onPress={onPress}
+      onPress={() => {
+        tapLight();
+        onPress();
+      }}
       className={`flex-row items-center gap-lawmake-md px-lawmake-lg py-lawmake-md active:bg-neutral-50 ${
         withDivider ? 'border-b border-neutral-100' : ''
       }`}
     >
       <View className="h-10 w-10 items-center justify-center rounded-lawmake-md bg-primary-light">
-        <Icon size={20} color="#2563EB" />
+        <Icon size={20} color="#2563EB" strokeWidth={1.75} />
       </View>
       <View className="flex-1">
         <Text className="text-lawmake-body font-semibold text-neutral-900">{label}</Text>
         <Text className="mt-lawmake-xs text-lawmake-footnote text-neutral-500">{description}</Text>
       </View>
-      <ChevronRight size={18} color="#A3A3A3" />
+      <ChevronRight size={18} color="#A3A3A3" strokeWidth={1.75} />
     </Pressable>
   );
 }

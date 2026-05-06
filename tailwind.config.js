@@ -47,16 +47,18 @@ module.exports = {
       },
       // 타이포 사이즈 — tokens.ts와 동일
       fontSize: {
-        'lawmake-large': ['28px', { lineHeight: '34px', fontWeight: '700' }],
-        'lawmake-title1': ['22px', { lineHeight: '28px', fontWeight: '700' }],
-        'lawmake-title2': ['19px', { lineHeight: '24px', fontWeight: '700' }],
-        'lawmake-title3': ['17px', { lineHeight: '22px', fontWeight: '600' }],
-        'lawmake-headline': ['16px', { lineHeight: '22px', fontWeight: '600' }],
-        'lawmake-body': ['15px', { lineHeight: '21px', fontWeight: '400' }],
-        'lawmake-callout': ['14px', { lineHeight: '19px', fontWeight: '400' }],
-        'lawmake-subhead': ['13px', { lineHeight: '18px', fontWeight: '500' }],
-        'lawmake-footnote': ['12px', { lineHeight: '16px', fontWeight: '400' }],
-        'lawmake-caption': ['11px', { lineHeight: '14px', fontWeight: '400' }],
+        // v1.3 PR2: 한글 가독성 향상 — body 15→17, footnote 12→14, caption 11→12
+        // PR3: 한글 본문 line-height 1.5x로 확장
+        'lawmake-large': ['28px', { lineHeight: '36px', fontWeight: '700' }],
+        'lawmake-title1': ['24px', { lineHeight: '32px', fontWeight: '700' }],
+        'lawmake-title2': ['20px', { lineHeight: '28px', fontWeight: '700' }],
+        'lawmake-title3': ['18px', { lineHeight: '26px', fontWeight: '600' }],
+        'lawmake-headline': ['17px', { lineHeight: '26px', fontWeight: '600' }],
+        'lawmake-body': ['17px', { lineHeight: '28px', fontWeight: '400' }],
+        'lawmake-callout': ['16px', { lineHeight: '25px', fontWeight: '400' }],
+        'lawmake-subhead': ['15px', { lineHeight: '22px', fontWeight: '500' }],
+        'lawmake-footnote': ['14px', { lineHeight: '21px', fontWeight: '400' }],
+        'lawmake-caption': ['12px', { lineHeight: '16px', fontWeight: '400' }],
       },
       // 간격 — tokens.ts spacing과 동일
       spacing: {

@@ -13,6 +13,7 @@ import { FilterChip } from '@/components/ui/FilterChip';
 import { SearchInput } from '@/components/ui/SearchInput';
 import { PARTIES } from '@/constants/parties';
 import { useLawmakeQuery } from '@/hooks/useLawmakeQuery';
+import { tapLight } from '@/lib/haptics';
 import type { MemberWithTerm } from '@/types';
 
 const CURRENT_TERM = 22;
@@ -67,7 +68,10 @@ export default function MembersScreen() {
     ({ item }: { item: MemberWithTerm }) => (
       <Pressable
         className="flex-row items-center gap-lawmake-md border-b border-neutral-100 bg-surface-primary px-lawmake-lg py-lawmake-md active:bg-neutral-50"
-        onPress={() => router.push(`/members/${item.id}`)}
+        onPress={() => {
+          tapLight();
+          router.push(`/members/${item.id}`);
+        }}
       >
         <View
           className="h-12 w-12 overflow-hidden rounded-full bg-neutral-100"

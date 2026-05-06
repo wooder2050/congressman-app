@@ -1,6 +1,7 @@
 import { Pressable, PressableProps, StyleSheet, View, ViewProps } from 'react-native';
 
 import { shadow as shadowTokens } from '@/design/tokens';
+import { tapLight } from '@/lib/haptics';
 
 const styles = StyleSheet.create({
   card: shadowTokens.card,
@@ -29,11 +30,15 @@ type PressableCardProps = PressableProps & {
   className?: string;
 };
 
-export function PressableCard({ className, ...props }: PressableCardProps) {
+export function PressableCard({ className, onPress, ...props }: PressableCardProps) {
   return (
     <Pressable
       className={`rounded-lawmake-lg border border-neutral-100 bg-surface-primary p-lawmake-lg active:bg-neutral-50 ${className ?? ''}`}
       style={styles.card}
+      onPress={(e) => {
+        tapLight();
+        onPress?.(e);
+      }}
       {...props}
     />
   );
