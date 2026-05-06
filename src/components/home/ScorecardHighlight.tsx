@@ -101,7 +101,11 @@ function RankCard({ label, labelTone, members, getRank, onPress }: RankCardProps
                 {m.grade}
               </Text>
             </View>
-            <Text className="w-12 text-right text-lawmake-callout font-semibold text-neutral-700">
+            <Text
+              className="w-12 text-right text-lawmake-callout font-semibold text-neutral-700"
+              numberOfLines={1}
+              adjustsFontSizeToFit
+            >
               {m.totalScore.toFixed(1)}
             </Text>
           </Pressable>
