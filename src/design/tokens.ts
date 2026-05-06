@@ -64,16 +64,19 @@ export const colors = {
  * - 본문 최소 14pt 이상 권장 (한글 가독성)
  */
 export const typography = {
-  largeTitle: { fontSize: 28, lineHeight: 34, fontWeight: '700' as const },
-  title1: { fontSize: 22, lineHeight: 28, fontWeight: '700' as const },
-  title2: { fontSize: 19, lineHeight: 24, fontWeight: '700' as const },
-  title3: { fontSize: 17, lineHeight: 22, fontWeight: '600' as const },
-  headline: { fontSize: 16, lineHeight: 22, fontWeight: '600' as const },
-  body: { fontSize: 15, lineHeight: 21, fontWeight: '400' as const },
-  callout: { fontSize: 14, lineHeight: 19, fontWeight: '400' as const },
-  subhead: { fontSize: 13, lineHeight: 18, fontWeight: '500' as const },
-  footnote: { fontSize: 12, lineHeight: 16, fontWeight: '400' as const },
-  caption: { fontSize: 11, lineHeight: 14, fontWeight: '400' as const },
+  // v1.3 PR2: 한글 가독성 향상 — body 15→17, footnote 12→14, caption 11→12
+  // PR3: 한글 본문 line-height 1.5x로 확장 (이전 ~1.45x)
+  // caption은 chrome(status, badge label) 전용으로 격리
+  largeTitle: { fontSize: 28, lineHeight: 36, fontWeight: '700' as const },
+  title1: { fontSize: 24, lineHeight: 32, fontWeight: '700' as const },
+  title2: { fontSize: 20, lineHeight: 28, fontWeight: '700' as const },
+  title3: { fontSize: 18, lineHeight: 26, fontWeight: '600' as const },
+  headline: { fontSize: 17, lineHeight: 26, fontWeight: '600' as const },
+  body: { fontSize: 17, lineHeight: 28, fontWeight: '400' as const },
+  callout: { fontSize: 16, lineHeight: 25, fontWeight: '400' as const },
+  subhead: { fontSize: 15, lineHeight: 22, fontWeight: '500' as const },
+  footnote: { fontSize: 14, lineHeight: 21, fontWeight: '400' as const },
+  caption: { fontSize: 12, lineHeight: 16, fontWeight: '400' as const },
 } as const;
 
 export type TypographyVariant = keyof typeof typography;
@@ -118,21 +121,21 @@ export const shadow = {
     shadowRadius: 0,
     elevation: 0,
   },
-  // 정적 카드 (기본)
+  // 정적 카드 (기본) — 좀 더 명확한 분리감 (premium feel)
   card: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.04,
-    shadowRadius: 3,
-    elevation: 1,
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 2,
   },
   // 살짝 떠있는 sheet, 시트형 popup
   raised: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 4,
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.1,
+    shadowRadius: 16,
+    elevation: 6,
   },
 } as const;
 

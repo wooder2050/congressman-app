@@ -2,6 +2,8 @@ import { useRouter } from 'expo-router';
 import { ChevronRight } from 'lucide-react-native';
 import { Pressable, Text, View } from 'react-native';
 
+import { tapLight } from '@/lib/haptics';
+
 const ELECTION_ID = 'local-2026';
 const ELECTION_DATE = new Date('2026-06-03T00:00:00');
 
@@ -20,11 +22,14 @@ export function LocalElectionBanner() {
 
   return (
     <Pressable
-      onPress={() => router.push(`/local-elections/${ELECTION_ID}`)}
-      className="overflow-hidden rounded-xl border border-rose-200 bg-rose-50 active:bg-rose-100"
+      onPress={() => {
+        tapLight();
+        router.push(`/local-elections/${ELECTION_ID}`);
+      }}
+      className="overflow-hidden rounded-xl border border-neutral-200 bg-surface-primary active:bg-neutral-50"
     >
       <View className="flex-row items-center gap-3 px-4 py-3.5">
-        <View className="rounded-lg bg-rose-500 px-2.5 py-1">
+        <View className="rounded-lg bg-primary px-2.5 py-1">
           <Text className="text-xs font-bold text-white">{dday}</Text>
         </View>
         <View className="flex-1">
@@ -35,7 +40,7 @@ export function LocalElectionBanner() {
             광역단체장 · 기초단체장 · 교육감 · 광역·기초의원
           </Text>
         </View>
-        <ChevronRight size={18} color="#F43F5E" />
+        <ChevronRight size={18} color="#A3A3A3" />
       </View>
     </Pressable>
   );

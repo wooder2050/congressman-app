@@ -10,7 +10,7 @@ import { Text, View } from 'react-native';
  */
 export function HomeHeader() {
   return (
-    <View className="bg-surface-primary px-lawmake-lg pb-lawmake-xl pt-lawmake-md">
+    <View className="bg-surface-primary px-lawmake-lg pb-lawmake-lg pt-lawmake-sm">
       <Text className="text-lawmake-large text-neutral-900">제22대 국회</Text>
       <Text className="mt-lawmake-xs text-lawmake-callout text-neutral-500">
         국회 의정활동 한눈에 보기

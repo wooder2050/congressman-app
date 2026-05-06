@@ -1,5 +1,7 @@
 import { Pressable, Text } from 'react-native';
 
+import { tapLight } from '@/lib/haptics';
+
 type FilterChipProps = {
   label: string;
   selected?: boolean;
@@ -10,15 +12,18 @@ type FilterChipProps = {
 export function FilterChip({ label, selected, onPress, className }: FilterChipProps) {
   return (
     <Pressable
-      className={`rounded-full border px-3.5 py-1.5 ${
+      className={`rounded-full px-4 py-2 ${
         selected
-          ? 'border-primary bg-primary-light'
-          : 'border-neutral-200 bg-white active:bg-neutral-50'
+          ? 'bg-primary'
+          : 'bg-neutral-100 active:bg-neutral-200'
       } ${className ?? ''}`}
-      onPress={onPress}
+      onPress={() => {
+        tapLight();
+        onPress?.();
+      }}
     >
       <Text
-        className={`text-xs font-medium ${selected ? 'text-primary' : 'text-neutral-600'}`}
+        className={`text-[13px] font-semibold ${selected ? 'text-white' : 'text-neutral-700'}`}
       >
         {label}
       </Text>

@@ -55,7 +55,7 @@ export default function HomeScreen() {
   if (!stats) return <EmptyState title="데이터가 없습니다" />;
 
   return (
-    <View className="flex-1">
+    <View className="flex-1" style={{ paddingTop: insets.top }}>
       <ScrollView
         className="flex-1 bg-neutral-50"
         contentContainerStyle={{ paddingBottom: insets.bottom + 16 }}

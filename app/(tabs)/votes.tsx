@@ -103,24 +103,40 @@ export default function VotesScreen() {
             <StatusBadge label={result.label} tone={result.tone} />
           </View>
 
-          {/* Vote Bar */}
-          <View className="mt-lawmake-md h-2 flex-row overflow-hidden rounded-full bg-neutral-100">
-            <View className="h-full bg-success" style={{ width: `${yesPercent}%` }} />
-            <View className="h-full bg-error" style={{ width: `${noPercent}%` }} />
-            <View className="h-full bg-neutral-300" style={{ width: `${abstainPercent}%` }} />
+          {/* Stacked Vote Bar — slimmer + percentage hint */}
+          <View className="mt-lawmake-md h-1.5 flex-row overflow-hidden rounded-full bg-neutral-100">
+            {yesPercent > 0 && (
+              <View className="h-full bg-success" style={{ width: `${yesPercent}%` }} />
+            )}
+            {noPercent > 0 && (
+              <View className="h-full bg-error" style={{ width: `${noPercent}%` }} />
+            )}
+            {abstainPercent > 0 && (
+              <View className="h-full bg-neutral-300" style={{ width: `${abstainPercent}%` }} />
+            )}
           </View>
 
-          <View className="mt-lawmake-sm flex-row justify-between">
-            <View className="flex-row gap-lawmake-md">
-              <Text className="text-lawmake-footnote font-medium text-success-dark">
-                찬성 {item.yesCount}
-              </Text>
-              <Text className="text-lawmake-footnote font-medium text-error-dark">
-                반대 {item.noCount}
-              </Text>
-              <Text className="text-lawmake-footnote text-neutral-500">
-                기권 {item.abstainCount}
-              </Text>
+          {/* Legend with color dots */}
+          <View className="mt-lawmake-md flex-row items-center justify-between">
+            <View className="flex-row items-center gap-lawmake-md">
+              <View className="flex-row items-center gap-1.5">
+                <View className="h-2 w-2 rounded-full bg-success" />
+                <Text className="text-lawmake-footnote font-medium text-neutral-700">
+                  찬성 {item.yesCount}
+                </Text>
+              </View>
+              <View className="flex-row items-center gap-1.5">
+                <View className="h-2 w-2 rounded-full bg-error" />
+                <Text className="text-lawmake-footnote font-medium text-neutral-700">
+                  반대 {item.noCount}
+                </Text>
+              </View>
+              <View className="flex-row items-center gap-1.5">
+                <View className="h-2 w-2 rounded-full bg-neutral-300" />
+                <Text className="text-lawmake-footnote text-neutral-500">
+                  기권 {item.abstainCount}
+                </Text>
+              </View>
             </View>
             <Text className="text-lawmake-caption text-neutral-400">
               {formatDate(item.procDate)}
@@ -136,9 +152,9 @@ export default function VotesScreen() {
   if (error) return <ErrorState onRetry={refetch} />;
 
   return (
-    <View className="flex-1 bg-surface-secondary">
+    <View className="flex-1 bg-surface-secondary" style={{ paddingTop: insets.top }}>
       {/* Large Title */}
-      <View className="bg-surface-primary px-lawmake-lg pb-lawmake-md pt-lawmake-md">
+      <View className="bg-surface-primary px-lawmake-lg pb-lawmake-sm pt-lawmake-sm">
         <Text className="text-lawmake-large text-neutral-900">표결</Text>
       </View>
 
