@@ -2,10 +2,13 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Linking, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { getWeeklyArticle } from '@/api/weekly';
 import { EmptyState } from '@/components/EmptyState';
+import { ErrorState } from '@/components/ErrorState';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { Badge } from '@/components/ui/Badge';
 import { Card, PressableCard } from '@/components/ui/Card';
-import { getWeeklyArticle } from '@/data/weekly';
+import { useLawmakeQuery } from '@/hooks/useLawmakeQuery';
 import type { FeaturedBill, WeeklyHighlight } from '@/types';
 
 const BILL_STATUS_COLORS: Record<string, { color: string; textColor: string; label: string }> = {
@@ -183,8 +186,13 @@ function HighlightCard({
 export default function WeeklyDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
-  const article = getWeeklyArticle(id);
+  const { data: article, isLoading, error, refetch } = useLawmakeQuery(
+    getWeeklyArticle,
+    [id],
+  );
 
+  if (isLoading) return <LoadingSpinner />;
+  if (error) return <ErrorState onRetry={refetch} />;
   if (!article) return <EmptyState title="주간뉴스를 찾을 수 없습니다" />;
 
   return (

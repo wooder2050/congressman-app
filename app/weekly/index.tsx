@@ -3,10 +3,13 @@ import { Calendar, FileText, Vote as VoteIcon } from 'lucide-react-native';
 import { FlatList, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { getWeeklyList, type WeeklyArticleSummary } from '@/api/weekly';
+import { EmptyState } from '@/components/EmptyState';
+import { ErrorState } from '@/components/ErrorState';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { Badge } from '@/components/ui/Badge';
 import { PressableCard } from '@/components/ui/Card';
-import { getAllWeeklyArticles } from '@/data/weekly';
-import type { WeeklyArticle } from '@/types';
+import { useLawmakeQuery } from '@/hooks/useLawmakeQuery';
 
 const BILL_STATUS_COLORS: Record<string, { color: string; textColor: string; label: string }> = {
   passed: { color: '#dcfce7', textColor: '#15803d', label: '통과' },
@@ -15,7 +18,7 @@ const BILL_STATUS_COLORS: Record<string, { color: string; textColor: string; lab
   rejected: { color: '#fee2e2', textColor: '#b91c1c', label: '부결' },
 };
 
-function WeeklyCard({ article }: { article: WeeklyArticle }) {
+function WeeklyCard({ article }: { article: WeeklyArticleSummary }) {
   const router = useRouter();
 
   return (
@@ -96,7 +99,12 @@ function WeeklyCard({ article }: { article: WeeklyArticle }) {
 
 export default function WeeklyListScreen() {
   const insets = useSafeAreaInsets();
-  const articles = getAllWeeklyArticles();
+  const { data: articles, isLoading, error, refetch } = useLawmakeQuery(getWeeklyList, []);
+
+  if (isLoading) return <LoadingSpinner />;
+  if (error) return <ErrorState onRetry={refetch} />;
+  if (!articles || articles.length === 0)
+    return <EmptyState title="주간 뉴스가 없습니다" />;
 
   return (
     <FlatList

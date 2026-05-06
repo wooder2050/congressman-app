@@ -2,10 +2,13 @@ import { useLocalSearchParams } from 'expo-router';
 import { Linking, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { getWeeklyArticle } from '@/api/weekly';
 import { EmptyState } from '@/components/EmptyState';
+import { ErrorState } from '@/components/ErrorState';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { Badge } from '@/components/ui/Badge';
 import { Card, PressableCard } from '@/components/ui/Card';
-import { getWeeklyArticle } from '@/data/weekly';
+import { useLawmakeQuery } from '@/hooks/useLawmakeQuery';
 
 const BILL_STATUS_COLORS: Record<string, { color: string; textColor: string; label: string }> = {
   passed: { color: '#0F766E', textColor: '#FFFFFF', label: '가결' },
@@ -25,8 +28,13 @@ const HIGHLIGHT_CATEGORY: Record<string, { emoji: string; label: string }> = {
 export default function WeeklyArticleScreen() {
   const { id, slug } = useLocalSearchParams<{ id: string; slug: string }>();
   const insets = useSafeAreaInsets();
-  const weekly = getWeeklyArticle(id);
+  const { data: weekly, isLoading, error, refetch } = useLawmakeQuery(
+    getWeeklyArticle,
+    [id],
+  );
 
+  if (isLoading) return <LoadingSpinner />;
+  if (error) return <ErrorState onRetry={refetch} />;
   if (!weekly) return <EmptyState title="주간뉴스를 찾을 수 없습니다" />;
 
   const decodedSlug = decodeURIComponent(slug);
