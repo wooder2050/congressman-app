@@ -55,7 +55,11 @@ export default function ScorecardRankingScreen() {
         className="flex-row items-center gap-lawmake-sm border-b border-neutral-100 bg-surface-primary px-lawmake-lg py-lawmake-sm active:bg-neutral-50"
         onPress={() => router.push(`/members/${item.memberId}/scorecard`)}
       >
-        <Text className="w-7 text-center text-lawmake-footnote font-bold text-neutral-400">
+        <Text
+          className="w-8 text-center text-lawmake-footnote font-bold text-neutral-400"
+          numberOfLines={1}
+          adjustsFontSizeToFit
+        >
           {item.overallRank}
         </Text>
         <MemberPhoto uri={item.photoUrl} size={40} partyColor={item.party.color} />

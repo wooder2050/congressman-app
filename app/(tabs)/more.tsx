@@ -69,7 +69,7 @@ export default function MoreScreen() {
       contentContainerStyle={{ paddingTop: insets.top, paddingBottom: insets.bottom + 16 }}
     >
       {/* Large Title */}
-      <View className="bg-surface-primary px-lawmake-lg pb-lawmake-md pt-lawmake-sm">
+      <View className="bg-surface-primary px-lawmake-lg pb-lawmake-sm pt-lawmake-sm">
         <Text className="text-lawmake-large text-neutral-900">더보기</Text>
       </View>
 
