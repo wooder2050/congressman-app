@@ -9,7 +9,6 @@ import { ErrorState } from '@/components/ErrorState';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { MemberPhoto } from '@/components/MemberPhoto';
 import { Card } from '@/components/ui/Card';
-import { Header } from '@/components/ui/Header';
 import { StatusBadge, type StatusTone } from '@/components/ui/StatusBadge';
 import { useLawmakeQuery } from '@/hooks/useLawmakeQuery';
 import { formatDate, formatNumber } from '@/lib/format';
@@ -105,8 +104,6 @@ export default function VoteDetailScreen() {
 
   return (
     <View className="flex-1 bg-surface-secondary">
-      <Header />
-
       {/* Title block */}
       <View className="bg-surface-primary px-lawmake-lg pb-lawmake-lg pt-lawmake-sm">
         <StatusBadge label={result.label} tone={result.tone} />

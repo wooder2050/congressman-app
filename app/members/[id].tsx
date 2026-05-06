@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { ChevronRight } from 'lucide-react-native';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -15,7 +15,6 @@ import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { PartyBadge } from '@/components/PartyBadge';
 import { Badge } from '@/components/ui/Badge';
 import { Card, PressableCard } from '@/components/ui/Card';
-import { Header } from '@/components/ui/Header';
 import { Section } from '@/components/ui/Section';
 import { StatusBadge, type StatusTone } from '@/components/ui/StatusBadge';
 import { SCORECARD_GRADE_MAP } from '@/constants/maps';
@@ -88,7 +87,9 @@ export default function MemberDetailScreen() {
 
   return (
     <View className="flex-1 bg-surface-secondary">
-      <Header rightAction={<BookmarkButton type="member" id={id} />} />
+      <Stack.Screen
+        options={{ headerRight: () => <BookmarkButton type="member" id={id} /> }}
+      />
       <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom + 32 }}>
         {/* Profile */}
         <View className="items-center bg-surface-primary px-lawmake-lg pb-lawmake-xl pt-lawmake-sm">
