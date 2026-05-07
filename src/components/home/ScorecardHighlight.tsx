@@ -12,7 +12,7 @@ interface Props {
 }
 
 /**
- * 홈 화면 의정활동 성적표 섹션 (TOP 5 + 하위 5).
+ * 홈 화면 의정활동 성적표 섹션 (TOP 3 + 하위 3).
  *
  * 변경 (PR3):
  * - 카드 안의 카드 안티패턴 제거 (Card > Card > Pressable → Card > Pressable row)
@@ -23,8 +23,8 @@ export function ScorecardHighlight({ data }: Props) {
   const router = useRouter();
   if (!data?.rankings || data.rankings.length === 0) return null;
 
-  const top5 = data.rankings.slice(0, 5);
-  const bottom5 = data.rankings.slice(-5).reverse();
+  const top3 = data.rankings.slice(0, 3);
+  const bottom3 = data.rankings.slice(-3).reverse();
   const total = data.rankings.length;
 
   const onPress = (memberId: string) => {
@@ -40,16 +40,16 @@ export function ScorecardHighlight({ data }: Props) {
       >
         <View>
           <RankGroup
-            label="TOP 5"
+            label="TOP 3"
             labelTone="primary"
-            members={top5}
+            members={top3}
             getRank={(_, i) => i + 1}
             onPress={onPress}
           />
           <RankGroup
-            label="하위 5"
+            label="하위 3"
             labelTone="error"
-            members={bottom5}
+            members={bottom3}
             getRank={(_, i) => total - i}
             onPress={onPress}
           />

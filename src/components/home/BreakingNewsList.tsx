@@ -47,7 +47,7 @@ export function BreakingNewsList({ items }: Props) {
   const hasMore = items.length > HOME_PREVIEW_COUNT;
 
   return (
-    <View className="bg-surface-primary px-lawmake-lg pt-lawmake-lg">
+    <View className="mt-lawmake-md bg-surface-primary px-lawmake-lg pt-lawmake-lg">
       <Section
         title="속보"
         onMore={hasMore ? () => router.push('/breaking-news' as never) : undefined}

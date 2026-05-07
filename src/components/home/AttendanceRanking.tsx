@@ -32,15 +32,15 @@ export function AttendanceRankingSection({ data }: Props) {
       <Section title="출석률 랭킹">
         <View>
           <RankGroup
-            label="출석률 TOP 5"
+            label="출석률 TOP 3"
             labelTone="success"
-            members={data.top.slice(0, 5)}
+            members={data.top.slice(0, 3)}
             onPress={onPress}
           />
           <RankGroup
-            label="출석률 하위 5"
+            label="출석률 하위 3"
             labelTone="error"
-            members={data.bottom.slice(0, 5)}
+            members={data.bottom.slice(0, 3)}
             onPress={onPress}
           />
         </View>

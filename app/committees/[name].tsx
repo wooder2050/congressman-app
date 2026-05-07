@@ -45,10 +45,7 @@ export default function CommitteeDetailScreen() {
     >
       {/* Header */}
       <View className="bg-surface-primary px-lawmake-lg pb-lawmake-md pt-lawmake-md">
-        <Pressable onPress={() => router.back()} hitSlop={12}>
-          <Text className="text-lawmake-footnote text-primary">뒤로</Text>
-        </Pressable>
-        <Text className="mt-lawmake-sm text-lawmake-title2 font-bold text-neutral-900">{detail.name}</Text>
+        <Text className="text-lawmake-title2 font-bold text-neutral-900">{detail.name}</Text>
 
         <View className="mt-lawmake-sm flex-row gap-lawmake-md">
           <View>

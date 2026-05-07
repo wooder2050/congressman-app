@@ -15,6 +15,7 @@ import { Card } from '@/components/ui/Card';
 import { Section } from '@/components/ui/Section';
 import { StatusBadge, type StatusTone } from '@/components/ui/StatusBadge';
 import { useLawmakeQuery } from '@/hooks/useLawmakeQuery';
+import { useAuth } from '@/lib/auth-context';
 import { formatDate } from '@/lib/format';
 import type { Bill } from '@/types';
 
@@ -29,6 +30,7 @@ export default function BillDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { session } = useAuth();
 
   const { data: bill, isLoading, error, refetch } = useLawmakeQuery(getBill, [id]);
 
@@ -40,9 +42,11 @@ export default function BillDetailScreen() {
 
   return (
     <View className="flex-1 bg-surface-secondary">
-      <Stack.Screen
-        options={{ headerRight: () => <BookmarkButton type="bill" id={id} /> }}
-      />
+      {session && (
+        <Stack.Screen
+          options={{ headerRight: () => <BookmarkButton type="bill" id={id} /> }}
+        />
+      )}
       <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom + 32 }}>
         {/* Title block */}
         <View className="bg-surface-primary px-lawmake-lg pb-lawmake-xl pt-lawmake-sm">

@@ -24,7 +24,7 @@ export function TopProposersSection({ proposers }: Props) {
   const router = useRouter();
   if (proposers.length === 0) return null;
 
-  const items = proposers.slice(0, 5);
+  const items = proposers.slice(0, 3);
 
   return (
     <View className="mt-lawmake-sm bg-surface-primary px-lawmake-lg pt-lawmake-lg">

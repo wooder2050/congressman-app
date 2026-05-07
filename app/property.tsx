@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { FlatList, Text, View } from 'react-native';
+import { FlatList, Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { getPropertyStats } from '@/api/property';
@@ -8,216 +8,208 @@ import { EmptyState } from '@/components/EmptyState';
 import { ErrorState } from '@/components/ErrorState';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { MemberPhoto } from '@/components/MemberPhoto';
-import { Badge } from '@/components/ui/Badge';
-import { Card, PressableCard } from '@/components/ui/Card';
-import { FilterChip } from '@/components/ui/FilterChip';
 import { useLawmakeQuery } from '@/hooks/useLawmakeQuery';
-import { formatAmount } from '@/lib/format';
-import type { PropertyMember, PropertyAsset } from '@/types';
+import { tapLight } from '@/lib/haptics';
+import {
+  buildProfiles,
+  formatPropertyAmount,
+  type MemberPropertyProfile,
+  type PropertyCategory,
+} from '@/lib/property-utils';
 
-type Category = 'multi-home' | 'expensive-home' | 'excessive-property';
-
-const CATEGORY_FILTERS: { label: string; value: Category }[] = [
+const CATEGORY_FILTERS: { label: string; value: PropertyCategory }[] = [
   { label: '다주택자', value: 'multi-home' },
   { label: '고가주택', value: 'expensive-home' },
-  { label: '부동산 과다보유', value: 'excessive-property' },
+  { label: '과다보유', value: 'excessive-property' },
 ];
 
-function groupMembersByCategory(
-  members: PropertyMember[],
-  assets: PropertyAsset[]
-) {
-  const memberMap = new Map(members.map((m) => [m.memberId, m]));
-  const memberAssets = new Map<string, PropertyAsset[]>();
-  for (const a of assets) {
-    if (!memberAssets.has(a.memberId)) memberAssets.set(a.memberId, []);
-    memberAssets.get(a.memberId)!.push(a);
-  }
+const SORT_DEFAULTS: Record<PropertyCategory, 'count' | 'max' | 'total' | 'name'> = {
+  'multi-home': 'count',
+  'expensive-home': 'max',
+  'excessive-property': 'total',
+  none: 'name',
+};
 
-  const multiHome: { member: PropertyMember; count: number; totalAmount: number }[] = [];
-  const expensiveHome: { member: PropertyMember; item: string; amount: number }[] = [];
-  const excessiveProperty: { member: PropertyMember; totalAmount: number }[] = [];
-
-  for (const [memberId, memberAssetList] of memberAssets) {
-    const member = memberMap.get(memberId);
-    if (!member) continue;
-
-    const ownAssets = memberAssetList.filter(
-      (a) => a.relation === '본인' || a.relation === '배우자'
-    );
-    const homeAssets = ownAssets.filter(
-      (a) => a.category === '건물' && !a.item.includes('임차') && !a.item.includes('분양')
-    );
-    if (homeAssets.length >= 2) {
-      multiHome.push({
-        member,
-        count: homeAssets.length,
-        totalAmount: homeAssets.reduce((s, a) => s + a.amount, 0),
-      });
+function sortProfiles(
+  profiles: MemberPropertyProfile[],
+  sort: 'count' | 'max' | 'total' | 'name',
+): MemberPropertyProfile[] {
+  return [...profiles].sort((a, b) => {
+    switch (sort) {
+      case 'count':
+        return (
+          b.housingCount - a.housingCount ||
+          b.housingTotalAmount - a.housingTotalAmount
+        );
+      case 'max':
+        return b.maxSingleHousingAmount - a.maxSingleHousingAmount;
+      case 'total':
+        return b.totalRealEstateAmount - a.totalRealEstateAmount;
+      case 'name':
+        return a.name.localeCompare(b.name, 'ko');
+      default:
+        return 0;
     }
-
-    for (const a of ownAssets) {
-      if (a.category === '건물' && a.amount >= 1500000000) {
-        expensiveHome.push({ member, item: a.item, amount: a.amount });
-      }
-    }
-
-    const totalProperty = ownAssets
-      .filter((a) => a.category === '건물' || a.category === '토지')
-      .reduce((s, a) => s + a.amount, 0);
-    if (totalProperty >= 3000000000) {
-      excessiveProperty.push({ member, totalAmount: totalProperty });
-    }
-  }
-
-  multiHome.sort((a, b) => b.count - a.count);
-  expensiveHome.sort((a, b) => b.amount - a.amount);
-  excessiveProperty.sort((a, b) => b.totalAmount - a.totalAmount);
-
-  return { multiHome, expensiveHome, excessiveProperty };
+  });
 }
 
 export default function PropertyScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const [category, setCategory] = useState<Category>('multi-home');
+  const [category, setCategory] = useState<PropertyCategory>('multi-home');
 
   const { data, isLoading, error, refetch } = useLawmakeQuery(getPropertyStats, []);
 
-  const grouped = useMemo(
-    () =>
-      data ? groupMembersByCategory(data.members, data.assets) : null,
-    [data]
+  const profiles = useMemo(
+    () => (data ? buildProfiles(data.members, data.assets) : []),
+    [data],
   );
+
+  // 카테고리별 인원수
+  const counts = useMemo(() => {
+    const c: Record<PropertyCategory, number> = {
+      'multi-home': 0,
+      'expensive-home': 0,
+      'excessive-property': 0,
+      none: 0,
+    };
+    for (const p of profiles) {
+      for (const cat of p.categories) c[cat]++;
+    }
+    return c;
+  }, [profiles]);
+
+  // 활성 카테고리에 속한 의원 정렬
+  const filtered = useMemo(() => {
+    const list = profiles.filter((p) => p.categories.includes(category));
+    return sortProfiles(list, SORT_DEFAULTS[category]);
+  }, [profiles, category]);
 
   if (isLoading) return <LoadingSpinner />;
   if (error) return <ErrorState onRetry={refetch} />;
-  if (!grouped) return <EmptyState title="데이터가 없습니다" />;
+  if (!data) return <EmptyState title="데이터가 없습니다" />;
 
-  const renderMultiHome = () => (
-    <FlatList
-      data={grouped.multiHome}
-      keyExtractor={(item) => item.member.memberId}
-      contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: insets.bottom + 16, gap: 8 }}
-      ListHeaderComponent={
-        <Text className="py-lawmake-sm text-lawmake-caption text-neutral-400">
-          본인/배우자 명의 주거용 건물 2채 이상 ({grouped.multiHome.length}명)
-        </Text>
-      }
-      renderItem={({ item }) => (
-        <PressableCard
-          className="flex-row items-center gap-lawmake-sm"
-          onPress={() => router.push(`/members/${item.member.memberId}`)}
-        >
-          <MemberPhoto uri={item.member.photoUrl} size={40} partyColor={item.member.partyColor} />
-          <View className="flex-1">
-            <Text className="text-lawmake-footnote font-semibold text-neutral-800">{item.member.name}</Text>
-            <Text className="text-lawmake-caption text-neutral-400">{item.member.district}</Text>
-          </View>
-          <View className="items-end">
-            <Badge label={`${item.count}채`} color="#DC2626" textColor="#FFFFFF" />
-            <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-400">{formatAmount(item.totalAmount)}원</Text>
-          </View>
-        </PressableCard>
-      )}
-    />
-  );
+  const renderItem = ({ item }: { item: MemberPropertyProfile }) => {
+    const onPress = () => {
+      tapLight();
+      router.push(`/members/${item.memberId}`);
+    };
 
-  const renderExpensiveHome = () => (
-    <FlatList
-      data={grouped.expensiveHome}
-      keyExtractor={(item, i) => `${item.member.memberId}-${i}`}
-      contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: insets.bottom + 16, gap: 8 }}
-      ListHeaderComponent={
-        <Text className="py-lawmake-sm text-lawmake-caption text-neutral-400">
-          단일 주택 신고가액 15억원 이상 ({grouped.expensiveHome.length}건)
-        </Text>
-      }
-      renderItem={({ item }) => (
-        <PressableCard
-          className="flex-row items-center gap-lawmake-sm"
-          onPress={() => router.push(`/members/${item.member.memberId}`)}
-        >
-          <MemberPhoto uri={item.member.photoUrl} size={40} partyColor={item.member.partyColor} />
-          <View className="flex-1">
-            <Text className="text-lawmake-footnote font-semibold text-neutral-800">{item.member.name}</Text>
-            <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-400" numberOfLines={1}>
-              {item.item}
+    return (
+      <Pressable
+        onPress={onPress}
+        className="flex-row items-center gap-lawmake-md border-b border-neutral-100 bg-surface-primary px-lawmake-lg py-lawmake-md active:bg-neutral-50"
+      >
+        <MemberPhoto uri={item.photoUrl} size={40} partyColor={item.partyColor} />
+        <View className="flex-1">
+          <View className="flex-row items-center gap-lawmake-sm">
+            <Text className="text-lawmake-body font-semibold text-neutral-900">
+              {item.name}
             </Text>
+            <Text className="text-lawmake-caption text-neutral-500">{item.party}</Text>
           </View>
-          <Text className="text-lawmake-footnote font-bold text-primary">{formatAmount(item.amount)}원</Text>
-        </PressableCard>
-      )}
-    />
-  );
+          <Text className="mt-lawmake-xs text-lawmake-footnote text-neutral-500" numberOfLines={1}>
+            {item.district}
+          </Text>
+        </View>
+        <View className="items-end">
+          {category === 'multi-home' && (
+            <>
+              <Text className="text-lawmake-headline font-bold text-error">
+                {item.housingCount}채
+              </Text>
+              <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-500">
+                {formatPropertyAmount(item.housingTotalAmount)}
+              </Text>
+            </>
+          )}
+          {category === 'expensive-home' && (
+            <Text className="text-lawmake-headline font-bold text-primary">
+              {formatPropertyAmount(item.maxSingleHousingAmount)}
+            </Text>
+          )}
+          {category === 'excessive-property' && (
+            <Text className="text-lawmake-headline font-bold text-primary">
+              {formatPropertyAmount(item.totalRealEstateAmount)}
+            </Text>
+          )}
+        </View>
+      </Pressable>
+    );
+  };
 
-  const renderExcessiveProperty = () => (
-    <FlatList
-      data={grouped.excessiveProperty}
-      keyExtractor={(item) => item.member.memberId}
-      contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: insets.bottom + 16, gap: 8 }}
-      ListHeaderComponent={
-        <Text className="py-lawmake-sm text-lawmake-caption text-neutral-400">
-          부동산(건물+토지) 총 30억원 이상 ({grouped.excessiveProperty.length}명)
-        </Text>
-      }
-      renderItem={({ item }) => (
-        <PressableCard
-          className="flex-row items-center gap-lawmake-sm"
-          onPress={() => router.push(`/members/${item.member.memberId}`)}
-        >
-          <MemberPhoto uri={item.member.photoUrl} size={40} partyColor={item.member.partyColor} />
-          <View className="flex-1">
-            <Text className="text-lawmake-footnote font-semibold text-neutral-800">{item.member.name}</Text>
-            <Text className="text-lawmake-caption text-neutral-400">{item.member.district}</Text>
-          </View>
-          <Text className="text-lawmake-footnote font-bold text-primary">{formatAmount(item.totalAmount)}원</Text>
-        </PressableCard>
-      )}
-    />
-  );
-
-  return (
-    <View className="flex-1 bg-surface-secondary">
-      {/* Summary */}
+  const ListHeader = (
+    <View>
+      {/* Disclaimer */}
       <View className="bg-surface-primary px-lawmake-lg pb-lawmake-sm pt-lawmake-sm">
         <Text className="text-lawmake-caption leading-4 text-neutral-400">
-          2024년 재산신고 공개자료 기반. 재산신고 가액은 공시가격 기준이며 시세와 다를 수 있습니다.
+          2024년 재산신고 공개자료 기반. 가액은 공시가격 기준이며 시세와 다를 수 있습니다.
         </Text>
       </View>
 
       {/* Summary Stats */}
       <View className="flex-row gap-lawmake-sm bg-surface-primary px-lawmake-lg pb-lawmake-md">
-        <Card className="flex-1 items-center py-lawmake-sm">
-          <Text className="text-lawmake-headline font-bold text-neutral-900">{grouped.multiHome.length}</Text>
-          <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-400">다주택자</Text>
-        </Card>
-        <Card className="flex-1 items-center py-lawmake-sm">
-          <Text className="text-lawmake-headline font-bold text-neutral-900">{grouped.expensiveHome.length}</Text>
-          <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-400">고가주택</Text>
-        </Card>
-        <Card className="flex-1 items-center py-lawmake-sm">
-          <Text className="text-lawmake-headline font-bold text-neutral-900">{grouped.excessiveProperty.length}</Text>
-          <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-400">과다보유</Text>
-        </Card>
+        {(['multi-home', 'expensive-home', 'excessive-property'] as PropertyCategory[]).map((c) => {
+          const label =
+            c === 'multi-home'
+              ? '다주택자'
+              : c === 'expensive-home'
+              ? '고가주택'
+              : '과다보유';
+          const active = category === c;
+          return (
+            <Pressable
+              key={c}
+              onPress={() => {
+                tapLight();
+                setCategory(c);
+              }}
+              className={`flex-1 items-center rounded-lawmake-lg border py-lawmake-md active:opacity-70 ${
+                active ? 'border-primary bg-primary-light' : 'border-neutral-100 bg-surface-primary'
+              }`}
+            >
+              <Text
+                className={`text-lawmake-title2 font-bold ${
+                  active ? 'text-primary' : 'text-neutral-900'
+                }`}
+              >
+                {counts[c]}
+              </Text>
+              <Text
+                className={`mt-lawmake-xs text-lawmake-caption ${
+                  active ? 'text-primary' : 'text-neutral-500'
+                }`}
+              >
+                {label}
+              </Text>
+            </Pressable>
+          );
+        })}
       </View>
 
-      {/* Category Filter */}
-      <View className="flex-row gap-lawmake-sm px-lawmake-lg py-lawmake-sm">
-        {CATEGORY_FILTERS.map((f) => (
-          <FilterChip
-            key={f.value}
-            label={f.label}
-            selected={category === f.value}
-            onPress={() => setCategory(f.value)}
-          />
-        ))}
+      {/* List subtitle */}
+      <View className="bg-surface-secondary px-lawmake-lg py-lawmake-sm">
+        <Text className="text-lawmake-caption text-neutral-500">
+          {category === 'multi-home' && '본인/배우자 명의 주거용 건물 2채 이상'}
+          {category === 'expensive-home' && '단일 주택 신고가액 15억원 이상'}
+          {category === 'excessive-property' && '부동산(건물+토지) 총 30억원 이상'}
+        </Text>
       </View>
+    </View>
+  );
 
-      {/* List */}
-      {category === 'multi-home' && renderMultiHome()}
-      {category === 'expensive-home' && renderExpensiveHome()}
-      {category === 'excessive-property' && renderExcessiveProperty()}
+  return (
+    <View className="flex-1 bg-surface-secondary">
+      <FlatList
+        data={filtered}
+        keyExtractor={(item) => item.memberId}
+        renderItem={renderItem}
+        ListHeaderComponent={ListHeader}
+        ListEmptyComponent={
+          <EmptyState title="해당 조건의 의원이 없습니다" />
+        }
+        contentContainerStyle={{ paddingBottom: insets.bottom + 16 }}
+      />
     </View>
   );
 }

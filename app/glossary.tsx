@@ -142,10 +142,7 @@ export default function GlossaryScreen() {
   return (
     <View className="flex-1 bg-surface-secondary">
       <View className="bg-surface-primary px-lawmake-lg pb-lawmake-sm pt-lawmake-md">
-        <Pressable onPress={() => router.back()} hitSlop={12}>
-          <Text className="text-lawmake-footnote text-primary">뒤로</Text>
-        </Pressable>
-        <Text className="mt-lawmake-sm text-lawmake-title2 font-bold text-neutral-900">용어 사전</Text>
+        <Text className="text-lawmake-title2 font-bold text-neutral-900">용어 사전</Text>
       </View>
 
       <View className="bg-surface-primary px-lawmake-lg pb-lawmake-sm">

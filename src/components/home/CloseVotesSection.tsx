@@ -28,7 +28,7 @@ export function CloseVotesSection({ votes }: Props) {
   const router = useRouter();
   if (!votes || votes.length === 0) return null;
 
-  const items = votes.slice(0, 5);
+  const items = votes.slice(0, 3);
 
   return (
     <View className="mt-lawmake-sm bg-surface-primary px-lawmake-lg pt-lawmake-lg">
