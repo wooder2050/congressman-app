@@ -26,17 +26,27 @@ function WeeklyCard({ article }: { article: WeeklyArticleSummary }) {
       className="mx-lawmake-lg mb-lawmake-sm"
       onPress={() => router.push(`/weekly/${article.id}`)}
     >
-      <View className="flex-row items-center justify-between">
-        <Text className="text-lawmake-headline font-bold text-neutral-900">{article.title}</Text>
-        <Text className="text-lawmake-caption text-neutral-400">{article.period}</Text>
+      <View className="flex-row items-baseline gap-lawmake-sm">
+        <Text
+          className="flex-1 text-lawmake-title3 font-bold text-neutral-900"
+          numberOfLines={1}
+        >
+          {article.title}
+        </Text>
+        <Text className="text-lawmake-caption font-medium text-neutral-400" numberOfLines={1}>
+          {article.period}
+        </Text>
       </View>
 
-      <Text className="mt-lawmake-sm text-lawmake-footnote leading-5 text-neutral-600" numberOfLines={2}>
+      <Text
+        className="mt-lawmake-sm text-lawmake-footnote text-neutral-600"
+        numberOfLines={2}
+      >
         {article.summary}
       </Text>
 
       {article.stats && (
-        <View className="mt-lawmake-sm flex-row gap-lawmake-sm">
+        <View className="mt-lawmake-sm flex-row flex-wrap gap-x-lawmake-sm gap-y-lawmake-xs">
           {article.stats.billsPassed != null && (
             <View className="flex-row items-center gap-lawmake-xs">
               <FileText size={12} color="#2563EB" />
@@ -65,17 +75,19 @@ function WeeklyCard({ article }: { article: WeeklyArticleSummary }) {
       )}
 
       {article.featuredBills.length > 0 && (
-        <View className="mt-lawmake-sm gap-lawmake-xs">
+        <View className="mt-lawmake-md gap-lawmake-xs">
           {article.featuredBills.slice(0, 3).map((bill, i) => {
             const status = BILL_STATUS_COLORS[bill.status];
             return (
-              <View key={i} className="flex-row items-center gap-lawmake-sm">
-                <Badge
-                  label={status.label}
-                  color={status.color}
-                  textColor={status.textColor}
-                />
-                <Text className="flex-1 text-lawmake-caption text-neutral-700" numberOfLines={1}>
+              <View key={i} className="flex-row items-start gap-lawmake-sm">
+                <View className="shrink-0 pt-0.5">
+                  <Badge
+                    label={status.label}
+                    color={status.color}
+                    textColor={status.textColor}
+                  />
+                </View>
+                <Text className="flex-1 text-lawmake-footnote text-neutral-700" numberOfLines={1}>
                   {bill.title}
                 </Text>
               </View>
@@ -85,11 +97,16 @@ function WeeklyCard({ article }: { article: WeeklyArticleSummary }) {
       )}
 
       {article.tags.length > 0 && (
-        <View className="mt-lawmake-sm flex-row flex-wrap gap-lawmake-xs">
+        <View className="mt-lawmake-md flex-row flex-wrap gap-lawmake-xs">
           {article.tags.slice(0, 4).map((tag) => (
-            <Text key={tag} className="text-lawmake-caption text-primary">
-              #{tag}
-            </Text>
+            <View
+              key={tag}
+              className="rounded-full bg-neutral-100 px-lawmake-sm py-0.5"
+            >
+              <Text className="text-lawmake-caption text-neutral-600">
+                #{tag}
+              </Text>
+            </View>
           ))}
         </View>
       )}

@@ -12,15 +12,15 @@ export default function TabLayout() {
         tabBarLabelStyle: {
           fontFamily: 'Inter_500Medium',
           fontSize: 11,
-          marginTop: -2,
+          marginTop: 2,
         },
         tabBarStyle: {
           backgroundColor: '#FFFFFF',
           borderTopWidth: 0.5,
           borderTopColor: '#E5E5E5',
-          height: Platform.OS === 'ios' ? 88 : 64,
-          paddingBottom: Platform.OS === 'ios' ? 28 : 8,
-          paddingTop: 8,
+          height: Platform.OS === 'ios' ? 92 : 68,
+          paddingBottom: Platform.OS === 'ios' ? 28 : 10,
+          paddingTop: 10,
         },
         tabBarIconStyle: {
           marginBottom: 0,
@@ -30,8 +30,8 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: '홈',
-          tabBarIcon: ({ color }) => <Home size={22} color={color} strokeWidth={2} />,
+          title: '',
+          tabBarIcon: ({ color }) => <Home size={24} color={color} strokeWidth={2} />,
         }}
       />
       <Tabs.Screen

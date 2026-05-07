@@ -2,9 +2,11 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
   addBillBookmark,
+  addBreakingNewsBookmark,
   addMemberBookmark,
   getUserPreferences,
   removeBillBookmark,
+  removeBreakingNewsBookmark,
   removeMemberBookmark,
 } from '@/api/user-preferences';
 import { useAuth } from '@/lib/auth-context';
@@ -48,6 +50,24 @@ export function useToggleMemberBookmark(memberId: string) {
   const mutation = useMutation({
     mutationFn: async () =>
       isBookmarked ? removeMemberBookmark(memberId) : addMemberBookmark(memberId),
+    onSuccess: (data) => {
+      queryClient.setQueryData<UserPreference | null>(QUERY_KEY, data);
+    },
+  });
+
+  return { isBookmarked, toggle: mutation.mutate, isPending: mutation.isPending };
+}
+
+export function useToggleBreakingNewsBookmark(newsId: string) {
+  const queryClient = useQueryClient();
+  const { data: prefs } = useUserPreferences();
+  const isBookmarked = prefs?.bookmarkedBreakingNews?.includes(newsId) ?? false;
+
+  const mutation = useMutation({
+    mutationFn: async () =>
+      isBookmarked
+        ? removeBreakingNewsBookmark(newsId)
+        : addBreakingNewsBookmark(newsId),
     onSuccess: (data) => {
       queryClient.setQueryData<UserPreference | null>(QUERY_KEY, data);
     },

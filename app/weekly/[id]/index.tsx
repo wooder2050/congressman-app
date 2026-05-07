@@ -168,7 +168,12 @@ function HighlightCard({
     <Wrapper className="mb-lawmake-sm" onPress={onPress}>
       <View className="flex-row items-center gap-lawmake-sm">
         <Text className="text-lawmake-headline">{cat.emoji}</Text>
-        <Text className="text-lawmake-footnote font-bold text-neutral-900">{highlight.title}</Text>
+        <Text
+          className="flex-1 text-lawmake-footnote font-bold text-neutral-900"
+          numberOfLines={2}
+        >
+          {highlight.title}
+        </Text>
         <Badge label={cat.label} color="#E5E5E5" textColor="#595959" />
       </View>
       <Text className="mt-lawmake-xs text-lawmake-footnote leading-5 text-neutral-600">

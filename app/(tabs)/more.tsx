@@ -93,12 +93,26 @@ export default function MoreScreen() {
             </Pressable>
           </View>
         ) : (
-          <MenuRow
-            icon={LogIn}
-            label="로그인"
-            description="즐겨찾기 · 내 지역구 활동 보기"
-            onPress={() => router.push('/sign-in' as never)}
-          />
+          <Pressable
+            onPress={() => {
+              tapLight();
+              router.push('/sign-in' as never);
+            }}
+            className="flex-row items-center gap-lawmake-md bg-primary px-lawmake-lg py-lawmake-md active:bg-primary-dark"
+          >
+            <View className="h-10 w-10 items-center justify-center rounded-full bg-white/20">
+              <LogIn size={20} color="#FFFFFF" strokeWidth={2} />
+            </View>
+            <View className="flex-1">
+              <Text className="text-lawmake-body font-semibold text-white">
+                로그인
+              </Text>
+              <Text className="mt-lawmake-xs text-lawmake-footnote text-white/80">
+                즐겨찾기 · 내 지역구 활동 보기
+              </Text>
+            </View>
+            <ChevronRight size={18} color="#FFFFFF" strokeWidth={2} />
+          </Pressable>
         )}
       </View>
 
@@ -136,7 +150,7 @@ export default function MoreScreen() {
       </View>
 
       <View className="mt-lawmake-xxxl items-center">
-        <Text className="text-lawmake-caption text-neutral-400">lawmake v1.3.0</Text>
+        <Text className="text-lawmake-caption text-neutral-400">lawmake v1.4.0</Text>
       </View>
     </ScrollView>
   );

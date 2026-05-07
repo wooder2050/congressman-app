@@ -708,6 +708,7 @@ export interface UserPreference {
   interests: string[];
   bookmarkedBills: string[];
   bookmarkedMembers: string[];
+  bookmarkedBreakingNews: string[];
   createdAt: string;
   updatedAt: string;
 }

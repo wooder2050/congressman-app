@@ -1,9 +1,9 @@
 import { useRouter } from 'expo-router';
-import { Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
-import { PressableCard } from '@/components/ui/Card';
 import { Section } from '@/components/ui/Section';
 import { StatusBadge, type StatusTone } from '@/components/ui/StatusBadge';
+import { tapLight } from '@/lib/haptics';
 import type { Vote } from '@/types';
 
 const VOTE_RESULT_TONE: Record<string, { label: string; tone: StatusTone }> = {
@@ -28,17 +28,29 @@ export function CloseVotesSection({ votes }: Props) {
   const router = useRouter();
   if (!votes || votes.length === 0) return null;
 
+  const items = votes.slice(0, 5);
+
   return (
-    <View className="mt-lawmake-xl px-lawmake-lg">
+    <View className="mt-lawmake-sm bg-surface-primary px-lawmake-lg pt-lawmake-lg">
       <Section title="접전 표결">
-        <View className="gap-lawmake-sm">
-          {votes.slice(0, 5).map((vote) => {
+        <View>
+          {items.map((vote, i) => {
             const result = VOTE_RESULT_TONE[vote.resultCode] ?? VOTE_RESULT_TONE.other;
             const total = vote.yesCount + vote.noCount + vote.abstainCount;
             const yesPct = total > 0 ? (vote.yesCount / total) * 100 : 0;
             const noPct = total > 0 ? (vote.noCount / total) * 100 : 0;
+            const isLast = i === items.length - 1;
             return (
-              <PressableCard key={vote.id} onPress={() => router.push(`/votes/${vote.id}`)}>
+              <Pressable
+                key={vote.id}
+                onPress={() => {
+                  tapLight();
+                  router.push(`/votes/${vote.id}`);
+                }}
+                className={`py-lawmake-md active:bg-neutral-50 ${
+                  isLast ? '' : 'border-b border-neutral-100'
+                }`}
+              >
                 <View className="flex-row items-start justify-between gap-lawmake-sm">
                   <Text
                     className="flex-1 text-lawmake-callout font-semibold text-neutral-900"
@@ -49,7 +61,7 @@ export function CloseVotesSection({ votes }: Props) {
                   <StatusBadge label={result.label} tone={result.tone} />
                 </View>
                 {/* Vote bar */}
-                <View className="mt-lawmake-md h-2 flex-row overflow-hidden rounded-full bg-neutral-100">
+                <View className="mt-lawmake-sm h-2 flex-row overflow-hidden rounded-full bg-neutral-100">
                   <View className="h-full bg-success" style={{ width: `${yesPct}%` }} />
                   <View className="h-full bg-error" style={{ width: `${noPct}%` }} />
                 </View>
@@ -64,7 +76,7 @@ export function CloseVotesSection({ votes }: Props) {
                     기권 {vote.abstainCount}
                   </Text>
                 </View>
-              </PressableCard>
+              </Pressable>
             );
           })}
         </View>

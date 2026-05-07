@@ -3,8 +3,8 @@ import { Pressable, Text, View } from 'react-native';
 
 import { MemberPhoto } from '@/components/MemberPhoto';
 import { PartyBadge } from '@/components/PartyBadge';
-import { Card } from '@/components/ui/Card';
 import { Section } from '@/components/ui/Section';
+import { tapLight } from '@/lib/haptics';
 import type { HomeStats } from '@/types';
 
 interface Props {
@@ -24,18 +24,23 @@ export function TopProposersSection({ proposers }: Props) {
   const router = useRouter();
   if (proposers.length === 0) return null;
 
+  const items = proposers.slice(0, 5);
+
   return (
-    <View className="mt-lawmake-xl px-lawmake-lg">
+    <View className="mt-lawmake-sm bg-surface-primary px-lawmake-lg pt-lawmake-lg">
       <Section title="최다 발의 의원">
-        <Card className="p-0">
-          {proposers.slice(0, 5).map((p, i) => {
-            const isLast = i === Math.min(4, proposers.length - 1);
+        <View>
+          {items.map((p, i) => {
+            const isLast = i === items.length - 1;
             return (
               <Pressable
                 key={p.memberId}
-                onPress={() => router.push(`/members/${p.memberId}`)}
-                className={`flex-row items-center gap-lawmake-md px-lawmake-lg py-lawmake-md active:bg-neutral-50 ${
-                  !isLast ? 'border-b border-neutral-100' : ''
+                onPress={() => {
+                  tapLight();
+                  router.push(`/members/${p.memberId}`);
+                }}
+                className={`flex-row items-center gap-lawmake-md py-lawmake-md active:bg-neutral-50 ${
+                  isLast ? '' : 'border-b border-neutral-100'
                 }`}
               >
                 <Text
@@ -58,7 +63,7 @@ export function TopProposersSection({ proposers }: Props) {
               </Pressable>
             );
           })}
-        </Card>
+        </View>
       </Section>
     </View>
   );

@@ -7,32 +7,49 @@ import {
   Inter_700Bold,
   useFonts,
 } from '@expo-google-fonts/inter';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { OfflineBanner } from '@/components/OfflineBanner';
+import { hasCompletedOnboarding } from '@/lib/onboarding';
 import { AuthProvider } from '@/lib/auth-context';
 import { QueryProvider } from '@/lib/providers';
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const router = useRouter();
   const [fontsLoaded] = useFonts({
     Inter_400Regular,
     Inter_500Medium,
     Inter_600SemiBold,
     Inter_700Bold,
   });
+  const [onboardingChecked, setOnboardingChecked] = useState(false);
 
   useEffect(() => {
-    if (fontsLoaded) {
+    let mounted = true;
+    hasCompletedOnboarding().then((done) => {
+      if (!mounted) return;
+      if (!done) {
+        router.replace('/onboarding');
+      }
+      setOnboardingChecked(true);
+    });
+    return () => {
+      mounted = false;
+    };
+  }, [router]);
+
+  useEffect(() => {
+    if (fontsLoaded && onboardingChecked) {
       SplashScreen.hideAsync();
     }
-  }, [fontsLoaded]);
+  }, [fontsLoaded, onboardingChecked]);
 
-  if (!fontsLoaded) {
+  if (!fontsLoaded || !onboardingChecked) {
     return null;
   }
 
@@ -56,6 +73,7 @@ export default function RootLayout() {
         }}
       >
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="onboarding" options={{ headerShown: false }} />
         <Stack.Screen
           name="sign-in"
           options={{ headerShown: true, title: '로그인' }}
@@ -156,6 +174,14 @@ export default function RootLayout() {
         <Stack.Screen
           name="about"
           options={{ headerShown: true, title: '앱 정보' }}
+        />
+        <Stack.Screen
+          name="breaking-news"
+          options={{ headerShown: true, title: '속보' }}
+        />
+        <Stack.Screen
+          name="search"
+          options={{ headerShown: true, title: '검색' }}
         />
         <Stack.Screen
           name="weekly/index"
