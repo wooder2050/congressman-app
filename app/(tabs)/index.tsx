@@ -57,7 +57,7 @@ export default function HomeScreen() {
   return (
     <View className="flex-1" style={{ paddingTop: insets.top }}>
       <ScrollView
-        className="flex-1 bg-neutral-50"
+        className="flex-1 bg-neutral-100"
         contentContainerStyle={{ paddingBottom: insets.bottom + 16 }}
         refreshControl={
           <RefreshControl refreshing={isRefetching} onRefresh={refetch} tintColor="#2563EB" />
@@ -65,7 +65,7 @@ export default function HomeScreen() {
       >
         <HomeHeader />
 
-        <View className="mt-4 px-5">
+        <View className="mt-lawmake-md px-lawmake-lg">
           <LocalElectionBanner />
         </View>
 

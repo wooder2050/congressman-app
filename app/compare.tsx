@@ -52,10 +52,7 @@ export default function CompareScreen() {
       contentContainerStyle={{ paddingBottom: insets.bottom + 32 }}
     >
       <View className="bg-surface-primary px-lawmake-lg pb-lawmake-md pt-lawmake-md">
-        <Pressable onPress={() => router.back()} hitSlop={12}>
-          <Text className="text-lawmake-footnote text-primary">뒤로</Text>
-        </Pressable>
-        <Text className="mt-lawmake-sm text-lawmake-title2 font-bold text-neutral-900">의원 비교</Text>
+        <Text className="text-lawmake-title2 font-bold text-neutral-900">의원 비교</Text>
         <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-400">
           최대 {MAX_COMPARE}명까지 비교할 수 있습니다
         </Text>

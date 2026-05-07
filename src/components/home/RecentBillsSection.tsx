@@ -1,10 +1,10 @@
 import { useRouter } from 'expo-router';
-import { Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
-import { PressableCard } from '@/components/ui/Card';
 import { Section } from '@/components/ui/Section';
 import { StatusBadge, type StatusTone } from '@/components/ui/StatusBadge';
 import { formatDate } from '@/lib/format';
+import { tapLight } from '@/lib/haptics';
 import type { Bill } from '@/types';
 
 const BILL_STATUS_TONE: Record<Bill['status'], { label: string; tone: StatusTone }> = {
@@ -30,24 +30,38 @@ export function RecentBillsSection({ bills }: Props) {
   const router = useRouter();
   if (bills.length === 0) return null;
 
+  const items = bills.slice(0, 3);
+
   return (
-    <View className="mt-lawmake-xl px-lawmake-lg">
+    <View className="mt-lawmake-sm bg-surface-primary px-lawmake-lg pt-lawmake-lg">
       <Section title="최근 발의 법안" onMore={() => router.push('/(tabs)/bills')}>
-        <View className="gap-lawmake-sm">
-          {bills.slice(0, 5).map((bill) => {
+        <View>
+          {items.map((bill, i) => {
             const status = BILL_STATUS_TONE[bill.status] ?? BILL_STATUS_TONE.pending;
+            const isLast = i === items.length - 1;
             return (
-              <PressableCard key={bill.id} onPress={() => router.push(`/bills/${bill.id}`)}>
+              <Pressable
+                key={bill.id}
+                onPress={() => {
+                  tapLight();
+                  router.push(`/bills/${bill.id}`);
+                }}
+                className={`py-lawmake-md active:bg-neutral-50 ${
+                  isLast ? '' : 'border-b border-neutral-100'
+                }`}
+              >
                 <View className="flex-row items-start justify-between gap-lawmake-sm">
                   <Text
-                    className="flex-1 text-lawmake-callout font-semibold text-neutral-900"
+                    className="flex-1 text-lawmake-callout font-semibold leading-snug text-neutral-900"
                     numberOfLines={2}
                   >
                     {bill.title}
                   </Text>
-                  <StatusBadge label={status.label} tone={status.tone} />
+                  <View className="shrink-0 pt-0.5">
+                    <StatusBadge label={status.label} tone={status.tone} />
+                  </View>
                 </View>
-                <Text className="mt-lawmake-xs text-lawmake-footnote text-neutral-500">
+                <Text className="mt-lawmake-sm text-lawmake-footnote text-neutral-500">
                   {bill.proposerName} · {formatDate(bill.proposedDate)}
                 </Text>
                 {bill.simpleSummary && (
@@ -58,7 +72,7 @@ export function RecentBillsSection({ bills }: Props) {
                     {bill.simpleSummary}
                   </Text>
                 )}
-              </PressableCard>
+              </Pressable>
             );
           })}
         </View>

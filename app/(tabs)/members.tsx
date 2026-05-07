@@ -74,9 +74,12 @@ export default function MembersScreen() {
         }}
       >
         <View
-          className="h-12 w-12 overflow-hidden rounded-full bg-neutral-100"
+          className="h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-neutral-100"
           style={{ borderWidth: 2, borderColor: item.term.party.color }}
         >
+          <Text className="absolute text-lawmake-footnote font-semibold text-neutral-400">
+            {item.name.charAt(0)}
+          </Text>
           <Image
             source={{ uri: item.photoUrl }}
             style={{ width: 44, height: 44 }}
@@ -126,7 +129,8 @@ export default function MembersScreen() {
           showsHorizontalScrollIndicator={false}
           keyExtractor={(item) => item.id}
           contentContainerStyle={{
-            paddingHorizontal: 16,
+            paddingLeft: 16,
+            paddingRight: 24,
             gap: 8,
           }}
           renderItem={({ item }) => (

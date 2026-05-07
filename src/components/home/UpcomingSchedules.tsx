@@ -25,7 +25,7 @@ export function UpcomingSchedulesSection({ schedules }: Props) {
   if (!schedules || schedules.length === 0) return null;
 
   return (
-    <View className="mt-lawmake-xl px-lawmake-lg">
+    <View className="mt-lawmake-md px-lawmake-lg">
       <Section title="다가오는 일정" onMore={() => router.push('/schedule')}>
         <View className="gap-lawmake-sm">
           {schedules.slice(0, 3).map((s) => (

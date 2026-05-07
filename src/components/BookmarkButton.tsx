@@ -1,33 +1,35 @@
-import { useRouter } from 'expo-router';
 import { Bookmark, BookmarkCheck } from 'lucide-react-native';
-import { Alert, Pressable, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
-import { useToggleBillBookmark, useToggleMemberBookmark } from '@/hooks/useBookmarks';
+import {
+  useToggleBillBookmark,
+  useToggleBreakingNewsBookmark,
+  useToggleMemberBookmark,
+} from '@/hooks/useBookmarks';
 import { useAuth } from '@/lib/auth-context';
 
 interface Props {
-  type: 'bill' | 'member';
+  type: 'bill' | 'member' | 'breaking-news';
   id: string;
   size?: number;
 }
 
 export function BookmarkButton({ type, id, size = 22 }: Props) {
-  const router = useRouter();
   const { session } = useAuth();
 
-  // hooks는 항상 호출되어야 하므로 분기 안에서 호출하지 않고 둘 다 호출
+  // hooks는 항상 호출되어야 하므로 분기 안에서 호출하지 않고 모두 호출
   const billState = useToggleBillBookmark(type === 'bill' ? id : '');
   const memberState = useToggleMemberBookmark(type === 'member' ? id : '');
-  const state = type === 'bill' ? billState : memberState;
+  const breakingNewsState = useToggleBreakingNewsBookmark(
+    type === 'breaking-news' ? id : '',
+  );
+  const state =
+    type === 'bill' ? billState : type === 'member' ? memberState : breakingNewsState;
+
+  // 비로그인 시 버튼 자체를 보여주지 않음 (유저 결정)
+  if (!session) return null;
 
   const handlePress = () => {
-    if (!session) {
-      Alert.alert('로그인이 필요합니다', '즐겨찾기 기능은 로그인 후 사용할 수 있습니다.', [
-        { text: '취소', style: 'cancel' },
-        { text: '로그인', onPress: () => router.push('/sign-in' as never) },
-      ]);
-      return;
-    }
     state.toggle();
   };
 

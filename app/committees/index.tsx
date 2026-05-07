@@ -29,10 +29,7 @@ export default function CommitteesScreen() {
       contentContainerStyle={{ paddingBottom: insets.bottom + 32 }}
     >
       <View className="bg-surface-primary px-lawmake-lg pb-lawmake-md pt-lawmake-md">
-        <Pressable onPress={() => router.back()} hitSlop={12}>
-          <Text className="text-lawmake-footnote text-primary">뒤로</Text>
-        </Pressable>
-        <Text className="mt-lawmake-sm text-lawmake-title2 font-bold text-neutral-900">상임위원회</Text>
+        <Text className="text-lawmake-title2 font-bold text-neutral-900">상임위원회</Text>
         <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-400">
           제22대 국회 {data?.length ?? 0}개 위원회
         </Text>

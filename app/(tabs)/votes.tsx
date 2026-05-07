@@ -88,19 +88,33 @@ export default function VotesScreen() {
       const noPercent = total > 0 ? (item.noCount / total) * 100 : 0;
       const abstainPercent = total > 0 ? (item.abstainCount / total) * 100 : 0;
 
+      // billName 끝의 (위원장명) 패턴 분리
+      const proposerMatch = item.billName.match(/^(.*?)\s*\(([^()]+위원장)\)\s*$/);
+      const titleOnly = proposerMatch ? proposerMatch[1].trim() : item.billName;
+      const proposerLabel = proposerMatch ? proposerMatch[2] : null;
+
       return (
         <PressableCard
           className="mx-lawmake-lg mb-lawmake-sm"
           onPress={() => router.push(`/votes/${item.id}`)}
         >
           <View className="flex-row items-start justify-between gap-lawmake-sm">
-            <Text
-              className="flex-1 text-lawmake-callout font-semibold text-neutral-900"
-              numberOfLines={2}
-            >
-              {item.billName}
-            </Text>
-            <StatusBadge label={result.label} tone={result.tone} />
+            <View className="flex-1">
+              <Text
+                className="text-lawmake-callout font-semibold leading-snug text-neutral-900"
+                numberOfLines={2}
+              >
+                {titleOnly}
+              </Text>
+              {proposerLabel && (
+                <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-500">
+                  {proposerLabel}
+                </Text>
+              )}
+            </View>
+            <View className="shrink-0 pt-0.5">
+              <StatusBadge label={result.label} tone={result.tone} />
+            </View>
           </View>
 
           {/* Stacked Vote Bar — slimmer + percentage hint */}
@@ -176,7 +190,8 @@ export default function VotesScreen() {
           showsHorizontalScrollIndicator={false}
           keyExtractor={(item) => item.id}
           contentContainerStyle={{
-            paddingHorizontal: 16,
+            paddingLeft: 16,
+            paddingRight: 24,
             gap: 8,
           }}
           renderItem={({ item }) => (

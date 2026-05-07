@@ -2,9 +2,9 @@ import { useRouter } from 'expo-router';
 import { Pressable, Text, View } from 'react-native';
 
 import { MemberPhoto } from '@/components/MemberPhoto';
-import { Card } from '@/components/ui/Card';
 import { Section } from '@/components/ui/Section';
 import { formatPercent } from '@/lib/format';
+import { tapLight } from '@/lib/haptics';
 import type { AttendanceRanking as AttendanceRankingType } from '@/types';
 
 interface Props {
@@ -22,21 +22,26 @@ export function AttendanceRankingSection({ data }: Props) {
   const router = useRouter();
   if (!data) return null;
 
+  const onPress = (memberId: string) => {
+    tapLight();
+    router.push(`/members/${memberId}`);
+  };
+
   return (
-    <View className="mt-lawmake-xl px-lawmake-lg">
+    <View className="mt-lawmake-sm bg-surface-primary px-lawmake-lg pt-lawmake-lg">
       <Section title="출석률 랭킹">
-        <View className="gap-lawmake-md">
-          <RankCard
-            label="출석률 TOP 5"
+        <View>
+          <RankGroup
+            label="출석률 TOP 3"
             labelTone="success"
-            members={data.top.slice(0, 5)}
-            onPress={(memberId) => router.push(`/members/${memberId}`)}
+            members={data.top.slice(0, 3)}
+            onPress={onPress}
           />
-          <RankCard
-            label="출석률 하위 5"
+          <RankGroup
+            label="출석률 하위 3"
             labelTone="error"
-            members={data.bottom.slice(0, 5)}
-            onPress={(memberId) => router.push(`/members/${memberId}`)}
+            members={data.bottom.slice(0, 3)}
+            onPress={onPress}
           />
         </View>
       </Section>
@@ -44,19 +49,19 @@ export function AttendanceRankingSection({ data }: Props) {
   );
 }
 
-interface RankCardProps {
+interface RankGroupProps {
   label: string;
   labelTone: 'success' | 'error';
   members: AttendanceRankingType['top'];
   onPress: (memberId: string) => void;
 }
 
-function RankCard({ label, labelTone, members, onPress }: RankCardProps) {
+function RankGroup({ label, labelTone, members, onPress }: RankGroupProps) {
   const labelClass = labelTone === 'success' ? 'text-success' : 'text-error';
 
   return (
-    <Card className="p-0">
-      <Text className={`px-lawmake-lg pb-lawmake-sm pt-lawmake-md text-lawmake-subhead font-semibold ${labelClass}`}>
+    <View>
+      <Text className={`pb-lawmake-sm pt-lawmake-md text-lawmake-subhead font-semibold ${labelClass}`}>
         {label}
       </Text>
       {members.map((m, i) => {
@@ -65,8 +70,8 @@ function RankCard({ label, labelTone, members, onPress }: RankCardProps) {
           <Pressable
             key={m.memberId}
             onPress={() => onPress(m.memberId)}
-            className={`flex-row items-center gap-lawmake-md px-lawmake-lg py-lawmake-md active:bg-neutral-50 ${
-              !isLast ? 'border-b border-neutral-100' : ''
+            className={`flex-row items-center gap-lawmake-md py-lawmake-md active:bg-neutral-50 ${
+              isLast ? '' : 'border-b border-neutral-100'
             }`}
           >
             <Text
@@ -86,6 +91,6 @@ function RankCard({ label, labelTone, members, onPress }: RankCardProps) {
           </Pressable>
         );
       })}
-    </Card>
+    </View>
   );
 }

@@ -2,9 +2,9 @@ import { useRouter } from 'expo-router';
 import { Pressable, Text, View } from 'react-native';
 
 import { MemberPhoto } from '@/components/MemberPhoto';
-import { Card, PressableCard } from '@/components/ui/Card';
 import { Section } from '@/components/ui/Section';
 import { StatusBadge } from '@/components/ui/StatusBadge';
+import { tapLight } from '@/lib/haptics';
 import type { PropertyStatsResponse } from '@/types';
 
 interface Props {
@@ -68,27 +68,32 @@ export function PropertyHighlight({ data }: Props) {
   }
   topMultiHome.sort((a, b) => b.count - a.count);
 
+  const topItems = topMultiHome.slice(0, 3);
+
   return (
-    <View className="mt-lawmake-xl px-lawmake-lg">
+    <View className="mt-lawmake-sm bg-surface-primary px-lawmake-lg pt-lawmake-lg">
       <Section title="부동산 보유 현황" onMore={() => router.push('/property')}>
         <View className="flex-row gap-lawmake-md">
-          <StatCard label="다주택자" value={multiHomeCount} colorClass="text-error" />
-          <StatCard label="고가주택" value={expensiveCount} colorClass="text-warning-dark" />
-          <StatCard label="과다보유" value={excessiveCount} colorClass="text-info-dark" />
+          <StatTile label="다주택자" value={multiHomeCount} colorClass="text-error" />
+          <StatTile label="고가주택" value={expensiveCount} colorClass="text-warning-dark" />
+          <StatTile label="과다보유" value={excessiveCount} colorClass="text-info-dark" />
         </View>
-        {topMultiHome.length > 0 && (
-          <Card className="mt-lawmake-md p-0">
-            <Text className="px-lawmake-lg pb-lawmake-sm pt-lawmake-md text-lawmake-subhead font-semibold text-error">
+        {topItems.length > 0 && (
+          <View className="mt-lawmake-md">
+            <Text className="pb-lawmake-sm pt-lawmake-md text-lawmake-subhead font-semibold text-error">
               다주택 TOP 3
             </Text>
-            {topMultiHome.slice(0, 3).map((m, i) => {
-              const isLast = i === Math.min(2, topMultiHome.length - 1);
+            {topItems.map((m, i) => {
+              const isLast = i === topItems.length - 1;
               return (
                 <Pressable
                   key={m.memberId}
-                  onPress={() => router.push(`/members/${m.memberId}`)}
-                  className={`flex-row items-center gap-lawmake-md px-lawmake-lg py-lawmake-md active:bg-neutral-50 ${
-                    !isLast ? 'border-b border-neutral-100' : ''
+                  onPress={() => {
+                    tapLight();
+                    router.push(`/members/${m.memberId}`);
+                  }}
+                  className={`flex-row items-center gap-lawmake-md py-lawmake-md active:bg-neutral-50 ${
+                    isLast ? '' : 'border-b border-neutral-100'
                   }`}
                 >
                   <Text
@@ -104,14 +109,14 @@ export function PropertyHighlight({ data }: Props) {
                 </Pressable>
               );
             })}
-          </Card>
+          </View>
         )}
       </Section>
     </View>
   );
 }
 
-function StatCard({
+function StatTile({
   label,
   value,
   colorClass,
@@ -122,9 +127,15 @@ function StatCard({
 }) {
   const router = useRouter();
   return (
-    <PressableCard className="flex-1 items-center" onPress={() => router.push('/property')}>
+    <Pressable
+      className="flex-1 items-center rounded-lawmake-md border border-neutral-100 py-lawmake-md active:bg-neutral-50"
+      onPress={() => {
+        tapLight();
+        router.push('/property');
+      }}
+    >
       <Text className={`text-lawmake-title2 font-bold ${colorClass}`}>{value}</Text>
       <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-500">{label}</Text>
-    </PressableCard>
+    </Pressable>
   );
 }

@@ -5,15 +5,16 @@ import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { getBill } from '@/api/bills';
+import { getBreakingNews } from '@/api/breaking-news';
 import { getMember } from '@/api/members';
-import { EmptyState } from '@/components/EmptyState';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { StatusBadge } from '@/components/ui/StatusBadge';
 import { Card, PressableCard } from '@/components/ui/Card';
 import { useUserPreferences } from '@/hooks/useBookmarks';
 import { useLawmakeQuery } from '@/hooks/useLawmakeQuery';
 import { useAuth } from '@/lib/auth-context';
 
-type Tab = 'members' | 'bills';
+type Tab = 'members' | 'bills' | 'breaking-news';
 
 export default function BookmarksScreen() {
   const router = useRouter();
@@ -47,12 +48,21 @@ export default function BookmarksScreen() {
 
   const memberIds = prefs?.bookmarkedMembers ?? [];
   const billIds = prefs?.bookmarkedBills ?? [];
-  const ids = tab === 'members' ? memberIds : billIds;
+  const newsIds = prefs?.bookmarkedBreakingNews ?? [];
+  const ids = tab === 'members' ? memberIds : tab === 'bills' ? billIds : newsIds;
+  const tabLabel = (t: Tab) =>
+    t === 'members'
+      ? `의원 ${memberIds.length}`
+      : t === 'bills'
+      ? `법안 ${billIds.length}`
+      : `속보 ${newsIds.length}`;
+  const emptyLabel =
+    tab === 'members' ? '의원' : tab === 'bills' ? '법안' : '속보';
 
   return (
     <View className="flex-1 bg-surface-secondary">
       <View className="flex-row gap-lawmake-sm border-b border-neutral-100 bg-surface-primary px-lawmake-lg pt-lawmake-sm pb-lawmake-sm">
-        {(['members', 'bills'] as Tab[]).map((t) => (
+        {(['members', 'bills', 'breaking-news'] as Tab[]).map((t) => (
           <Pressable
             key={t}
             onPress={() => setTab(t)}
@@ -65,7 +75,7 @@ export default function BookmarksScreen() {
                 tab === t ? 'text-white' : 'text-neutral-600'
               }`}
             >
-              {t === 'members' ? `의원 ${memberIds.length}` : `법안 ${billIds.length}`}
+              {tabLabel(t)}
             </Text>
           </Pressable>
         ))}
@@ -75,10 +85,10 @@ export default function BookmarksScreen() {
         <View className="flex-1 items-center justify-center p-lawmake-xl">
           <Bookmark size={48} color="#D1D5DB" />
           <Text className="mt-lawmake-md text-lawmake-callout font-bold text-neutral-900">
-            아직 즐겨찾기한 {tab === 'members' ? '의원' : '법안'}이 없습니다
+            아직 즐겨찾기한 {emptyLabel}이 없습니다
           </Text>
           <Text className="mt-lawmake-xs text-center text-lawmake-footnote text-neutral-500">
-            {tab === 'members' ? '의원 상세' : '법안 상세'} 화면의 북마크 버튼을 눌러보세요.
+            {emptyLabel} 화면의 북마크 버튼을 눌러보세요.
           </Text>
         </View>
       ) : (
@@ -87,11 +97,64 @@ export default function BookmarksScreen() {
           keyExtractor={(id) => id}
           contentContainerStyle={{ padding: 16, paddingBottom: insets.bottom + 16, gap: 8 }}
           renderItem={({ item }) =>
-            tab === 'members' ? <MemberRow id={item} /> : <BillRow id={item} />
+            tab === 'members' ? (
+              <MemberRow id={item} />
+            ) : tab === 'bills' ? (
+              <BillRow id={item} />
+            ) : (
+              <BreakingNewsRow id={item} />
+            )
           }
         />
       )}
     </View>
+  );
+}
+
+function BreakingNewsRow({ id }: { id: string }) {
+  const router = useRouter();
+  const { data: items, isLoading } = useLawmakeQuery(getBreakingNews, []);
+  const item = items?.find((n) => n.id === id);
+
+  if (isLoading) {
+    return (
+      <Card>
+        <ActivityIndicator />
+      </Card>
+    );
+  }
+
+  if (!item) {
+    return (
+      <Card>
+        <Text className="text-lawmake-caption text-neutral-400">
+          데이터를 찾을 수 없습니다 (ID: {id})
+        </Text>
+      </Card>
+    );
+  }
+
+  return (
+    <PressableCard
+      onPress={() => item.linkUrl && router.push(item.linkUrl as never)}
+    >
+      <View className="flex-row items-center gap-lawmake-sm">
+        <StatusBadge label="속보" tone="neutral" />
+        <Text className="text-lawmake-caption text-neutral-400">{item.date}</Text>
+      </View>
+      <Text
+        className="mt-lawmake-sm text-lawmake-headline leading-snug text-neutral-900"
+        numberOfLines={2}
+      >
+        {item.title}
+      </Text>
+      <Text
+        className="mt-lawmake-xs text-lawmake-footnote text-neutral-600"
+        numberOfLines={2}
+      >
+        {item.description}
+      </Text>
+    </PressableCard>
   );
 }
 

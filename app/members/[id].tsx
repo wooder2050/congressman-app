@@ -19,6 +19,7 @@ import { Section } from '@/components/ui/Section';
 import { StatusBadge, type StatusTone } from '@/components/ui/StatusBadge';
 import { SCORECARD_GRADE_MAP } from '@/constants/maps';
 import { useLawmakeQuery } from '@/hooks/useLawmakeQuery';
+import { useAuth } from '@/lib/auth-context';
 import { formatAmount, formatDate, formatPercent } from '@/lib/format';
 import type { Bill } from '@/types';
 
@@ -42,6 +43,7 @@ export default function MemberDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { session } = useAuth();
 
   const { data: member, isLoading, error, refetch } = useLawmakeQuery(getMember, [id]);
   const { data: terms } = useLawmakeQuery(getMemberTerms, [id]);
@@ -87,9 +89,11 @@ export default function MemberDetailScreen() {
 
   return (
     <View className="flex-1 bg-surface-secondary">
-      <Stack.Screen
-        options={{ headerRight: () => <BookmarkButton type="member" id={id} /> }}
-      />
+      {session && (
+        <Stack.Screen
+          options={{ headerRight: () => <BookmarkButton type="member" id={id} /> }}
+        />
+      )}
       <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom + 32 }}>
         {/* Profile */}
         <View className="items-center bg-surface-primary px-lawmake-lg pb-lawmake-xl pt-lawmake-sm">
@@ -127,12 +131,10 @@ export default function MemberDetailScreen() {
               )}
             </>
           )}
-          {member.career && (
-            <Text className="mt-lawmake-sm text-center text-lawmake-footnote leading-5 text-neutral-500">
-              {member.career}
-            </Text>
-          )}
         </View>
+
+        {/* Career */}
+        {member.career && <CareerSection raw={member.career} />}
 
         {/* Attendance */}
         {attendance && (
@@ -305,22 +307,38 @@ export default function MemberDetailScreen() {
               <View className="gap-lawmake-sm">
                 {assetsData.years.map((year) => (
                   <Card key={year.year}>
-                    <View className="flex-row items-center justify-between">
-                      <Text className="text-lawmake-body font-semibold text-neutral-900">
+                    <View className="flex-row items-baseline justify-between gap-lawmake-sm">
+                      <Text
+                        className="shrink-0 text-lawmake-body font-semibold text-neutral-900"
+                      >
                         {year.year}년
                       </Text>
-                      <Text className="text-lawmake-body font-bold text-primary">
+                      <Text
+                        className="flex-1 text-right text-lawmake-body font-bold text-primary"
+                        numberOfLines={1}
+                        adjustsFontSizeToFit
+                        minimumFontScale={0.8}
+                      >
                         {formatAmount(year.total)}원
                       </Text>
                     </View>
                     {year.categories.length > 0 && (
                       <View className="mt-lawmake-md gap-lawmake-xs">
                         {year.categories.slice(0, 4).map((cat) => (
-                          <View key={cat.category} className="flex-row justify-between">
-                            <Text className="text-lawmake-footnote text-neutral-500">
+                          <View
+                            key={cat.category}
+                            className="flex-row items-baseline justify-between gap-lawmake-sm"
+                          >
+                            <Text
+                              className="shrink text-lawmake-footnote text-neutral-500"
+                              numberOfLines={1}
+                            >
                               {cat.category}
                             </Text>
-                            <Text className="text-lawmake-footnote text-neutral-700">
+                            <Text
+                              className="shrink-0 text-right text-lawmake-footnote text-neutral-700"
+                              numberOfLines={1}
+                            >
                               {formatAmount(cat.amount)}원
                             </Text>
                           </View>
@@ -383,5 +401,123 @@ function NavLink({ label, onPress }: { label: string; onPress: () => void }) {
       <Text className="text-lawmake-body font-medium text-neutral-700">{label}</Text>
       <ChevronRight size={18} color="#A3A3A3" />
     </Pressable>
+  );
+}
+
+/**
+ * Career raw text 파싱:
+ * - HTML entity 디코딩 (&middot; 등)
+ * - [학력] / [경력] 섹션으로 분리
+ * - 각 줄을 list item으로 렌더, 한국어 가독성 위해 leading-relaxed
+ */
+function decodeHtmlEntities(s: string): string {
+  return s
+    .replace(/&middot;/g, '·')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&nbsp;/g, ' ');
+}
+
+function parseCareer(raw: string): { education: string[]; career: string[]; rest: string[] } {
+  const decoded = decodeHtmlEntities(raw);
+  // 줄 단위 분리, 빈 줄 제거
+  const lines = decoded
+    .split(/\r?\n/)
+    .map((l) => l.trim())
+    .filter(Boolean);
+
+  let section: 'education' | 'career' | 'rest' = 'rest';
+  const education: string[] = [];
+  const career: string[] = [];
+  const rest: string[] = [];
+
+  for (const line of lines) {
+    if (/^\[학력\]/.test(line)) {
+      section = 'education';
+      continue;
+    }
+    if (/^\[경력\]/.test(line)) {
+      section = 'career';
+      continue;
+    }
+    if (/^\[/.test(line)) {
+      // 다른 [섹션] 헤더는 rest로 떨어뜨림
+      section = 'rest';
+      rest.push(line);
+      continue;
+    }
+    if (section === 'education') education.push(line);
+    else if (section === 'career') career.push(line);
+    else rest.push(line);
+  }
+
+  return { education, career, rest };
+}
+
+function CareerSection({ raw }: { raw: string }) {
+  const { education, career, rest } = parseCareer(raw);
+  if (!education.length && !career.length && !rest.length) return null;
+
+  return (
+    <View className="mt-lawmake-md bg-surface-primary px-lawmake-lg pt-lawmake-lg pb-lawmake-lg">
+      {education.length > 0 && (
+        <CareerGroup title="학력" items={education} />
+      )}
+      {career.length > 0 && (
+        <View className={education.length > 0 ? 'mt-lawmake-lg' : ''}>
+          <CareerGroup title="경력" items={career} />
+        </View>
+      )}
+      {rest.length > 0 && (
+        <View className={(education.length > 0 || career.length > 0) ? 'mt-lawmake-lg' : ''}>
+          <CareerGroup title="기타" items={rest} />
+        </View>
+      )}
+    </View>
+  );
+}
+
+function CareerGroup({ title, items }: { title: string; items: string[] }) {
+  return (
+    <View>
+      <Text className="mb-lawmake-sm text-lawmake-subhead font-semibold text-neutral-900">
+        {title}
+      </Text>
+      <View className="gap-lawmake-xs">
+        {items.map((line, i) => (
+          <CareerLine key={i} line={line} />
+        ))}
+      </View>
+    </View>
+  );
+}
+
+function CareerLine({ line }: { line: string }) {
+  // "현) ..." or "전) ..." 같은 prefix를 별도 톤으로
+  const prefixMatch = line.match(/^(현\)|전\)|前\)|現\))\s*(.*)$/);
+  if (prefixMatch) {
+    const isPresent = /현|現/.test(prefixMatch[1]);
+    return (
+      <View className="flex-row gap-lawmake-sm">
+        <Text
+          className={`shrink-0 text-lawmake-footnote font-semibold ${
+            isPresent ? 'text-primary' : 'text-neutral-400'
+          }`}
+        >
+          {prefixMatch[1]}
+        </Text>
+        <Text className="flex-1 text-lawmake-footnote leading-relaxed text-neutral-700">
+          {prefixMatch[2]}
+        </Text>
+      </View>
+    );
+  }
+  return (
+    <Text className="text-lawmake-footnote leading-relaxed text-neutral-700">
+      {line}
+    </Text>
   );
 }

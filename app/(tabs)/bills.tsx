@@ -90,14 +90,16 @@ export default function BillsScreen() {
         >
           <View className="flex-row items-start justify-between gap-lawmake-sm">
             <Text
-              className="flex-1 text-lawmake-callout font-semibold text-neutral-900"
+              className="flex-1 text-lawmake-callout font-semibold leading-snug text-neutral-900"
               numberOfLines={2}
             >
               {item.title}
             </Text>
-            <StatusBadge label={statusInfo.label} tone={statusInfo.tone} />
+            <View className="shrink-0 pt-0.5">
+              <StatusBadge label={statusInfo.label} tone={statusInfo.tone} />
+            </View>
           </View>
-          <Text className="mt-lawmake-xs text-lawmake-footnote text-neutral-500">
+          <Text className="mt-lawmake-sm text-lawmake-footnote text-neutral-500">
             {item.proposerName}
             {item.coProposerCount > 0 ? ` 외 ${item.coProposerCount}인` : ''} ·{' '}
             {formatDate(item.proposedDate)}
@@ -149,7 +151,8 @@ export default function BillsScreen() {
           showsHorizontalScrollIndicator={false}
           keyExtractor={(item) => item.id}
           contentContainerStyle={{
-            paddingHorizontal: 16,
+            paddingLeft: 16,
+            paddingRight: 24,
             gap: 8,
           }}
           renderItem={({ item }) => (

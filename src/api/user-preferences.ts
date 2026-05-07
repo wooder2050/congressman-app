@@ -45,3 +45,17 @@ export async function removeMemberBookmark(memberId: string): Promise<UserPrefer
     requireAuth: true,
   });
 }
+
+export async function addBreakingNewsBookmark(newsId: string): Promise<UserPreference> {
+  return apiFetch(`/api/user/preferences/bookmarks/breaking-news/${encodeURIComponent(newsId)}`, {
+    method: 'POST',
+    requireAuth: true,
+  });
+}
+
+export async function removeBreakingNewsBookmark(newsId: string): Promise<UserPreference> {
+  return apiFetch(`/api/user/preferences/bookmarks/breaking-news/${encodeURIComponent(newsId)}`, {
+    method: 'DELETE',
+    requireAuth: true,
+  });
+}

@@ -31,7 +31,7 @@ export function LatestWeeklySection({ article }: Props) {
   if (!article) return null;
 
   return (
-    <View className="mt-lawmake-xl px-lawmake-lg">
+    <View className="mt-lawmake-md px-lawmake-lg">
       <Section title="주간뉴스" onMore={() => router.push('/weekly')}>
         <PressableCard onPress={() => router.push(`/weekly/${article.id}`)}>
           <View className="flex-row items-center gap-lawmake-sm">
