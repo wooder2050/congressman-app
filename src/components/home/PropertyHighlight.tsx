@@ -1,10 +1,12 @@
 import { useRouter } from 'expo-router';
+import { useMemo } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 import { MemberPhoto } from '@/components/MemberPhoto';
 import { Section } from '@/components/ui/Section';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { tapLight } from '@/lib/haptics';
+import { buildProfiles } from '@/lib/property-utils';
 import type { PropertyStatsResponse } from '@/types';
 
 interface Props {
@@ -21,54 +23,32 @@ interface Props {
  */
 export function PropertyHighlight({ data }: Props) {
   const router = useRouter();
-  if (!data || data.members.length === 0) return null;
 
-  const memberMap = new Map(data.members.map((m) => [m.memberId, m]));
-  const memberAssets = new Map<string, typeof data.assets>();
-  for (const a of data.assets) {
-    if (!memberAssets.has(a.memberId)) memberAssets.set(a.memberId, []);
-    memberAssets.get(a.memberId)!.push(a);
-  }
+  // /property 화면과 동일한 산식을 사용해 카운트가 일치하도록 한다.
+  const profiles = useMemo(
+    () => (data ? buildProfiles(data.members, data.assets) : []),
+    [data],
+  );
+
+  if (!data || data.members.length === 0) return null;
 
   let multiHomeCount = 0;
   let expensiveCount = 0;
   let excessiveCount = 0;
-  const topMultiHome: {
-    name: string;
-    memberId: string;
-    photoUrl: string;
-    partyColor: string;
-    count: number;
-  }[] = [];
-
-  for (const [memberId, assets] of memberAssets) {
-    const member = memberMap.get(memberId);
-    if (!member) continue;
-    const ownAssets = assets.filter((a) => a.relation === '본인' || a.relation === '배우자');
-    const homes = ownAssets.filter(
-      (a) => a.category === '건물' && !a.item.includes('임차') && !a.item.includes('분양'),
-    );
-    if (homes.length >= 2) {
-      multiHomeCount++;
-      topMultiHome.push({
-        name: member.name,
-        memberId,
-        photoUrl: member.photoUrl,
-        partyColor: member.partyColor,
-        count: homes.length,
-      });
-    }
-    if (ownAssets.some((a) => a.category === '건물' && a.amount >= 1500000000)) {
-      expensiveCount++;
-    }
-    const totalProp = ownAssets
-      .filter((a) => a.category === '건물' || a.category === '토지')
-      .reduce((s, a) => s + a.amount, 0);
-    if (totalProp >= 3000000000) excessiveCount++;
+  for (const p of profiles) {
+    if (p.categories.includes('multi-home')) multiHomeCount++;
+    if (p.categories.includes('expensive-home')) expensiveCount++;
+    if (p.categories.includes('excessive-property')) excessiveCount++;
   }
-  topMultiHome.sort((a, b) => b.count - a.count);
 
-  const topItems = topMultiHome.slice(0, 3);
+  const topItems = profiles
+    .filter((p) => p.categories.includes('multi-home'))
+    .sort(
+      (a, b) =>
+        b.housingCount - a.housingCount ||
+        b.housingTotalAmount - a.housingTotalAmount,
+    )
+    .slice(0, 3);
 
   return (
     <View className="mt-lawmake-sm bg-surface-primary px-lawmake-lg pt-lawmake-lg">
@@ -105,7 +85,7 @@ export function PropertyHighlight({ data }: Props) {
                   </Text>
                   <MemberPhoto uri={m.photoUrl} size={36} partyColor={m.partyColor} />
                   <Text className="flex-1 text-lawmake-body text-neutral-900">{m.name}</Text>
-                  <StatusBadge label={`${m.count}채`} tone="error" />
+                  <StatusBadge label={`${m.housingCount}채`} tone="error" />
                 </Pressable>
               );
             })}
