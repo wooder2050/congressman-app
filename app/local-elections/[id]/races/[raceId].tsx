@@ -11,19 +11,9 @@ import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { LocalProportionalNotice } from '@/components/LocalProportionalNotice';
 import { Card } from '@/components/ui/Card';
 import { StatusBadge } from '@/components/ui/StatusBadge';
-import { ballotInfoFor } from '@/constants/local-elections';
+import { ballotInfoFor, TYPE_LABELS } from '@/constants/local-elections';
 import { useLawmakeQuery } from '@/hooks/useLawmakeQuery';
-import type { LocalElectionCandidateDetail, LocalElectionType } from '@/types';
-
-const TYPE_LABELS: Record<LocalElectionType, string> = {
-  governor: '광역단체장',
-  mayor: '기초단체장',
-  superintendent: '교육감',
-  'metro-council': '광역의원',
-  'metro-proportional': '광역의원 비례',
-  'local-council': '기초의원',
-  'local-proportional': '기초의원 비례',
-};
+import type { LocalElectionCandidateDetail } from '@/types';
 
 function CandidateCard({ c }: { c: LocalElectionCandidateDetail }) {
   const [expanded, setExpanded] = useState(false);

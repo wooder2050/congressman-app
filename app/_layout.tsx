@@ -13,8 +13,8 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 
 import { OfflineBanner } from '@/components/OfflineBanner';
-import { hasCompletedOnboarding } from '@/lib/onboarding';
 import { AuthProvider } from '@/lib/auth-context';
+import { hasCompletedOnboarding } from '@/lib/onboarding';
 import { QueryProvider } from '@/lib/providers';
 
 SplashScreen.preventAutoHideAsync();

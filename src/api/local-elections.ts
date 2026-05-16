@@ -1,12 +1,12 @@
 import { apiFetch } from '@/api/client';
 import type {
-  LocalElectionSummary,
   LocalElectionOverview,
-  LocalElectionRaceSummary,
   LocalElectionRaceDetail,
-  LocalElectionRegionSummary,
+  LocalElectionRaceSummary,
   LocalElectionRegionDetail,
+  LocalElectionRegionSummary,
   LocalElectionStats,
+  LocalElectionSummary,
   LocalElectionType,
 } from '@/types';
 

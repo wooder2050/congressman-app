@@ -9,19 +9,10 @@ import { EmptyState } from '@/components/EmptyState';
 import { ErrorState } from '@/components/ErrorState';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { PressableCard } from '@/components/ui/Card';
-import { ballotInfoFor, SIDO_LIST } from '@/constants/local-elections';
+import { ballotInfoFor, SIDO_LIST, TYPE_LABELS } from '@/constants/local-elections';
 import { useLawmakeQuery } from '@/hooks/useLawmakeQuery';
+import { derivePartyChips } from '@/lib/local-elections-helpers';
 import type { LocalElectionType } from '@/types';
-
-const TYPE_LABELS: Record<LocalElectionType, string> = {
-  governor: '광역단체장',
-  mayor: '기초단체장',
-  superintendent: '교육감',
-  'metro-council': '광역의원',
-  'metro-proportional': '광역의원 비례',
-  'local-council': '기초의원',
-  'local-proportional': '기초의원 비례',
-};
 
 const TYPE_FILTERS: { id: LocalElectionType | 'all'; label: string }[] = [
   { id: 'all', label: '전체' },
@@ -157,23 +148,7 @@ export default function LocalElectionRaceListScreen() {
             const isNonPartisan = ballot?.kind === 'non-partisan';
             const isLocalPropEmpty =
               item.electionType === 'local-proportional' && item.candidateCount === 0;
-            const partyGroups = item.partyGroups ?? [];
-            // partyGroups가 없을 때 topCandidates를 정당별로 그룹핑 (client fallback)
-            const derivedPartyChips = isProportional
-              ? partyGroups.length > 0
-                ? partyGroups.map((g) => ({
-                    key: g.partyId ?? g.partyShortName,
-                    color: g.partyColor,
-                    label: `${g.partyShortName} ${g.candidateCount}명`,
-                  }))
-                : item.topCandidates
-                    .filter((c) => c.party)
-                    .map((c) => ({
-                      key: c.party!.id,
-                      color: c.party!.color,
-                      label: c.party!.shortName,
-                    }))
-              : [];
+            const partyChips = isProportional ? derivePartyChips(item) : [];
 
             const stripeColor = isProportional
               ? '#1D4ED8'
@@ -224,9 +199,9 @@ export default function LocalElectionRaceListScreen() {
                           NEC Open API 미제공 — 상세에서 안내 보기
                         </Text>
                       ) : isProportional ? (
-                        derivedPartyChips.length > 0 ? (
+                        partyChips.length > 0 ? (
                           <View className="mt-lawmake-sm flex-row flex-wrap gap-lawmake-xs">
-                            {derivedPartyChips.map((c) => (
+                            {partyChips.map((c) => (
                               <View
                                 key={c.key}
                                 className="flex-row items-center gap-lawmake-xs rounded-lawmake-sm bg-neutral-100 px-lawmake-sm py-0.5"
