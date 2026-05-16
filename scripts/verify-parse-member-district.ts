@@ -97,6 +97,9 @@ const gyeonggiSigungu = [
   '성남시분당구',
   '성남시수정구',
   '성남시중원구',
+  '수원시권선구',
+  '수원시영통구',
+  '수원시장안구',
   '수원시팔달구',
   '용인시기흥구',
 ];
@@ -118,13 +121,29 @@ const gyeonggiSigungu = [
 
 console.log('');
 
-// 시 단위만 알 때 (구가 없는 케이스)
+// 시 단위만 알 때 (구가 없는 케이스) — 모든 수원시 자치구가 매칭되어야 함
 {
   const parsed = parseMemberDistrict('경기 수원시갑');
   const r = findMatchingSigungu(gyeonggiSigungu, parsed.sigunguCandidates);
   console.log('input: "경기 수원시갑" → "수원시" candidate');
   expect(r.primary, '수원시', '"수원시"가 primary');
-  expect(r.allMatched.includes('수원시팔달구'), true, 'prefix 매칭으로 수원시팔달구 포함');
+  expect(
+    r.allMatched.sort(),
+    ['수원시권선구', '수원시영통구', '수원시장안구', '수원시팔달구'].sort(),
+    'allMatched는 모든 수원시 자치구 4개를 포함',
+  );
+}
+
+// 성남시 longest-first stop 회귀 — 성남시분당구만 잡고 다른 성남시 자치구는 제외
+{
+  const parsed = parseMemberDistrict('경기 성남시 분당구갑');
+  const r = findMatchingSigungu(gyeonggiSigungu, parsed.sigunguCandidates);
+  console.log('input: "경기 성남시 분당구갑" — longest-first stop 회귀 방지');
+  expect(
+    r.allMatched.sort(),
+    ['성남시분당구'].sort(),
+    '"성남시" candidate가 잡는 수정구·중원구가 누설되지 않음',
+  );
 }
 
 console.log('');

@@ -39,9 +39,12 @@ export function SigunguPicker({
   const [pickerOpen, setPickerOpen] = useState(false);
   const insets = useSafeAreaInsets();
 
+  // public prop이라 비정상 값(0, 음수) 방어
+  const safeVisibleCount = Math.max(1, visibleCount);
+
   // 상위 N개 + 현재 선택된 chip 우선
   const visibleSigungu = (() => {
-    const head = sigunguList.slice(0, visibleCount);
+    const head = sigunguList.slice(0, safeVisibleCount);
     if (
       typeof filter === 'string' &&
       filter !== 'mine' &&
@@ -49,7 +52,7 @@ export function SigunguPicker({
       !head.includes(filter)
     ) {
       // 선택된 chip이 상위 N개 밖이면 앞쪽에 끌어옴
-      return [filter, ...head.slice(0, visibleCount - 1)];
+      return [filter, ...head.slice(0, safeVisibleCount - 1)];
     }
     return head;
   })();

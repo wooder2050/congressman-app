@@ -53,15 +53,21 @@ export function useSigunguFilter({ sido, sigunguList, isReady }: UseSigunguFilte
     setFilter('mine');
   }, [touched, isReady, filter, myMatchingSigungu.length]);
 
-  // 유효성 보정: 'mine'이 더 이상 매칭되지 않으면(예: prefs 변경, 다른 sido로 route 재사용)
-  // 'undefined'로 되돌려 빈 목록이나 깨진 라벨을 방지.
+  // 유효성 보정: 현재 filter 값이 더 이상 유효하지 않으면 'undefined'로 되돌림.
+  // - 'mine': myMatchingSigungu가 비었을 때 (prefs 변경, sido 간 route 재사용)
+  // - 특정 sigungu: sigunguList에 없을 때 (route 재사용으로 다른 sido 데이터, type 화면 전환)
   // touched와 무관하게 항상 적용 — 사용자 선택이라도 무효해진 상태는 정리해야 안전.
+  // 특히 type 화면은 stale 값을 backend `sigungu` 쿼리로 보낼 위험이 있어 방어 필요.
   useEffect(() => {
     if (!isReady) return;
-    if (filter !== 'mine') return;
-    if (myMatchingSigungu.length > 0) return;
+    if (filter === undefined) return;
+    if (filter === 'mine') {
+      if (myMatchingSigungu.length > 0) return;
+    } else {
+      if (sigunguList.includes(filter)) return;
+    }
     setFilter(undefined);
-  }, [isReady, filter, myMatchingSigungu.length]);
+  }, [isReady, filter, myMatchingSigungu.length, sigunguList]);
 
   const setFilterByUser = (next: SigunguFilterValue) => {
     setTouched(true);
