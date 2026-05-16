@@ -12,7 +12,8 @@
     "format:check": "prettier --check .",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
-    "knip": "knip"
+    "knip": "knip",
+    "verify:parse-district": "tsx scripts/verify-parse-member-district.ts"
   },
   "dependencies": {
     "@expo-google-fonts/inter": "^0.4.2",
@@ -62,6 +63,7 @@
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "knip": "^5.85.0",
     "prettier": "^3.8.1",
+    "tsx": "^4.22.0",
     "typescript": "~5.9.2"
   },
   "private": true

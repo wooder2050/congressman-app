@@ -148,7 +148,10 @@ export default function LocalElectionRaceListScreen() {
             const isNonPartisan = ballot?.kind === 'non-partisan';
             const isLocalPropEmpty =
               item.electionType === 'local-proportional' && item.candidateCount === 0;
-            const partyChips = isProportional ? derivePartyChips(item) : [];
+            const partyChipsResult = isProportional
+              ? derivePartyChips(item)
+              : { chips: [], isFallback: false, hasMoreParties: false };
+            const partyChips = partyChipsResult.chips;
 
             const stripeColor = isProportional
               ? '#1D4ED8'
@@ -200,21 +203,28 @@ export default function LocalElectionRaceListScreen() {
                         </Text>
                       ) : isProportional ? (
                         partyChips.length > 0 ? (
-                          <View className="mt-lawmake-sm flex-row flex-wrap gap-lawmake-xs">
-                            {partyChips.map((c) => (
-                              <View
-                                key={c.key}
-                                className="flex-row items-center gap-lawmake-xs rounded-lawmake-sm bg-neutral-100 px-lawmake-sm py-0.5"
-                              >
+                          <View className="mt-lawmake-sm">
+                            <View className="flex-row flex-wrap gap-lawmake-xs">
+                              {partyChips.map((c) => (
                                 <View
-                                  className="h-2 w-2 rounded-full"
-                                  style={{ backgroundColor: c.color }}
-                                />
-                                <Text className="text-lawmake-caption text-neutral-700">
-                                  {c.label}
-                                </Text>
-                              </View>
-                            ))}
+                                  key={c.key}
+                                  className="flex-row items-center gap-lawmake-xs rounded-lawmake-sm bg-neutral-100 px-lawmake-sm py-0.5"
+                                >
+                                  <View
+                                    className="h-2 w-2 rounded-full"
+                                    style={{ backgroundColor: c.color }}
+                                  />
+                                  <Text className="text-lawmake-caption text-neutral-700">
+                                    {c.label}
+                                  </Text>
+                                </View>
+                              ))}
+                            </View>
+                            {partyChipsResult.isFallback && partyChipsResult.hasMoreParties && (
+                              <Text className="mt-lawmake-xs text-lawmake-caption text-neutral-400">
+                                일부 정당만 표시 — 상세에서 전체 명부 확인
+                              </Text>
+                            )}
                           </View>
                         ) : (
                           <Text className="mt-lawmake-sm text-lawmake-caption text-neutral-400">

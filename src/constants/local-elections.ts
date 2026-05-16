@@ -113,20 +113,24 @@ export function parseMemberDistrict(district: string): {
 
 /**
  * sigungu 목록(자치구 단위 포함)에서 my-district candidates와 prefix 매칭되는 항목 추출.
- * longest candidate 우선으로 매칭해 "분당구"보다 "성남시분당구"를 먼저 잡는다.
+ *
+ * longest-first 전략:
+ *  1. candidates는 길이 내림차순으로 정렬되어 들어옴 (parseMemberDistrict 결과)
+ *  2. 첫 매칭되는 candidate에서 멈춤 — 더 일반적인(짧은) candidate가 잡는 sigungu는 무시
+ *  3. 예: "성남시 분당구갑"의 candidates는 ["성남시분당구", "성남시", "분당구", "분당구갑", ...]
+ *     "성남시분당구"가 매칭되면 거기서 멈춤. "성남시"가 "성남시수정구"까지 잡는 것 방지.
  */
 export function findMatchingSigungu(
   sigunguList: readonly string[],
   candidates: readonly string[],
 ): { primary: string | undefined; allMatched: string[] } {
-  const matched = new Set<string>();
-  let primary: string | undefined;
   for (const cand of candidates) {
-    const hits = sigunguList.filter((s) => s.startsWith(cand) || s.endsWith(cand));
-    if (hits.length > 0 && primary === undefined) primary = cand;
-    for (const h of hits) matched.add(h);
+    const hits = sigunguList.filter((s) => s === cand || s.startsWith(cand) || s.endsWith(cand));
+    if (hits.length > 0) {
+      return { primary: cand, allMatched: hits };
+    }
   }
-  return { primary, allMatched: Array.from(matched) };
+  return { primary: undefined, allMatched: [] };
 }
 
 export const SIDO_LIST = [
