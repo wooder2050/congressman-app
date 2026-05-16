@@ -609,7 +609,9 @@ export type LocalElectionType =
   | 'governor'
   | 'mayor'
   | 'metro-council'
+  | 'metro-proportional'
   | 'local-council'
+  | 'local-proportional'
   | 'superintendent';
 
 export interface LocalElectionSummary {
@@ -642,6 +644,14 @@ export interface LocalElectionCandidatePreview {
   photoUrl: string | null;
 }
 
+export interface LocalElectionPartyGroup {
+  partyId: string | null;
+  partyName: string;
+  partyShortName: string;
+  partyColor: string;
+  candidateCount: number;
+}
+
 export interface LocalElectionRaceSummary {
   id: number;
   electionType: LocalElectionType;
@@ -652,6 +662,8 @@ export interface LocalElectionRaceSummary {
   seatCount: number;
   candidateCount: number;
   topCandidates: LocalElectionCandidatePreview[];
+  /** 비례대표 race에만 채워짐 — 정당별 명부 후보 수 */
+  partyGroups?: LocalElectionPartyGroup[];
 }
 
 export interface LocalElectionCandidateDetail {

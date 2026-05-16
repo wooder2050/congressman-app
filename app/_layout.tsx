@@ -168,6 +168,10 @@ export default function RootLayout() {
           options={{ headerShown: true, title: '지역별 선거구' }}
         />
         <Stack.Screen
+          name="local-elections/[id]/regions/[sido]/[type]"
+          options={{ headerShown: true, title: '선거 종류' }}
+        />
+        <Stack.Screen
           name="local-elections/[id]/vote"
           options={{ headerShown: true, title: '투표 안내' }}
         />
