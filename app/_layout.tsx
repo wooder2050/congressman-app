@@ -13,8 +13,8 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 
 import { OfflineBanner } from '@/components/OfflineBanner';
-import { hasCompletedOnboarding } from '@/lib/onboarding';
 import { AuthProvider } from '@/lib/auth-context';
+import { hasCompletedOnboarding } from '@/lib/onboarding';
 import { QueryProvider } from '@/lib/providers';
 
 SplashScreen.preventAutoHideAsync();
@@ -166,6 +166,10 @@ export default function RootLayout() {
         <Stack.Screen
           name="local-elections/[id]/regions/[sido]"
           options={{ headerShown: true, title: '지역별 선거구' }}
+        />
+        <Stack.Screen
+          name="local-elections/[id]/regions/[sido]/[type]"
+          options={{ headerShown: true, title: '선거 종류' }}
         />
         <Stack.Screen
           name="local-elections/[id]/vote"

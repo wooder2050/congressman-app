@@ -1,12 +1,12 @@
 import { apiFetch } from '@/api/client';
 import type {
-  LocalElectionSummary,
   LocalElectionOverview,
-  LocalElectionRaceSummary,
   LocalElectionRaceDetail,
-  LocalElectionRegionSummary,
+  LocalElectionRaceSummary,
   LocalElectionRegionDetail,
+  LocalElectionRegionSummary,
   LocalElectionStats,
+  LocalElectionSummary,
   LocalElectionType,
 } from '@/types';
 
@@ -40,6 +40,35 @@ export async function getLocalElectionRaces(params: {
   return apiFetch(`/api/local-elections/${params.id}/races${qs ? `?${qs}` : ''}`);
 }
 Object.defineProperty(getLocalElectionRaces, 'queryKey', { value: 'localElectionRaces' });
+
+/**
+ * Backend가 `limit`을 max 100으로 clamp하므로,
+ * 단일 시도+종류 전체 race를 받으려면 페이지를 합쳐야 함.
+ * 종류 페이지(`/regions/[sido]/[type]`)에서 사용.
+ */
+export async function getLocalElectionRacesAll(params: {
+  id: string;
+  type?: LocalElectionType;
+  sido?: string;
+  sigungu?: string;
+  q?: string;
+}): Promise<{ races: LocalElectionRaceSummary[]; total: number }> {
+  const PAGE_SIZE = 100;
+  const first = await getLocalElectionRaces({ ...params, page: 1, limit: PAGE_SIZE });
+  if (first.races.length >= first.total) return first;
+
+  const totalPages = Math.ceil(first.total / PAGE_SIZE);
+  const rest = await Promise.all(
+    Array.from({ length: totalPages - 1 }, (_, i) =>
+      getLocalElectionRaces({ ...params, page: i + 2, limit: PAGE_SIZE }),
+    ),
+  );
+  return {
+    races: [first, ...rest].flatMap((r) => r.races),
+    total: first.total,
+  };
+}
+Object.defineProperty(getLocalElectionRacesAll, 'queryKey', { value: 'localElectionRacesAll' });
 
 export async function getLocalElectionRace(params: {
   id: string;
