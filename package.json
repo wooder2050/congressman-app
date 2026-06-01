@@ -12,8 +12,7 @@
     "format:check": "prettier --check .",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
-    "knip": "knip",
-    "verify:parse-district": "tsx scripts/verify-parse-member-district.ts"
+    "knip": "knip"
   },
   "dependencies": {
     "@expo-google-fonts/inter": "^0.4.2",
