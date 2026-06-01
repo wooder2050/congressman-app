@@ -11,11 +11,9 @@ import { getWeeklyList } from '@/api/weekly';
 import { EmptyState } from '@/components/EmptyState';
 import { ErrorState } from '@/components/ErrorState';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
-import { LocalElectionBanner } from '@/components/LocalElectionBanner';
 import { AttendanceRankingSection } from '@/components/home/AttendanceRanking';
 import { BreakingNewsList } from '@/components/home/BreakingNewsList';
 import { CloseVotesSection } from '@/components/home/CloseVotesSection';
-import { ElectionFAB } from '@/components/home/ElectionFAB';
 import { HomeHeader } from '@/components/home/HomeHeader';
 import { HomeStatsGrid } from '@/components/home/HomeStatsGrid';
 import { LatestWeeklySection } from '@/components/home/LatestWeeklySection';
@@ -65,10 +63,6 @@ export default function HomeScreen() {
       >
         <HomeHeader />
 
-        <View className="mt-lawmake-md px-lawmake-lg">
-          <LocalElectionBanner />
-        </View>
-
         <BreakingNewsList items={breakingNews} />
 
         <LatestWeeklySection article={latestWeekly} />
@@ -98,8 +92,6 @@ export default function HomeScreen() {
 
         <PropertyHighlight data={propertyData} />
       </ScrollView>
-
-      <ElectionFAB />
     </View>
   );
 }
